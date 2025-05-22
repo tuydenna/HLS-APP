@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xiao Din Watch</title>
+    <link rel="stylesheet" href="/media_player/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/media_player/script.js" defer></script>
+    <style>
+        .post-hover:hover {
+            cursor: pointer;
+            background: #dcdcdc33;
+        }
+    </style>
+</head>
+<body>
+<div class="flex p-5">
+    <div class="flex-none w-2/3">
+        <%- include('./components/video-player', {video: data.post.video}); %>
+        <section title="video-title" >
+            <p class="text-lg font-bold text-xl"><%= data.post.title %></p>
+        </section>
+        <section  title="author">
+            <div class="flex mt-3">
+                <div class="flex justify-content-start">
+                    <div class="avatar">
+                        <div class="w-24 rounded-full">
+                            <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                        </div>
+                    </div>
+                    <div class="flex-col ml-2 self-center">
+                        <div>
+                            <h5 class="mb-0"><%= data.post.author.name %></h5>
+                        </div>
+                        <div>
+                            <p>5 subscribers</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex grow justify-end self-center" style="align-self: center">
+                    <%- include('./components/like-view', {post: data.post}); %>
+                </div>
+            </div>
+        </section>
+        <section title="description"  class="mt-5">
+            <div tabindex="0" class="collapse bg-base-200">
+                <div class="collapse-title text-xl font-medium">Focus me to see content</div>
+                <div class="collapse-content">
+                    <p> <%= data.post.description %></p>
+                </div>
+            </div>
+        </section>
+        <section>
+            <div class="divider divider-start font-bold">Comments ...</div>
+            <input type="text" placeholder="commenting"  class="input w-full max-w-xs" id="press-comment" />
+        </section>
+        <%- include('./components/comment', {comments: data.post.comments}); %>
+    </div>
+
+    <div class="flex flex-col grow pl-5">
+        <%- include('./components/related-post', {posts: data.posts}); %>
+    </div>
+</div>
+
+<!--scripting JS-->
+<%- include('./js/index', {data: data}); %>
+
+<%- include('../layouts/footer'); %>
