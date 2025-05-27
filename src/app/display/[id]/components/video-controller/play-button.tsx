@@ -1,11 +1,10 @@
 import { useEffect, useState} from "react";
 
 export default function PlayButton({videoEl}: {videoEl: HTMLVideoElement | null}) {
-    const [isPlay, setIsPlay] = useState(true)
+    const [isPlay, setIsPlay] = useState(false)
 
     useEffect(() => {
         function playOrPauseVideo() {
-            alert("eded"+ isPlay.toString())
             if (isPlay) {
                 videoEl?.pause()
             } else {

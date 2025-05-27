@@ -2,18 +2,31 @@ import {JSX, useEffect, useState, createRef, useRef, RefObject} from "react";
 
 export default function VideoTimeline({videoEl}: {videoEl: HTMLVideoElement | null}): JSX.Element {
     const [timeline, setTimeline] = useState<string>(".0")
+    const [previewTimeline, setPreviewTimeline] = useState<string>(".0")
     const isScrubbingRef: RefObject<HTMLDivElement | boolean> = useRef(false)
     const timelineRef: RefObject<HTMLDivElement | null> = createRef<HTMLDivElement | null>()
 
     useEffect(()=>{
+        const timelineEl: HTMLDivElement = timelineRef.current!;
+
+        function handleSeekVideo(e:MouseEvent): string {
+            const currentTimeline: number = getCurrentTimelinePosition(e);
+            videoEl!.currentTime = currentTimeline * videoEl!.duration;
+            return currentTimeline.toString()
+        }
+
+        function getCurrentTimelinePosition(e:MouseEvent): number {
+            const rect: DOMRect = timelineEl.getBoundingClientRect()
+            return Math.min(Math.max(0, e.x - rect.x), rect.width) / rect.width;
+        }
+
         function updateTimeline() {
             const timeLine: number = videoEl!.currentTime/videoEl!.duration
+            console.log("timeline", timeLine);
             if(timeLine <= 1) {
                 setTimeline(timeLine.toString())
             }
         }
-
-        const timelineEl: HTMLDivElement = timelineRef.current!;
 
         function mouseDownScrubbing(e: MouseEvent) {
             e.preventDefault()
@@ -22,7 +35,15 @@ export default function VideoTimeline({videoEl}: {videoEl: HTMLVideoElement | nu
             videoEl!.pause()
         }
 
-        function mouseMoveEvent(e: MouseEvent) {
+        function mouseMoveOnTimeline(e: MouseEvent) {
+            if (isScrubbingRef.current) {
+                setTimeline(handleSeekVideo(e))
+            } else {
+                setPreviewTimeline(getCurrentTimelinePosition(e).toString())
+            }
+        }
+
+        function mouseMoveOnDocument(e: MouseEvent) {
             if (isScrubbingRef.current) {
                 setTimeline(handleSeekVideo(e))
             }
@@ -36,23 +57,16 @@ export default function VideoTimeline({videoEl}: {videoEl: HTMLVideoElement | nu
             }
         }
 
-        function handleSeekVideo(e:MouseEvent): string {
-            const rect: DOMRect = timelineEl.getBoundingClientRect()
-            const currentTimeline: number = Math.min(Math.max(0, e.x - rect.x), rect.width) / rect.width;
-            videoEl!.currentTime = currentTimeline * videoEl!.duration;
-            return currentTimeline.toString()
-        }
-
         if (videoEl) {
             videoEl.addEventListener("timeupdate", updateTimeline)
         }
         if (timelineEl) {
             timelineEl.addEventListener("mousedown", mouseDownScrubbing)
-            timelineEl.addEventListener("mousemove", mouseMoveEvent)
+            timelineEl.addEventListener("mousemove", mouseMoveOnTimeline)
         }
 
         document.addEventListener("mouseup", mouseUpEvent)
-        document.addEventListener("mousemove", mouseMoveEvent)
+        document.addEventListener("mousemove", mouseMoveOnDocument)
 
         return () => {
             if (videoEl) {
@@ -60,15 +74,15 @@ export default function VideoTimeline({videoEl}: {videoEl: HTMLVideoElement | nu
             }
             if (timelineEl) {
                 timelineEl.removeEventListener("mousedown", mouseDownScrubbing)
-                timelineEl.removeEventListener("mousemove", mouseMoveEvent)
+                timelineEl.removeEventListener("mousemove", mouseMoveOnTimeline)
             }
             document.removeEventListener("mouseup", mouseUpEvent)
-            document.removeEventListener("mousemove", mouseMoveEvent)
+            document.removeEventListener("mousemove", mouseMoveOnDocument)
         }
-    }, [videoEl, timeline])
+    }, [videoEl, timeline, previewTimeline])
 
     return (
-        <div ref={timelineRef} className="timeline-container" style={{"--preview-position": ".19", "--progress-position": timeline}}>
+        <div ref={timelineRef} className="timeline-container" style={{"--preview-position": previewTimeline , "--progress-position": timeline}}>
             <div className="timeline">
                 <img className="preview-img" alt={""}/>
                 <div className="thumb-indicator"></div>

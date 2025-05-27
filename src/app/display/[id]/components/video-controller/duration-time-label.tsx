@@ -1,4 +1,4 @@
-import {RefObject, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {formatVideoTimeUpdate, formatDuration} from "@util/video-config";
 
 export default function DurationTimeLabel({videoEl}: {videoEl: HTMLVideoElement | null}) {
@@ -6,9 +6,9 @@ export default function DurationTimeLabel({videoEl}: {videoEl: HTMLVideoElement 
     const [durationTime, setDurationTime] = useState<string>("00:00")
 
     useEffect(()=> {
+        console.error("videoEl", videoEl);
         if (videoEl) {
             function loadedDataEvent() {
-                alert("sd")
                 setDuration(formatDuration(+videoEl!.duration))
             }
             function timeupdateEvent() {

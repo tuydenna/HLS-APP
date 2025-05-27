@@ -1,4 +1,3 @@
-
 .line-clamp {
     overflow: hidden;
     display: -webkit-box;
@@ -56,10 +55,15 @@ video {
     pointer-events: none;
 }
 
-.video-container:hover .video-controls-container,
-.video-container:focus-within .video-controls-container,
-.video-container.paused .video-controls-container {
+/*.video-container:hover .video-controls-container,*/
+/*.video-container:focus-within .video-controls-container,*/
+/*.video-container.paused .video-controls-container {*/
+/*    opacity: 0;*/
+/*}*/
+
+.video-container:hover .video-controls-container {
     opacity: 1;
+    transition: opacity 500ms ease-in-out;
 }
 
 .video-controls-container .controls {
@@ -175,6 +179,7 @@ video {
     width: 100%;
     position: relative
 }
+
 
 .timeline::before {
     content: "";
