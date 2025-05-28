@@ -189,7 +189,7 @@ video {
     bottom: 0;
     right: calc(100% - var(--preview-position) * 100%);
     background-color: rgb(150, 150, 150);
-    display: none;
+    display: block;
 }
 
 .timeline::after {

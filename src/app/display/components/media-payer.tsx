@@ -12,23 +12,35 @@ import PlayFullScreenButton from "@display/[id]/components/video-controller/play
 import VideoTimeline from "@display/[id]/components/video-controller/video-timeline";
 import {getSegmentBuffer} from "@app/services/stream-api";
 
-const MIME_CODEC  = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
+const MIME_CODEC: string  = 'video/mp4; codecs="avc1.64002A, mp4a.40.2"';
+const BUFFER_FETCH_GAP: number = 5;
+const CHUNK_SIZE: number = 1 * 10 ** 6;
 
 const isMediaSourceSupported = (mimeCodec: string) => {
-    // return 'MIME_CODEC ' in window && MediaSource.isTypeSupported(mimeCodec);
     return MediaSource.isTypeSupported(mimeCodec);
 };
+
+const initMediaSourceExtension = (videoEl: HTMLVideoElement): MediaSource => {
+    const mediaSource: MediaSource = new MediaSource();
+    videoEl.src = URL.createObjectURL(mediaSource);
+    return mediaSource;
+}
 
 export default function MediaPayer(data: {video: {path: string}}):JSX.Element {
 
     const videoRef: RefObject<HTMLVideoElement | null> = useRef<HTMLVideoElement>(null)
     const mediaSourceRef: RefObject<MediaSource | null> = useRef<MediaSource>(null)
     const sourceBufferRef: RefObject<SourceBuffer | null> = useRef<SourceBuffer>(null)
-    const segmentIndexRef = useRef(0);
-    const isFetchingChunkRef = useRef(false);
+    const segmentIndexRef: RefObject<number> = useRef(0);
+    const lastBufferRangeRef: RefObject<number> = useRef(0);
+    const isFetchingChunkRef: RefObject<boolean> = useRef(false);
     const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null)
-    const [bufferedRanges, setBufferedRanges] = useState(null);
-    const mime_type: string = 'video/mp4; codecs="avc1.64002A, mp4a.40.2"';
+
+    function getSegmentRange() {
+        const segment =  {start: lastBufferRangeRef.current ? lastBufferRangeRef.current + 1 : 0, end: lastBufferRangeRef.current + CHUNK_SIZE};
+        lastBufferRangeRef.current = segment.end;
+        return segment
+    }
 
     const fetchAndAppendBuffer = async function (sourceBuffer: SourceBuffer, segment: any): Promise<boolean> {
         console.log(
@@ -58,74 +70,70 @@ export default function MediaPayer(data: {video: {path: string}}):JSX.Element {
         });
     }
 
-
     useEffect(() => {
-        async function sourceOpenConnectBufferingAndInitSegment() {
+
+        if (!videoRef.current) return;
+        setVideoEl(videoRef.current);
+
+        async function createBufferPipelineAndInitSegmentMetadata() {
             console.log("sourceopening start segmenting", mediaSourceRef.current!.readyState);
-            mediaSourceRef.current.duration = 120;
             const manifest =  (await import("@display/manifest.json")).default
-            if (!MediaSource.isTypeSupported(mime_type)) {
+
+            if (!isMediaSourceSupported(MIME_CODEC)) {
                 console.error("MediaSource is not supported");
                 return
             }
 
-            const sourceBuffer: SourceBuffer = mediaSourceRef.current!.addSourceBuffer(mime_type);
+            const sourceBuffer: SourceBuffer = mediaSourceRef.current!.addSourceBuffer(MIME_CODEC);
             sourceBufferRef.current = sourceBuffer;
 
+            mediaSourceRef.current!.duration = 3 * 50 + 57;
             // Init Segment data
-            await fetchAndAppendBuffer(sourceBuffer, manifest[segmentIndexRef.current]);
-            await fetchAndAppendBuffer(sourceBuffer, manifest[segmentIndexRef.current]);
+            await fetchAndAppendBuffer(sourceBuffer, getSegmentRange());
+            await fetchAndAppendBuffer(sourceBuffer, getSegmentRange());
         }
 
         async function prefetchSegmentChunkBuffer() {
             const sourceBuffer: SourceBuffer | null = sourceBufferRef.current;
-            if (sourceBuffer) {
-                const advanceBufferTime = 5;
-                const bufferedDuration: number = sourceBuffer?.buffered.end(sourceBuffer.buffered!.length - 1) || 0
-                const currentTime: number | undefined = videoRef.current?.currentTime;
-                if (!isFetchingChunkRef.current && currentTime && (currentTime + advanceBufferTime >= bufferedDuration)) {
-                    // @ts-ignore
-                    const manifest: {start: number, end: number, type: string}[] = (await import("@display/manifest.json")).default
-                    isFetchingChunkRef.current = true;
-                    await fetchAndAppendBuffer(sourceBuffer, manifest[segmentIndexRef.current]);
-                    console.warn("timeupdate", bufferedDuration, currentTime,  sourceBuffer);
-                }
-            } else {
-                console.error("sourceBuffer is null");
+            if (!sourceBuffer) {
+                console.error("[prefetchSegmentChunkBuffer]: sourceBuffer is null");
+                return
+            }
+
+            const bufferedDuration: number = sourceBuffer?.buffered.end(sourceBuffer.buffered!.length - 1) || 0
+            const currentTime: number = videoRef.current!.currentTime;
+
+            if (!isFetchingChunkRef.current && currentTime && (currentTime + BUFFER_FETCH_GAP >= bufferedDuration)) {
+                isFetchingChunkRef.current = true;
+                await fetchAndAppendBuffer(sourceBuffer, getSegmentRange());
+                console.warn("timeupdate", bufferedDuration, currentTime,  sourceBuffer);
             }
         }
 
-        const run = async () => {
-
-            mediaSourceRef.current = new MediaSource();
-            videoRef.current!.src = URL.createObjectURL(mediaSourceRef.current);
-
-            mediaSourceRef.current.addEventListener('sourceopen', sourceOpenConnectBufferingAndInitSegment);
-
-            videoRef.current?.addEventListener("timeupdate", prefetchSegmentChunkBuffer)
-        };
-        if (videoRef.current) {
-            run();
-            setVideoEl(videoRef.current);
+        if (videoEl) {
+            const mediaSource: MediaSource = initMediaSourceExtension(videoEl);
+            mediaSourceRef.current = mediaSource;
+            mediaSource.addEventListener('sourceopen', createBufferPipelineAndInitSegmentMetadata);
+            videoEl.addEventListener("timeupdate", prefetchSegmentChunkBuffer);
         }
 
         console.warn("User Effect Called");
 
         return () => {
-            if (videoRef.current) {
-                videoRef.current?.removeEventListener("timeupdate", prefetchSegmentChunkBuffer)
+            if (videoEl) {
+                videoEl.removeEventListener("timeupdate", prefetchSegmentChunkBuffer)
             }
             if (mediaSourceRef.current) {
-                mediaSourceRef.current.removeEventListener("sourceopen", sourceOpenConnectBufferingAndInitSegment)
+                mediaSourceRef.current.removeEventListener("sourceopen", createBufferPipelineAndInitSegmentMetadata)
             }
         }
-    }, [videoRef.current, mediaSourceRef]);
+    }, [videoRef.current]);
 
     return (
         <div className="video-container paused m-0 mb-3" data-volume-level="high">
             <img className="thumbnail-img" alt={"f"}/>
             <div className="video-controls-container">
-                <VideoTimeline videoEl={videoEl}/>
+                <VideoTimeline videoEl={videoEl} sourceBufferRef={sourceBufferRef} />
                 <div className="controls">
                     <PlayButton videoEl={videoEl}/>
                     <SoundButton videoEl={videoEl}/>
@@ -142,7 +150,7 @@ export default function MediaPayer(data: {video: {path: string}}):JSX.Element {
                     <PlayFullScreenButton videoEl={videoEl}/>
                 </div>
             </div>
-            <video ref={videoRef} controls={true} autoPlay={false} muted={true}>
+            <video ref={videoRef} controls={false} autoPlay={false} muted={true}>
                 <track kind="captions" srcLang="en" src="/media_player/assets/subtitles.vtt"/>
             </video>
         </div>

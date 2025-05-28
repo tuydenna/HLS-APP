@@ -6,27 +6,29 @@ export default function DurationTimeLabel({videoEl}: {videoEl: HTMLVideoElement 
     const [durationTime, setDurationTime] = useState<string>("00:00")
 
     useEffect(()=> {
-        console.error("videoEl", videoEl);
-        if (videoEl) {
-            function loadedDataEvent() {
-                setDuration(formatDuration(+videoEl!.duration))
-            }
-            function timeupdateEvent() {
-                if (duration === "00:00") {
 
-                }
-                setDuration(formatDuration(+videoEl!.duration))
-                const durationTime: string = formatVideoTimeUpdate(videoEl!.currentTime)
-                setDurationTime(durationTime)
-            }
-            videoEl.addEventListener("loadstart", loadedDataEvent)
-            videoEl.addEventListener("timeupdate", timeupdateEvent)
+        if (!videoEl) return
 
-            return () => {
-                if (videoEl) {
-                    videoEl.removeEventListener("loadedmetadata", loadedDataEvent)
-                    videoEl.removeEventListener("timeupdate", timeupdateEvent)
-                }
+        function initDuration() {
+            if (videoEl?.duration) {
+                setDuration(formatDuration(+videoEl.duration))
+                "videoEl.duration"
+            }
+            console.log("loadedmetadata", videoEl?.duration);
+        }
+
+        function timeupdateEvent() {
+            const durationTime: string = formatVideoTimeUpdate(videoEl!.currentTime)
+            setDurationTime(durationTime)
+        }
+
+        videoEl.addEventListener("loadedmetadata", initDuration)
+        videoEl.addEventListener("timeupdate", timeupdateEvent)
+
+        return () => {
+            if (videoEl) {
+                videoEl.removeEventListener("loadedmetadata", initDuration)
+                videoEl.removeEventListener("timeupdate", timeupdateEvent)
             }
         }
     }, [videoEl])

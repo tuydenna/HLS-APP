@@ -1,10 +1,11 @@
 import {JSX, useEffect, useState, createRef, useRef, RefObject} from "react";
 
-export default function VideoTimeline({videoEl}: {videoEl: HTMLVideoElement | null}): JSX.Element {
+export default function VideoTimeline({videoEl, sourceBufferRef}: {videoEl: HTMLVideoElement | null, sourceBufferRef: RefObject<SourceBuffer | null>}): JSX.Element {
     const [timeline, setTimeline] = useState<string>(".0")
     const [previewTimeline, setPreviewTimeline] = useState<string>(".0")
     const isScrubbingRef: RefObject<HTMLDivElement | boolean> = useRef(false)
     const timelineRef: RefObject<HTMLDivElement | null> = createRef<HTMLDivElement | null>()
+    const defaultPreviewTimelineRef: RefObject<number> = useRef<number>(0)
 
     useEffect(()=>{
         const timelineEl: HTMLDivElement = timelineRef.current!;
@@ -21,8 +22,7 @@ export default function VideoTimeline({videoEl}: {videoEl: HTMLVideoElement | nu
         }
 
         function updateTimeline() {
-            const timeLine: number = videoEl!.currentTime/videoEl!.duration
-            console.log("timeline", timeLine);
+            const timeLine: number = videoEl!.currentTime / videoEl!.duration
             if(timeLine <= 1) {
                 setTimeline(timeLine.toString())
             }
@@ -37,9 +37,9 @@ export default function VideoTimeline({videoEl}: {videoEl: HTMLVideoElement | nu
 
         function mouseMoveOnTimeline(e: MouseEvent) {
             if (isScrubbingRef.current) {
-                setTimeline(handleSeekVideo(e))
+                setTimeline(handleSeekVideo(e));
             } else {
-                setPreviewTimeline(getCurrentTimelinePosition(e).toString())
+                setPreviewTimeline(getCurrentTimelinePosition(e).toString());
             }
         }
 
@@ -57,13 +57,33 @@ export default function VideoTimeline({videoEl}: {videoEl: HTMLVideoElement | nu
             }
         }
 
-        if (videoEl) {
-            videoEl.addEventListener("timeupdate", updateTimeline)
+        function resetPreviewTimeline() {
+            // Reset To last current preview timeline
+            setPreviewTimeline(defaultPreviewTimelineRef.current.toString())
         }
-        if (timelineEl) {
-            timelineEl.addEventListener("mousedown", mouseDownScrubbing)
-            timelineEl.addEventListener("mousemove", mouseMoveOnTimeline)
+
+        function updatePreviewTimeline() {
+            const sourceBuffer: SourceBuffer | null = sourceBufferRef.current;
+            if (!sourceBuffer) {
+                console.error("sourceBuffer is null")
+                return;
+            }
+            const bufferTimeline: number  = sourceBuffer.buffered.end(sourceBuffer.buffered!.length - 1)
+            const previewTimeline: number = bufferTimeline / videoEl!.duration;
+            defaultPreviewTimelineRef.current = previewTimeline;
+            setPreviewTimeline(previewTimeline.toString())
         }
+
+        if (!videoEl) return
+
+        videoEl.addEventListener("timeupdate", updateTimeline)
+        videoEl.addEventListener("progress", updatePreviewTimeline)
+
+        if (!timelineEl) return
+
+        timelineEl.addEventListener("mousedown", mouseDownScrubbing)
+        timelineEl.addEventListener("mousemove", mouseMoveOnTimeline)
+        timelineEl.addEventListener("mouseleave",resetPreviewTimeline)
 
         document.addEventListener("mouseup", mouseUpEvent)
         document.addEventListener("mousemove", mouseMoveOnDocument)
@@ -71,10 +91,12 @@ export default function VideoTimeline({videoEl}: {videoEl: HTMLVideoElement | nu
         return () => {
             if (videoEl) {
                 videoEl.removeEventListener("timeupdate", updateTimeline)
+                videoEl.removeEventListener("progress", updatePreviewTimeline)
             }
             if (timelineEl) {
                 timelineEl.removeEventListener("mousedown", mouseDownScrubbing)
                 timelineEl.removeEventListener("mousemove", mouseMoveOnTimeline)
+                timelineEl.removeEventListener("mouseleave",resetPreviewTimeline)
             }
             document.removeEventListener("mouseup", mouseUpEvent)
             document.removeEventListener("mousemove", mouseMoveOnDocument)
