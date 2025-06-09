@@ -1,0 +1,101 @@
+import {RefObject} from "react";
+import {IQueueConfigRef, ISegment} from "@app/types/video-config";
+
+const videoConfig = {
+    MIME_CODEC: 'video/mp4; codecs="avc1.64002A, mp4a.40.2"',
+    BUFFER_FETCH_GAP: 5,
+    CHUNK_SIZE:  1 * 10 ** 6
+}
+
+const isMediaSourceSupported = (mimeCodec: string) => {
+    return MediaSource.isTypeSupported(mimeCodec);
+};
+
+const initMediaSourceExtension = (videoEl: HTMLVideoElement): MediaSource => {
+    const mediaSource: MediaSource = new MediaSource();
+    videoEl.src = URL.createObjectURL(mediaSource);
+    return mediaSource;
+}
+
+const initSourceBuffer = (mediaSource: MediaSource): SourceBuffer => {
+    return mediaSource.addSourceBuffer(videoConfig.MIME_CODEC)
+}
+
+function setInitVideoDuration(mediaSource: MediaSource, duration: number) {
+    mediaSource.duration = duration;
+    return duration
+
+}
+
+function getSegmentRange(segmentEndRange: number , videoSize: number): ISegment {
+    const end: number   = Math.min(segmentEndRange + videoConfig.CHUNK_SIZE, videoSize)
+    const start: number = segmentEndRange ? segmentEndRange + 1 : 0
+    return {start, end}
+}
+
+function setSegmentEnd(queueConfigRef: RefObject<IQueueConfigRef>, segment: ISegment): number {
+    queueConfigRef.current.segmentEnd = segment.end;
+    return segment.end;
+}
+
+function setIsFetchingChunk(queueConfigRef: RefObject<IQueueConfigRef>, isFetchingChunk: boolean = true): boolean {
+    queueConfigRef.current.isFetchingChunk = isFetchingChunk;
+    return isFetchingChunk;
+}
+
+function setIsSeeking(queueConfigRef: RefObject<IQueueConfigRef>, isSeeking: boolean = true): boolean {
+    queueConfigRef.current.isSeeking = isSeeking;
+    return isSeeking;
+}
+
+function getIsSeeking(queueConfigRef: RefObject<IQueueConfigRef>): boolean {
+    return queueConfigRef.current.isSeeking;
+}
+
+function getSegmentEnd(queueConfigRef: RefObject<IQueueConfigRef>): number {
+    return queueConfigRef.current.segmentEnd;
+}
+
+function getIsFetchingChunk(queueConfigRef: RefObject<IQueueConfigRef>): boolean {
+    return queueConfigRef.current.isFetchingChunk;
+}
+
+function streamIsOpen (queueConfigRef:RefObject<IQueueConfigRef>, videoSize: number): boolean {
+    return getSegmentEnd(queueConfigRef) < videoSize;
+}
+
+const closeStreamSegmentIfPossible = function (mediaSourceRef: RefObject<MediaSource | null>, queueConfigRef: RefObject<IQueueConfigRef>, videoSize: number): boolean {
+    if (!streamIsOpen(queueConfigRef, videoSize)) {
+        try {
+            mediaSourceRef.current?.endOfStream()
+            console.warn("stream segment is at the end");
+            return true
+        } catch (e) {
+            console.error("[close stream segment]", e);
+        }
+    }
+    return false
+}
+
+function canPreFetchSegment (queueConfigRef: RefObject<IQueueConfigRef>, sourceBufferRef: RefObject<SourceBuffer | null>, {videoSize, currentTime}: {videoSize: number, currentTime: number}): boolean {
+    const sourceBuffer: SourceBuffer | null = sourceBufferRef.current;
+    if (!sourceBuffer) {
+        console.error("[prefetchSegmentChunkBuffer]: sourceBuffer is null");
+        return false
+    }
+    const bufferedDuration: number = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1)
+    return !!(!getIsFetchingChunk(queueConfigRef) && currentTime && (currentTime + videoConfig.BUFFER_FETCH_GAP >= bufferedDuration)) && streamIsOpen(queueConfigRef, videoSize)
+}
+
+function findSegment(currentTime: number) {
+    const manifest = {"initSegmentUrl":"media_segments/init.mp4","segments":[{"start":0,"url":"media_segments/segment_0.m4s","duration":8.341667},{"start":8.341667,"url":"media_segments/segment_1.m4s","duration":4.170833},{"start":12.5125,"url":"media_segments/segment_2.m4s","duration":8.341667},{"start":20.854166999999997,"url":"media_segments/segment_3.m4s","duration":4.170833},{"start":25.025,"url":"media_segments/segment_4.m4s","duration":8.341667},{"start":33.366667,"url":"media_segments/segment_5.m4s","duration":4.170833},{"start":37.5375,"url":"media_segments/segment_6.m4s","duration":8.341667},{"start":45.879167,"url":"media_segments/segment_7.m4s","duration":4.170833},{"start":50.050000000000004,"url":"media_segments/segment_8.m4s","duration":4.170833},{"start":54.220833000000006,"url":"media_segments/segment_9.m4s","duration":8.341667},{"start":62.56250000000001,"url":"media_segments/segment_10.m4s","duration":4.170833},{"start":66.733333,"url":"media_segments/segment_11.m4s","duration":8.341667},{"start":75.075,"url":"media_segments/segment_12.m4s","duration":4.170833},{"start":79.245833,"url":"media_segments/segment_13.m4s","duration":8.341667},{"start":87.5875,"url":"media_segments/segment_14.m4s","duration":4.170833},{"start":91.75833300000001,"url":"media_segments/segment_15.m4s","duration":8.341667},{"start":100.10000000000001,"url":"media_segments/segment_16.m4s","duration":4.170833},{"start":104.27083300000001,"url":"media_segments/segment_17.m4s","duration":4.170833},{"start":108.44166600000001,"url":"media_segments/segment_18.m4s","duration":8.341667},{"start":116.78333300000001,"url":"media_segments/segment_19.m4s","duration":4.170833},{"start":120.95416600000001,"url":"media_segments/segment_20.m4s","duration":8.341667},{"start":129.29583300000002,"url":"media_segments/segment_21.m4s","duration":4.170833},{"start":133.466666,"url":"media_segments/segment_22.m4s","duration":8.341667},{"start":141.808333,"url":"media_segments/segment_23.m4s","duration":4.170833},{"start":145.979166,"url":"media_segments/segment_24.m4s","duration":4.170833},{"start":150.14999899999998,"url":"media_segments/segment_25.m4s","duration":8.341667},{"start":158.49166599999998,"url":"media_segments/segment_26.m4s","duration":4.170833},{"start":162.66249899999997,"url":"media_segments/segment_27.m4s","duration":8.341667},{"start":171.00416599999997,"url":"media_segments/segment_28.m4s","duration":4.170833},{"start":175.17499899999996,"url":"media_segments/segment_29.m4s","duration":8.341667},{"start":183.51666599999996,"url":"media_segments/segment_30.m4s","duration":4.170833},{"start":187.68749899999995,"url":"media_segments/segment_31.m4s","duration":8.341667},{"start":196.02916599999995,"url":"media_segments/segment_32.m4s","duration":4.170833},{"start":200.19999899999993,"url":"media_segments/segment_33.m4s","duration":4.170833},{"start":204.37083199999992,"url":"media_segments/segment_34.m4s","duration":8.341667},{"start":212.71249899999992,"url":"media_segments/segment_35.m4s","duration":4.170833},{"start":216.8833319999999,"url":"media_segments/segment_36.m4s","duration":8.341667},{"start":225.2249989999999,"url":"media_segments/segment_37.m4s","duration":4.170833},{"start":229.3958319999999,"url":"media_segments/segment_38.m4s","duration":8.341667},{"start":237.7374989999999,"url":"media_segments/segment_39.m4s","duration":1.134467}],"duration":238.8719659999999}
+    let totalTime: number = 0;
+    for (const seg of manifest.segments) {
+        totalTime += seg.duration;
+        if (totalTime >= currentTime) {
+            return  seg;
+        }
+    }
+}
+
+export {videoConfig, findSegment, setIsSeeking, getIsSeeking, isMediaSourceSupported, setInitVideoDuration, initSourceBuffer, initMediaSourceExtension, getSegmentRange, setSegmentEnd, setIsFetchingChunk, getIsFetchingChunk, getSegmentEnd, streamIsOpen, closeStreamSegmentIfPossible, canPreFetchSegment};

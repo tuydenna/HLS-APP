@@ -12,9 +12,7 @@ export default function DurationTimeLabel({videoEl}: {videoEl: HTMLVideoElement 
         function initDuration() {
             if (videoEl?.duration) {
                 setDuration(formatDuration(+videoEl.duration))
-                "videoEl.duration"
             }
-            console.log("loadedmetadata", videoEl?.duration);
         }
 
         function timeupdateEvent() {
@@ -23,6 +21,11 @@ export default function DurationTimeLabel({videoEl}: {videoEl: HTMLVideoElement 
         }
 
         videoEl.addEventListener("loadedmetadata", initDuration)
+        videoEl.addEventListener("canplay", function () {
+            // videoEl.play()
+            // videoEl.muted = false
+            console.log("canplay")
+        })
         videoEl.addEventListener("timeupdate", timeupdateEvent)
 
         return () => {

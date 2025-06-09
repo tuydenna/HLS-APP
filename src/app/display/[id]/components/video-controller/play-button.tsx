@@ -26,9 +26,13 @@ export default function PlayButton({videoEl}: {videoEl: HTMLVideoElement | null}
                 }
             }
         }
+        function pauseVideo() {
+            videoEl?.pause();
+            setIsPlay(false);
+        }
         if (videoEl) {
             videoEl.addEventListener("leavepictureinpicture",playOrPauseVideo)
-            videoEl.addEventListener("ended", playOrPauseVideo)
+            videoEl.addEventListener("ended", pauseVideo)
             videoEl.addEventListener("click", playOrPauseVideo)
             videoEl.addEventListener("play", playVideoInPictureMode)
             videoEl.addEventListener("pause", pauseVideoInPictureMode)
@@ -36,7 +40,7 @@ export default function PlayButton({videoEl}: {videoEl: HTMLVideoElement | null}
         return () => {
             if (videoEl) {
                 videoEl.removeEventListener('leavepictureinpicture', playOrPauseVideo);
-                videoEl.removeEventListener('ended', playOrPauseVideo);
+                videoEl.removeEventListener('ended', pauseVideo);
                 videoEl.removeEventListener('click', playOrPauseVideo);
                 videoEl.removeEventListener('play', playVideoInPictureMode);
                 videoEl.removeEventListener('pause', pauseVideoInPictureMode);
@@ -66,4 +70,8 @@ export default function PlayButton({videoEl}: {videoEl: HTMLVideoElement | null}
         </button>
     )
 
+}
+
+function playOrPauseVideo(this: HTMLVideoElement, ev: MouseEvent) {
+    throw new Error("Function not implemented.");
 }
