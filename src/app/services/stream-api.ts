@@ -1,3 +1,4 @@
+import {ErrorException} from "@app/types/error-exeption";
 
 const endPoint: string = "/stream-segment"
 
@@ -16,7 +17,8 @@ async function getSegmentBuffer(video_path: string, range: string) {
 async function getSegmentFileBuffer(segmentFile: string) {
     const res = await fetch(getBaseAPI("fmp4/"+ segmentFile));
     if (!res.ok) {
-       throw new Error((await res.json()).message);
+        const json = await res.json();
+        throw new ErrorException(res.status, json.message);
     }
     return (await res.arrayBuffer());
 }

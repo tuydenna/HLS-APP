@@ -1,57 +1,17 @@
 "use server"
 
-import MediaPayer from "@display/components/media-payer";
+import MediaPayer from "@display/[id]/components/content/media-payer";
 import {PropRoute} from "@app/types/props";
 import {getPost,} from "@app/services/post-api";
-import VideoAuthor from "@display/[id]/components/video-author";
-import VideoComments from "@display/[id]/components/video-comments";
+import VideoAuthor from "@display/[id]/components/content/video-author";
+import VideoComments from "@display/[id]/components/content/video-comments";
 import {IVideoPost} from "@app/types/video-post";
+import RightSideRelatedPosts from "@display/[id]/components/right-side";
 
 export default async function Page(props: PropRoute<{ id: string }>) {
 
-    // useEffect(function () {
-    //     const createComment = async function (postId: string, comment: string) {
-    //         return await fetch("/api/comments", {
-    //             headers: {
-    //                 'Accept': 'application/json',
-    //                 'Content-Type': 'application/json'
-    //             },
-    //             method: "POST",
-    //             body: JSON.stringify({postId, comment})
-    //         });
-    //     }
-    //     const likeOrUnlike = async function (id: string) {
-    //         // const filled = getElById("btn-like-post").getAttribute("fill");
-    //         const filled = "none";
-    //         if (filled === 'none') {
-    //             const res = await fetch('/api/posts/' + id + '/increase-likes?userId= <%= data.post.author.userId %>', {
-    //                 method: "PUT"
-    //             });
-    //             const data = await res.json();
-    //             if (res.ok) {
-    //                 // getElById("stat-likes").innerText = data.likes;
-    //                 // getElById("btn-like-post").setAttribute("fill", "blue")
-    //             } else {
-    //                 alert("Likes Failed!");
-    //             }
-    //         } else {
-    //             const res = await fetch('/api/posts/' + id + '/decrease-likes?userId= <%= data.post.author.userId %>', {
-    //                 method: "PUT"
-    //             });
-    //             const data = await res.json();
-    //             if (res.ok) {
-    //                 // getElById("btn-like-post").setAttribute("fill", "none")
-    //                 // getElById("stat-likes").innerText = data.likes;
-    //             } else {
-    //                 alert("Likes Failed!");
-    //             }
-    //         }
-    //     }
-    // })
-
     const postId: string = (await props.params).id
     const post: IVideoPost = await getPost(postId)
-    console.log(post);
 
     return (
         <div className="flex p-5">
@@ -77,8 +37,7 @@ export default async function Page(props: PropRoute<{ id: string }>) {
                     <VideoComments comments={post.comments} />
                 </div>
             </div>
-            <div className="flex flex-col grow pl-5">
-            </div>
+            <RightSideRelatedPosts/>
         </div>
     )
 }

@@ -1,14 +1,14 @@
 "use client"
-import "./media-player.css"
+import "./css/media-player.css"
 import {JSX, RefObject, useEffect, useRef, useState} from "react";
-import DurationTimeLabel from "@display/[id]/components/video-controller/duration-time-label";
-import PlayButton from "@display/[id]/components/video-controller/play-button";
-import SoundButton from "@display/[id]/components/video-controller/sound-button";
-import PlayBackRateButton from "@display/[id]/components/video-controller/play-back-rate-button";
-import PlayInPictureButton from "@display/[id]/components/video-controller/play-in-picture-button";
-import PlayInTheatreButton from "@display/[id]/components/video-controller/play-in-theatre-button";
-import PlayFullScreenButton from "@display/[id]/components/video-controller/play-full-screen-button";
-import VideoTimeline from "@display/[id]/components/video-controller/video-timeline";
+import DurationTimeLabel from "@display/[id]/components/content/video-controller/duration-time-label";
+import PlayButton from "@display/[id]/components/content/video-controller/play-button";
+import SoundButton from "@display/[id]/components/content/video-controller/sound-button";
+import PlayBackRateButton from "@display/[id]/components/content/video-controller/play-back-rate-button";
+import PlayInPictureButton from "@display/[id]/components/content/video-controller/play-in-picture-button";
+import PlayInTheatreButton from "@display/[id]/components/content/video-controller/play-in-theatre-button";
+import PlayFullScreenButton from "@display/[id]/components/content/video-controller/play-full-screen-button";
+import VideoTimeline from "@display/[id]/components/content/video-controller/video-timeline";
 import {getSegmentFileBuffer} from "@app/services/stream-api";
 import {
     canPreFetchSegment,
@@ -23,7 +23,8 @@ import {
     videoConfig
 } from "@display/helper/media-source-helper";
 import {IQueueConfigRef} from "@app/types/video-config";
-import SpinnerIndicator from "@display/[id]/components/extentsion/spinner-indicator";
+import SpinnerIndicator from "@display/[id]/components/content/extentsion/spinner-indicator";
+import {ErrorException} from "@app/types/error-exeption";
 
 export default function MediaPayer(data: {video: {path: string, size: number}}):JSX.Element {
 
@@ -35,25 +36,38 @@ export default function MediaPayer(data: {video: {path: string, size: number}}):
     const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null)
 
     const fetchAndAppendBuffer = async function (sourceBuffer: SourceBuffer, fileSegment: string): Promise<string | undefined> {
-        try {
-            const chunk: ArrayBuffer  = await getSegmentFileBuffer(fileSegment);
-            return await new Promise((resolve, reject) => {
-                if (sourceBuffer && !sourceBuffer.updating) {
-                    sourceBuffer?.appendBuffer(chunk);
+        let retryCount: number = 0;
+        const retry = async function (): Promise<string | undefined> {
+            try {
+                const chunk: ArrayBuffer  = await getSegmentFileBuffer(fileSegment);
+                return await new Promise((resolve, reject) => {
+                    if (sourceBuffer && !sourceBuffer.updating) {
+                        sourceBuffer?.appendBuffer(chunk);
+                    }
+                    sourceBuffer?.addEventListener('updateend', function () {
+                        console.log(`[fetchAndAppendBuffer]: sourceBuffer is updated  Segment : ${fileSegment}`);
+                        setIsFetchingChunk(queueConfigRef, false)
+                        closeStreamSegmentIfPossible(mediaSourceRef, queueConfigRef, data.video.size);
+                        fileSegmentIndexRef.current += 1
+                        resolve("successes");
+                    }, {once: true});
+                });
+            } catch (e: ErrorException | unknown) {
+                if (e instanceof ErrorException) {
+                    if (e.code == 404) {
+                        mediaSourceRef.current?.endOfStream();
+                        console.error("[fetchAndAppendBufferV2]: ", e);
+                        return;
+                    }
+                    if (retryCount <= 5) {
+                        retryCount++;
+                        return await retry()
+                    }
+                    return;
                 }
-                sourceBuffer?.addEventListener('updateend', function () {
-                    console.log(`[fetchAndAppendBuffer]: sourceBuffer is updated  Segment : ${fileSegment}`);
-                    setIsFetchingChunk(queueConfigRef, false)
-                    closeStreamSegmentIfPossible(mediaSourceRef, queueConfigRef, data.video.size);
-                    fileSegmentIndexRef.current += 1
-                    resolve("successes");
-                }, {once: true});
-            });
-        } catch (e) {
-            mediaSourceRef.current?.endOfStream();
-            console.error("[fetchAndAppendBufferV2]: ", e);
+            }
         }
-
+        return await retry()
     }
 
     const handleSeekVideoDuration = async (segmentStart: number, currentTime: number): Promise<void> => {
@@ -96,6 +110,7 @@ export default function MediaPayer(data: {video: {path: string, size: number}}):
 
     async function prefetchSegmentChunkBuffer() {
         if (!getIsSeeking(queueConfigRef) && canPreFetchSegment(queueConfigRef, sourceBufferRef, {currentTime: videoRef.current!.currentTime, videoSize: data.video.size})) {
+            console.log("[prefetchSegmentChunkBuffer]");
             setIsFetchingChunk(queueConfigRef)
             await fetchAndAppendBuffer(sourceBufferRef.current!, `segment_${fileSegmentIndexRef.current}.m4s`);
             console.log("[prefetchSegmentChunkBuffer]:", sourceBufferRef.current?.buffered.length)
@@ -155,7 +170,7 @@ export default function MediaPayer(data: {video: {path: string, size: number}}):
     }, [videoRef.current]);
 
     return (
-        <div className="video-container paused m-0 mb-3" data-volume-level="high">
+        <div className="video-container paused m-0 mb-3 full-screen" data-volume-level="high">
             <img className="thumbnail-img" alt={"f"}/>
             <SpinnerIndicator videoEl={videoEl}/>
             <div className="video-controls-container">

@@ -1,15 +1,15 @@
 "use client"
 
-import "./media-player.css"
+import "./css/media-player.css"
 import {JSX, RefObject, useCallback, useEffect, useRef, useState} from "react";
-import DurationTimeLabel from "@display/[id]/components/video-controller/duration-time-label";
-import PlayButton from "@display/[id]/components/video-controller/play-button";
-import SoundButton from "@display/[id]/components/video-controller/sound-button";
-import PlayBackRateButton from "@display/[id]/components/video-controller/play-back-rate-button";
-import PlayInPictureButton from "@display/[id]/components/video-controller/play-in-picture-button";
-import PlayInTheatreButton from "@display/[id]/components/video-controller/play-in-theatre-button";
-import PlayFullScreenButton from "@display/[id]/components/video-controller/play-full-screen-button";
-import VideoTimeline from "@display/[id]/components/video-controller/video-timeline";
+import DurationTimeLabel from "@display/[id]/components/content/video-controller/duration-time-label";
+import PlayButton from "@display/[id]/components/content/video-controller/play-button";
+import SoundButton from "@display/[id]/components/content/video-controller/sound-button";
+import PlayBackRateButton from "@display/[id]/components/content/video-controller/play-back-rate-button";
+import PlayInPictureButton from "@display/[id]/components/content/video-controller/play-in-picture-button";
+import PlayInTheatreButton from "@display/[id]/components/content/video-controller/play-in-theatre-button";
+import PlayFullScreenButton from "@display/[id]/components/content/video-controller/play-full-screen-button";
+import VideoTimeline from "@display/[id]/components/content/video-controller/video-timeline";
 
 const MIME_CODEC  = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
 

@@ -6,3 +6,7 @@ export function getEnv(key: string) {
     console.warn(`${process.env[key]} env key: ${key}`)
     throw Error(`unknown env key: ${key}`);
 }
+
+export function getImageURL(path: string): string {
+    return process.env.NEXT_PUBLIC_DEV_IMAGE + path;
+}

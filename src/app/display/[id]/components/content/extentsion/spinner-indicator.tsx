@@ -26,7 +26,7 @@ export default function SpinnerIndicator({videoEl}: {videoEl: HTMLVideoElement |
 
     return (
         <div className="flex justify-center h-full w-full absolute" style={{opacity: isSpinning ? 1 : 0}}>
-            <Image src="/spinner.svg" width={100} height={100} alt="Buffering"/>
+            <Image src="/spinner.svg" width={50} height={50} style={{width: "calc(10% + 1rem)"}} alt="Buffering"/>
         </div>
     )
 }

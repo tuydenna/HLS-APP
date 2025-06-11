@@ -27,17 +27,6 @@ function setInitVideoDuration(mediaSource: MediaSource, duration: number) {
 
 }
 
-function getSegmentRange(segmentEndRange: number , videoSize: number): ISegment {
-    const end: number   = Math.min(segmentEndRange + videoConfig.CHUNK_SIZE, videoSize)
-    const start: number = segmentEndRange ? segmentEndRange + 1 : 0
-    return {start, end}
-}
-
-function setSegmentEnd(queueConfigRef: RefObject<IQueueConfigRef>, segment: ISegment): number {
-    queueConfigRef.current.segmentEnd = segment.end;
-    return segment.end;
-}
-
 function setIsFetchingChunk(queueConfigRef: RefObject<IQueueConfigRef>, isFetchingChunk: boolean = true): boolean {
     queueConfigRef.current.isFetchingChunk = isFetchingChunk;
     return isFetchingChunk;
@@ -98,4 +87,19 @@ function findSegment(currentTime: number) {
     }
 }
 
-export {videoConfig, findSegment, setIsSeeking, getIsSeeking, isMediaSourceSupported, setInitVideoDuration, initSourceBuffer, initMediaSourceExtension, getSegmentRange, setSegmentEnd, setIsFetchingChunk, getIsFetchingChunk, getSegmentEnd, streamIsOpen, closeStreamSegmentIfPossible, canPreFetchSegment};
+export {
+    videoConfig,
+    findSegment,
+    setIsSeeking,
+    getIsSeeking,
+    isMediaSourceSupported,
+    setInitVideoDuration,
+    initSourceBuffer,
+    initMediaSourceExtension,
+    setIsFetchingChunk,
+    getIsFetchingChunk,
+    getSegmentEnd,
+    streamIsOpen,
+    closeStreamSegmentIfPossible,
+    canPreFetchSegment
+};

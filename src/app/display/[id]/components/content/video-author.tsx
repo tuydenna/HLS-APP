@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image";
-import VideoLikeView from "@display/[id]/components/video-like-view";
+import VideoLikeView from "@display/[id]/components/content/video-like-view";
 import {IVideoPost} from "@app/types/video-post";
 
 export default function VideoAuthor ({post}: {post: IVideoPost}) {
