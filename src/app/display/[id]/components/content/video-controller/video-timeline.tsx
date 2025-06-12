@@ -48,8 +48,7 @@ export default function VideoTimeline({videoEl, sourceBufferRef, onSeekVideoDura
                 isScrubbingRef.current = false;
                 setTimeline(currentTimeline);
                 const currentTime: number = currentTimeline * videoEl!.duration
-                const byteOffset = Math.round((2457520 / 8) * currentTime);
-                onSeekVideoDuration(byteOffset, currentTime);
+                onSeekVideoDuration(currentTime);
             }
         }
 

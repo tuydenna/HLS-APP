@@ -1,5 +1,5 @@
 import {RefObject} from "react";
-import {IQueueConfigRef, ISegment} from "@app/types/video-config";
+import {IQueueConfigRef} from "@app/types/video-config";
 
 const videoConfig = {
     MIME_CODEC: 'video/mp4; codecs="avc1.64002A, mp4a.40.2"',
@@ -87,7 +87,18 @@ function findSegment(currentTime: number) {
     }
 }
 
+function logMediaEncoderError(e: ErrorEvent) {
+    // @ts-ignore
+    console.error("[Media Encoder]: ", e.target.error);
+}
+
+function getAndPlusOneSegmentIndex(fileSegment: string) {
+    return +fileSegment.split("_")[1].split(".")[0] + 1
+}
+
 export {
+    logMediaEncoderError,
+    getAndPlusOneSegmentIndex,
     videoConfig,
     findSegment,
     setIsSeeking,

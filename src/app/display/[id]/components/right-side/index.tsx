@@ -8,15 +8,11 @@ import Link from "next/link";
 
 export default function RightSideRelatedPosts( ) {
 
-    function goWatchThisVideo(postId: string) {
-
-    }
-
     const [posts, setPosts] = useState<IVideoPost[]>([]);
 
     useEffect(() => {
         getPosts().then(setPosts);
-    }, [posts]);
+    }, []);
 
     return (
         <div className="flex flex-col grow pl-5">

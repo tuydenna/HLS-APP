@@ -9,14 +9,14 @@ import PlayInPictureButton from "@display/[id]/components/content/video-controll
 import PlayInTheatreButton from "@display/[id]/components/content/video-controller/play-in-theatre-button";
 import PlayFullScreenButton from "@display/[id]/components/content/video-controller/play-full-screen-button";
 import VideoTimeline from "@display/[id]/components/content/video-controller/video-timeline";
-import {getSegmentFileBuffer} from "@app/services/stream-api";
+import {getSeekingSegmentFileBuffer, getSegmentFileBuffer} from "@app/services/stream-api";
 import {
     canPreFetchSegment,
-    closeStreamSegmentIfPossible, findSegment,
+    closeStreamSegmentIfPossible, findSegment, getAndPlusOneSegmentIndex,
     getIsSeeking,
     initMediaSourceExtension,
     initSourceBuffer,
-    isMediaSourceSupported,
+    isMediaSourceSupported, logMediaEncoderError,
     setInitVideoDuration,
     setIsFetchingChunk,
     setIsSeeking,
@@ -25,30 +25,31 @@ import {
 import {IQueueConfigRef} from "@app/types/video-config";
 import SpinnerIndicator from "@display/[id]/components/content/extentsion/spinner-indicator";
 import {ErrorException} from "@app/types/error-exeption";
+import {IVideo} from "@app/types/video";
 
-export default function MediaPayer(data: {video: {path: string, size: number}}):JSX.Element {
+export default function MediaPayer(data: {video: IVideo}):JSX.Element {
 
     const videoRef: RefObject<HTMLVideoElement | null> = useRef<HTMLVideoElement>(null)
     const mediaSourceRef: RefObject<MediaSource | null> = useRef<MediaSource>(null)
     const sourceBufferRef: RefObject<SourceBuffer | null> = useRef<SourceBuffer>(null)
     const queueConfigRef: RefObject<IQueueConfigRef> = useRef({segmentEnd: 0 , isFetchingChunk: false, isSeeking: false})
-    const fileSegmentIndexRef: RefObject<number> = useRef(0)
+    const fileSegmentCurrentIndexRef: RefObject<number> = useRef(0)
     const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null)
 
     const fetchAndAppendBuffer = async function (sourceBuffer: SourceBuffer, fileSegment: string): Promise<string | undefined> {
         let retryCount: number = 0;
         const retry = async function (): Promise<string | undefined> {
             try {
-                const chunk: ArrayBuffer  = await getSegmentFileBuffer(fileSegment);
+                const chunk: ArrayBuffer = await getSegmentFileBuffer(data.video.id, fileSegment);
                 return await new Promise((resolve, reject) => {
                     if (sourceBuffer && !sourceBuffer.updating) {
                         sourceBuffer?.appendBuffer(chunk);
                     }
                     sourceBuffer?.addEventListener('updateend', function () {
-                        console.log(`[fetchAndAppendBuffer]: sourceBuffer is updated  Segment : ${fileSegment}`);
+                        console.log(`[fetchAndAppendBuffer]: sourceBuffer is updated Segment : ${fileSegment}`);
                         setIsFetchingChunk(queueConfigRef, false)
                         closeStreamSegmentIfPossible(mediaSourceRef, queueConfigRef, data.video.size);
-                        fileSegmentIndexRef.current += 1
+                        fileSegmentCurrentIndexRef.current += 1
                         resolve("successes");
                     }, {once: true});
                 });
@@ -70,7 +71,42 @@ export default function MediaPayer(data: {video: {path: string, size: number}}):
         return await retry()
     }
 
-    const handleSeekVideoDuration = async (segmentStart: number, currentTime: number): Promise<void> => {
+    const fetchSeekingAndAppendBuffer = async function (sourceBuffer: SourceBuffer, currentTime:  number): Promise<string | undefined> {
+        let retryCount: number = 0;
+        const retry = async function (): Promise<string | undefined> {
+            try {
+                const res = await getSeekingSegmentFileBuffer(data.video.id, currentTime);
+                return await new Promise((resolve, reject) => {
+                    if (sourceBuffer && !sourceBuffer.updating) {
+                        sourceBuffer?.appendBuffer(res.buffer);
+                    }
+                    sourceBuffer?.addEventListener('updateend', function () {
+                        console.log(`[fetchAndAppendBuffer]: sourceBuffer is updated Segment : ${res.fileSegment}`);
+                        setIsFetchingChunk(queueConfigRef, false)
+                        closeStreamSegmentIfPossible(mediaSourceRef, queueConfigRef, data.video.size);
+                        fileSegmentCurrentIndexRef.current = getAndPlusOneSegmentIndex(res.fileSegment!);
+                        resolve("successes");
+                    }, {once: true});
+                });
+            } catch (e: ErrorException | unknown) {
+                if (e instanceof ErrorException) {
+                    if (e.code == 404) {
+                        mediaSourceRef.current?.endOfStream();
+                        console.error("[fetchAndAppendBufferV2]: ", e);
+                        return;
+                    }
+                    if (retryCount <= 5) {
+                        retryCount++;
+                        return await retry()
+                    }
+                    return;
+                }
+            }
+        }
+        return await retry()
+    }
+
+    const handleSeekVideoDuration = async (currentTime: number): Promise<void> => {
         setIsSeeking(queueConfigRef);
         setIsFetchingChunk(queueConfigRef, false);
 
@@ -94,14 +130,9 @@ export default function MediaPayer(data: {video: {path: string, size: number}}):
             sourceBuffer.remove(bufferStartTime, bufferEndTime);
             sourceBuffer.addEventListener("updateend", async () => {
                 videoEl!.currentTime = currentTime;
-                const segmentObj  = findSegment(currentTime);
-                if (segmentObj) {
-                    const segFile: string = segmentObj.url.split("/")[1]
-                    fileSegmentIndexRef.current = +segFile.split("_")[1].split(".")[0]
-                    await fetchAndAppendBuffer(sourceBuffer, segFile);
-                    setIsSeeking(queueConfigRef, false)
-                    console.log("[handleSeekVideoDuration]: ", sourceBuffer.buffered.length, sourceBuffer.buffered.start(0), sourceBuffer.buffered.end(0));
-                }
+                await fetchSeekingAndAppendBuffer(sourceBuffer, currentTime)
+                setIsSeeking(queueConfigRef, false)
+                console.log("[handleSeekVideoDuration]: ", sourceBuffer.buffered.length, sourceBuffer.buffered.start(0), sourceBuffer.buffered.end(0));
             }, {once: true});
         } else {
             console.error("[sourceBuffer]: is null", sourceBuffer)
@@ -112,16 +143,11 @@ export default function MediaPayer(data: {video: {path: string, size: number}}):
         if (!getIsSeeking(queueConfigRef) && canPreFetchSegment(queueConfigRef, sourceBufferRef, {currentTime: videoRef.current!.currentTime, videoSize: data.video.size})) {
             console.log("[prefetchSegmentChunkBuffer]");
             setIsFetchingChunk(queueConfigRef)
-            await fetchAndAppendBuffer(sourceBufferRef.current!, `segment_${fileSegmentIndexRef.current}.m4s`);
+            await fetchAndAppendBuffer(sourceBufferRef.current!, `segment_${fileSegmentCurrentIndexRef.current}.m4s`);
             console.log("[prefetchSegmentChunkBuffer]:", sourceBufferRef.current?.buffered.length)
         } else {
             console.warn("[prefetchSegmentChunkBuffer]: no permission!")
         }
-    }
-
-    function logMediaEncoderError(e: ErrorEvent) {
-        // @ts-ignore
-        console.error("[Media Encoder]: ", e.target.error);
     }
 
     useEffect(() => {
@@ -144,8 +170,8 @@ export default function MediaPayer(data: {video: {path: string, size: number}}):
             setInitVideoDuration(mediaSourceRef.current!, 3 * 60 + 57)
 
             await fetchAndAppendBuffer(sourceBuffer, "init.mp4");
-            fileSegmentIndexRef.current = 0;
-            await fetchAndAppendBuffer(sourceBuffer, `segment_${fileSegmentIndexRef.current}.m4s`);
+            fileSegmentCurrentIndexRef.current = 0;
+            await fetchAndAppendBuffer(sourceBuffer, `segment_${fileSegmentCurrentIndexRef.current}.m4s`);
         }
 
         if (videoEl) {

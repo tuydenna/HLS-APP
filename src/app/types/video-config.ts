@@ -1,6 +1,7 @@
-interface ISegment {
+interface IPlaylist {
+    fileName: string;
     start: number;
-    end: number;
+    duration: number;
 }
 
 interface IQueueConfigRef {
@@ -9,4 +10,4 @@ interface IQueueConfigRef {
     isSeeking: boolean,
 }
 
-export type {ISegment, IQueueConfigRef}
+export type {IPlaylist, IQueueConfigRef}

@@ -6,16 +6,8 @@ function getBaseAPI(endUrl: string  = ""): string {
     return  process.env.NEXT_PUBLIC_DEV_API + endPoint + ( endUrl ?  "/" + endUrl : "") ;
 }
 
-async function getSegmentBuffer(video_path: string, range: string) {
-    return (
-        await fetch(
-            getBaseAPI(video_path),
-            { headers: { Range: range } }
-    ).then(res => res.arrayBuffer()))
-}
-
-async function getSegmentFileBuffer(segmentFile: string) {
-    const res = await fetch(getBaseAPI("fmp4/"+ segmentFile));
+async function getSegmentFileBuffer(videoId: string, segmentFile: string) {
+    const res = await fetch(getBaseAPI("fmp4/" + videoId + "/" + segmentFile));
     if (!res.ok) {
         const json = await res.json();
         throw new ErrorException(res.status, json.message);
@@ -23,11 +15,14 @@ async function getSegmentFileBuffer(segmentFile: string) {
     return (await res.arrayBuffer());
 }
 
-async function getSeekRangeHeader(currentTime: number) {
-    return (
-        await fetch(
-            getBaseAPI("seekable-range/" + currentTime),
-    ).then(res => res.json())).data
+async function getSeekingSegmentFileBuffer(videoId: string, currentTime: number): Promise<{fileSegment: string | null, buffer: ArrayBuffer}> {
+    const res = await fetch(getBaseAPI("fmp4/seeks/" + videoId + "/" + currentTime));
+    if (!res.ok) {
+        const json = await res.json();
+        throw new ErrorException(res.status, json.message);
+    }
+
+    return {fileSegment: res.headers.get("X-Segment-Name"), buffer: (await res.arrayBuffer())};
 }
 
-export {getSegmentBuffer, getSeekRangeHeader, getSegmentFileBuffer}
+export {getSegmentFileBuffer,getSeekingSegmentFileBuffer}
