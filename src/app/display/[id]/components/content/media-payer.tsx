@@ -12,7 +12,7 @@ import VideoTimeline from "@display/[id]/components/content/video-controller/vid
 import {getSeekingSegmentFileBuffer, getSegmentFileBuffer} from "@app/services/stream-api";
 import {
     canPreFetchSegment,
-    closeStreamSegmentIfPossible, findSegment, getAndPlusOneSegmentIndex,
+    closeStreamSegmentIfPossible, getAndPlusOneSegmentIndex,
     getIsSeeking,
     initMediaSourceExtension,
     initSourceBuffer,

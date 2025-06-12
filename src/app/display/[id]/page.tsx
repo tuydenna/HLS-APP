@@ -34,7 +34,7 @@ export default async function Page(props: PropRoute<{ id: string }>) {
                             </div>
                         </div>
                     </section>
-                    <VideoComments comments={post.comments} />
+                    <VideoComments comments={post.comments} postId={postId} />
                 </div>
             </div>
             <RightSideRelatedPosts/>
