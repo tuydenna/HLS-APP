@@ -1,17 +1,17 @@
 import Link from "next/link";
 import Image from "next/image";
 import {getPosts} from "@app/services/post-api";
-import { Key } from "react";
+import {IVideoPost} from "@app/types/video-post";
+import moment from "moment/moment";
 
 export default async function Content() {
     const posts = await getPosts()
-    console.log(posts);
     return (
         <div className="videos">
-            <h1>Recommended</h1>
-            <div className="videos__container">
+            <h1 style={{marginBottom: 10}}>Recommended</h1>
+            <div className="videos__container mt-5">
                 {
-                    posts?.map((post: { id: Key | null | undefined; thumbnail: string; title: string; }) => {
+                    posts?.map((post: IVideoPost) => {
                         return (
                             <div className="video" key={post.id}>
                                 <div className="video__thumbnail">
@@ -20,39 +20,69 @@ export default async function Content() {
                                     </Link>
                                 </div>
                                 <div className="video__details">
-                                    <div className="author">
-                                        <Image src="http://aninex.com/images/srvc/web_de_icon.png" alt="" width={200} height={100}/>
+                                    <div className="author" style={{minWidth:'15%'}}>
+                                        <Image src="http://aninex.com/images/srvc/web_de_icon.png" alt="" width={50} height={50}/>
                                     </div>
                                     <div className="title">
-                                        <h3>Build A Password Generator with React JS - Beginners Tutorial</h3>
-                                        <a href="">FutureCoders</a>
-                                        <span>10M Views • 3 Months Ago</span>
+                                        <h3>{post.title}</h3>
+                                        <a href="">{post.author.name}</a>
+                                        <span>{post.views} Views • {moment(post.createdAt).fromNow()}</span>
                                     </div>
                                 </div>
                             </div>
                         )
                     })
                 }
+
                 <div className="video">
                     <div className="video__thumbnail">
-                        <a href="/watch-videos/<%= data[i].id %>">
-                            <img src="<%= data[i].thumbnail %>" alt="<%= data[i].title %>"/>
-                        </a>
+                        <Link href={"/display"}>
+                            <img src="https://img.youtube.com/vi/YpTmcCBBdTE/maxresdefault.jpg" alt=""/>
+                        </Link>
                     </div>
                     <div className="video__details">
                         <div className="author">
                             <img src="http://aninex.com/images/srvc/web_de_icon.png" alt=""/>
                         </div>
                         <div className="title">
-                            <h3>
-                            </h3>
-                            <a href=""></a>
+                            <h3>Build A Password Generator with React JS - Beginners Tutorial</h3>
+                            <a href="">FutureCoders</a>
                             <span>10M Views • 3 Months Ago</span>
                         </div>
                     </div>
-                </div>
-
-                <div className="video">
+                </div> <div className="video">
+                    <div className="video__thumbnail">
+                        <Link href={"/display"}>
+                            <img src="https://img.youtube.com/vi/YpTmcCBBdTE/maxresdefault.jpg" alt=""/>
+                        </Link>
+                    </div>
+                    <div className="video__details">
+                        <div className="author">
+                            <img src="http://aninex.com/images/srvc/web_de_icon.png" alt=""/>
+                        </div>
+                        <div className="title">
+                            <h3>Build A Password Generator with React JS - Beginners Tutorial</h3>
+                            <a href="">FutureCoders</a>
+                            <span>10M Views • 3 Months Ago</span>
+                        </div>
+                    </div>
+                </div> <div className="video">
+                    <div className="video__thumbnail">
+                        <Link href={"/display"}>
+                            <img src="https://img.youtube.com/vi/YpTmcCBBdTE/maxresdefault.jpg" alt=""/>
+                        </Link>
+                    </div>
+                    <div className="video__details">
+                        <div className="author">
+                            <img src="http://aninex.com/images/srvc/web_de_icon.png" alt=""/>
+                        </div>
+                        <div className="title">
+                            <h3>Build A Password Generator with React JS - Beginners Tutorial</h3>
+                            <a href="">FutureCoders</a>
+                            <span>10M Views • 3 Months Ago</span>
+                        </div>
+                    </div>
+                </div> <div className="video">
                     <div className="video__thumbnail">
                         <Link href={"/display"}>
                             <img src="https://img.youtube.com/vi/YpTmcCBBdTE/maxresdefault.jpg" alt=""/>

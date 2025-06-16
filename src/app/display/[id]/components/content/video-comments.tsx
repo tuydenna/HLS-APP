@@ -3,6 +3,7 @@
 import {JSX, RefObject, useEffect, useRef, useState} from "react";
 import {IComment} from "@app/types/comment";
 import CommentService from "@app/services/comment-api";
+import moment from "moment/moment";
 
 export default function VideoComments ({postId, comments}: {postId: string, comments: IComment[]}): JSX.Element {
 
@@ -35,16 +36,17 @@ export default function VideoComments ({postId, comments}: {postId: string, comm
     return (
         <section className="mt-5 ml-2">
             <div className="flex">
-                <div className="divider divider-start font-bold">Comments</div>
-                <input type="text" placeholder="commenting" ref={commentRef} style={{padding: "10px", borderBottom: "1px  solid white"}} className="flex-1 h-10 rounded-3xl" />
+                <div className="divider divider-start font-bold">Comment</div>
+                <input type="text" ref={commentRef} style={{padding: "10px", borderBottom: "1px  solid gray"}} className="flex-1 h-10 rounded-3xl" />
             </div>
             {
                 commentList.map((comment: IComment) => {
                     return (
                         <section key={comment.id} title="list-comment" id="list-comment">
                             <div className="chat chat-start mt-3">
-                                <div className="chat-bubble">
+                                <div className="chat-bubble text-sm">
                                     {comment.text}
+                                    <div className="text-[10px] text-gray-400">{moment(comment.createdAt).fromNow()}</div>
                                 </div>
                             </div>
                         </section>

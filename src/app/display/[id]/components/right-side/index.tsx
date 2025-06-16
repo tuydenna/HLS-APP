@@ -5,6 +5,7 @@ import {getPosts} from "@app/services/post-api";
 import {IVideoPost} from "@app/types/video-post";
 import {getImageURL} from "@util/helper";
 import Link from "next/link";
+import moment from "moment/moment";
 
 export default function RightSideRelatedPosts( ) {
 
@@ -28,11 +29,13 @@ export default function RightSideRelatedPosts( ) {
                                             {post.title}
                                         </p>
                                     </div>
-                                    <div className="grow text-gray-400 pt-1">
+                                    <div className="grow text-gray-500 pt-1">
                                         <div className="text-sm line-clamp-1">
                                             {post.author.name}
                                         </div>
-                                        <div className="text-sm line-clamp-1">{post.views} views <sup className="font-bold ml-2">.</sup> 3 hours ago</div>
+                                        <div className="text-xs line-clamp-1">
+                                            {post.views} views <sup className="font-bold ml-2"> . </sup> {moment(post.createdAt).fromNow()}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -40,7 +43,7 @@ export default function RightSideRelatedPosts( ) {
                     )
                 })
             }
-            <div className="text-center cursor-pointer text-gray-400 p-2">Load more ...</div>
+            <div className="text-center cursor-pointer text-gray-500 p-2">Load more ...</div>
         </div>
 
     )

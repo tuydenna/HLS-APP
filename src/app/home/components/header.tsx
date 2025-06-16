@@ -1,4 +1,9 @@
+"use client"
+
+import Link from "next/link";
+
 export default function Header() {
+
     return (
         <div className="header">
             <div className="header__left">
@@ -17,7 +22,7 @@ export default function Header() {
             </div>
 
             <div className="header__icons">
-                {/*<i className="material-icons display-this" onClick={()=> upload()}>upload</i>*/}
+                <Link href="/upload-studio"><i className="material-icons display-this">upload</i></Link>
                 <i className="material-icons">videocam</i>
                 <i className="material-icons">apps</i>
                 <i className="material-icons">notifications</i>
