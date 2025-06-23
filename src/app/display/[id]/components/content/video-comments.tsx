@@ -1,8 +1,8 @@
 "use client"
 
 import {JSX, RefObject, useEffect, useRef, useState} from "react";
-import {IComment} from "@app/types/comment";
-import CommentService from "@app/services/comment-api";
+import {IComment} from "../../../../../types/comment";
+import CommentService from "../../../../../services/comment-api";
 import moment from "moment/moment";
 
 export default function VideoComments ({postId, comments}: {postId: string, comments: IComment[]}): JSX.Element {

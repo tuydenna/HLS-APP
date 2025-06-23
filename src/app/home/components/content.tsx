@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import {getPosts} from "@app/services/post-api";
-import {IVideoPost} from "@app/types/video-post";
+import {getPosts} from "../../../services/post-api";
+import {IVideoPost} from "../../../types/video-post";
 import moment from "moment/moment";
 
 export default async function Content() {

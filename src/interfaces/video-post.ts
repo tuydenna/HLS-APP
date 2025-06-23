@@ -1,7 +1,7 @@
-import {ILikePost} from "@app/types/likePosts";
-import {IVideo} from "@app/types/video";
-import {IUser} from "@app/types/user";
-import {IComment} from "@app/types/comment";
+import {ILikePost} from "./likePosts";
+import {IVideo} from "./video";
+import {IUser} from "./user";
+import {IComment} from "./comment";
 
 export interface IVideoPost {
     id: string
@@ -13,10 +13,17 @@ export interface IVideoPost {
     views: number
     description: number
     thumbnail: string
+    status: PostStatus
     createdAt: Date
     updatedAt: Date
     likePosts: ILikePost[]
     video: IVideo
     author: IUser
     comments: IComment[]
+}
+
+export enum PostStatus {
+    Published = "PUBLISHED",
+    Pending = "PENDING",
+    Error = "ERROR"
 }

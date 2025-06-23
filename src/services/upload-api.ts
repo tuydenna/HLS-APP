@@ -1,4 +1,4 @@
-import BaseService from "@app/services/base-service";
+import BaseService from "./base-service";
 
 export default class FileService extends BaseService {
 

@@ -1,4 +1,4 @@
-import {ErrorException} from "@app/types/error-exeption";
+import {ErrorException} from "@interfaces/error-exeption";
 
 const fetchAdapter = {
     get: function (url: string) {
@@ -43,7 +43,7 @@ export default class BaseService {
     async create(data: any) {
         const res = await fetchAdapter.post(this.getBaseAPI(), data);
         if (res.ok) {
-            return (await res.json());
+            return (await res.json()).data;
         }
         throw new ErrorException(res.status, (await res.json()).data.message);
     }

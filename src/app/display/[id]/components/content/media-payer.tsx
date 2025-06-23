@@ -1,4 +1,5 @@
 "use client"
+
 import "./css/media-player.css"
 import {JSX, RefObject, useEffect, useRef, useState} from "react";
 import DurationTimeLabel from "@display/[id]/components/content/video-controller/duration-time-label";
@@ -9,7 +10,7 @@ import PlayInPictureButton from "@display/[id]/components/content/video-controll
 import PlayInTheatreButton from "@display/[id]/components/content/video-controller/play-in-theatre-button";
 import PlayFullScreenButton from "@display/[id]/components/content/video-controller/play-full-screen-button";
 import VideoTimeline from "@display/[id]/components/content/video-controller/video-timeline";
-import {getSeekingSegmentFileBuffer, getSegmentFileBuffer} from "@app/services/stream-api";
+import {getSeekingSegmentFileBuffer, getSegmentFileBuffer} from "@services/stream-api";
 import {
     canPreFetchSegment,
     closeStreamSegmentIfPossible, getAndPlusOneSegmentIndex,
@@ -22,10 +23,10 @@ import {
     setIsSeeking,
     videoConfig
 } from "@display/helper/media-source-helper";
-import {IQueueConfigRef} from "@app/types/video-config";
+import {IQueueConfigRef} from "@interfaces/video-config";
 import SpinnerIndicator from "@display/[id]/components/content/extentsion/spinner-indicator";
-import {ErrorException} from "@app/types/error-exeption";
-import {IVideo} from "@app/types/video";
+import {ErrorException} from "@interfaces/error-exeption";
+import {IVideo} from "@interfaces/video";
 
 export default function MediaPayer(data: {video: IVideo}):JSX.Element {
 

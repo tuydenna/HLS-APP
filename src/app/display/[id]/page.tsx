@@ -1,11 +1,11 @@
 "use server"
 
 import MediaPayer from "@display/[id]/components/content/media-payer";
-import {PropRoute} from "@app/types/props";
-import {getPost,} from "@app/services/post-api";
+import {PropRoute} from "../../../types/props";
+import {getPost,} from "../../../services/post-api";
 import VideoAuthor from "@display/[id]/components/content/video-author";
 import VideoComments from "@display/[id]/components/content/video-comments";
-import {IVideoPost} from "@app/types/video-post";
+import {IVideoPost} from "../../../types/video-post";
 import RightSideRelatedPosts from "@display/[id]/components/right-side";
 
 export default async function Page(props: PropRoute<{ id: string }>) {

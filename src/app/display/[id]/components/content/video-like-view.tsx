@@ -1,8 +1,8 @@
 "use client"
 
 import {JSX, useEffect, useState} from "react";
-import {IVideoPost} from "@app/types/video-post";
-import {updateLikePost} from "@app/services/post-api";
+import {IVideoPost} from "../../../../../types/video-post";
+import {updateLikePost} from "../../../../../services/post-api";
 
 export default function VideoLikeView({post}: {post: IVideoPost}): JSX.Element {
     const [isLike, setIsLike] = useState(false);

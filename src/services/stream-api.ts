@@ -1,4 +1,4 @@
-import {ErrorException} from "@app/types/error-exeption";
+import {ErrorException} from "@interfaces/error-exeption";
 
 const endPoint: string = "/stream-segment"
 

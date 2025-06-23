@@ -1,8 +1,8 @@
 "use client"
 
 import {useEffect, useState} from "react";
-import {getPosts} from "@app/services/post-api";
-import {IVideoPost} from "@app/types/video-post";
+import {getPosts} from "../../../../../services/post-api";
+import {IVideoPost} from "../../../../../types/video-post";
 import {getImageURL} from "@util/helper";
 import Link from "next/link";
 import moment from "moment/moment";
