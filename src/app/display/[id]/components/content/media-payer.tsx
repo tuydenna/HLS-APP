@@ -10,7 +10,6 @@ import PlayInPictureButton from "@display/[id]/components/content/video-controll
 import PlayInTheatreButton from "@display/[id]/components/content/video-controller/play-in-theatre-button";
 import PlayFullScreenButton from "@display/[id]/components/content/video-controller/play-full-screen-button";
 import VideoTimeline from "@display/[id]/components/content/video-controller/video-timeline";
-import {getSeekingSegmentFileBuffer, getSegmentFileBuffer} from "@services/stream-api";
 import {
     canPreFetchSegment,
     closeStreamSegmentIfPossible, getAndPlusOneSegmentIndex,
@@ -27,6 +26,7 @@ import {IQueueConfigRef} from "@interfaces/video-config";
 import SpinnerIndicator from "@display/[id]/components/content/extentsion/spinner-indicator";
 import {ErrorException} from "@interfaces/error-exeption";
 import {IVideo} from "@interfaces/video";
+import StreamService from "@services/stream-service";
 
 export default function MediaPayer(data: {video: IVideo}):JSX.Element {
 
@@ -36,12 +36,13 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
     const queueConfigRef: RefObject<IQueueConfigRef> = useRef({segmentEnd: 0 , isFetchingChunk: false, isSeeking: false})
     const fileSegmentCurrentIndexRef: RefObject<number> = useRef(0)
     const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null)
+    const streamService = new StreamService();
 
     const fetchAndAppendBuffer = async function (sourceBuffer: SourceBuffer, fileSegment: string): Promise<string | undefined> {
         let retryCount: number = 0;
         const retry = async function (): Promise<string | undefined> {
             try {
-                const chunk: ArrayBuffer = await getSegmentFileBuffer(data.video.id, fileSegment);
+                const chunk: ArrayBuffer = await streamService.getSegmentFileBuffer(data.video.id, fileSegment);
                 return await new Promise((resolve, reject) => {
                     if (sourceBuffer && !sourceBuffer.updating) {
                         sourceBuffer?.appendBuffer(chunk);
@@ -76,7 +77,7 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
         let retryCount: number = 0;
         const retry = async function (): Promise<string | undefined> {
             try {
-                const res = await getSeekingSegmentFileBuffer(data.video.id, currentTime);
+                const res = await streamService.getSeekingSegmentFileBuffer(data.video.id, currentTime);
                 return await new Promise((resolve, reject) => {
                     if (sourceBuffer && !sourceBuffer.updating) {
                         sourceBuffer?.appendBuffer(res.buffer);

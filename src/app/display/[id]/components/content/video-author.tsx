@@ -1,27 +1,60 @@
 "use client"
 
-import Image from "next/image";
-import VideoLikeView from "@display/[id]/components/content/video-like-view";
-import {IVideoPost} from "../../../../../types/video-post";
+import {IVideoPost} from "@interfaces/video-post";
+import {Avatar, AvatarFallback, AvatarImage} from "@app/components/ui/avatar";
+import {CardDescription, CardTitle} from "@app/components/ui/card";
+import {Button} from "@app/components/ui/button";
+import {Heart} from "lucide-react";
+import React, {useState} from "react";
+import {getImageURL} from "@util/helper";
+import PostService from "@services/postv2-api";
+import {IUser} from "@interfaces/user";
 
-export default function VideoAuthor ({post}: {post: IVideoPost}) {
+export default function VideoAuthor ({post, auth}: {post: IVideoPost, auth: IUser}) {
+    const [isLiked, setIsLiked] = useState(false);
+    const [likeCount, setLikeCount] = useState(post.likes);
+
+    const formatNumber = (num: number): string => {
+        if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+        if (num >= 1000) return (num / 1000).toFixed(0) + 'K';
+        return num.toString();
+    };
+
+    async function onLike() {
+        await new PostService().likePost(post.id, auth.id)
+        setIsLiked(true);
+    }
+
     return (
-        <section title="author">
-            <div className="flex mt-3">
-                <div className="flex justify-content-start">
-                    <div className="avatar">
-                        <div className="w-16 rounded-full min-w-20">
-                            <Image alt="avatar" width={30} height={30} src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"/>
-                        </div>
-                    </div>
-                    <div className="flex-col ml-2 self-center">
-                        <p className="mb-0">{post.author.name}</p>
-                        <p className="text-sm">5 subscribers</p>
-                    </div>
+        <div className="flex flex-col md:flex-row items-center justify-between">
+            <div className="flex items-center space-x-1 mb-6 md:mb-0">
+                <Avatar className="h-20 w-20 border-4 border-muted">
+                    <AvatarImage src={getImageURL(post.author.avatar)} alt="@alexdoe" />
+                    <AvatarFallback className="bg-violet-500">{post.author.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div>
+                    <CardTitle className="text-xl">{post.author?.name}</CardTitle>
+                    <CardDescription>1.2M Subscribers</CardDescription>
                 </div>
-                <VideoLikeView post={post}/>
             </div>
-        </section>
+            <div className="flex items-end space-x-8">
+                <div className="text-center">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-12 w-12 rounded-full group transition-transform transform hover:scale-110"
+                        onClick={onLike}
+                    >
+                        <Heart className={"h-7 w-7 transition-colors " + (post.likes ? 'text-red-500 fill-red-500' : 'text-muted-foreground group-hover:text-red-400')} />
+                    </Button>
+                    <p className="text-lg font-semibold mt-1">{formatNumber(likeCount)}</p>
+                </div>
+                <div className="text-center">
+                    <p className="text-sm text-muted-foreground h-12 flex items-center">Views</p>
+                    <p className="text-lg font-semibold mt-1">{formatNumber(post.views)}</p>
+                </div>
+            </div>
+        </div>
     )
 }
 

@@ -1,16 +1,13 @@
 import {Input} from "@app/components/ui/input";
-import React, {EffectCallback, JSX, useEffect, useState} from "react";
+import React, {JSX, useState} from "react";
 import {Card, CardContent} from "@app/components/ui/card";
 import {getImageURL, timeAgo} from "@util/helper";
 import {IVideoPost, PostStatus} from "@interfaces/video-post";
 import PostService from "@services/postv2-api";
 import {ErrorIcon, PendingIcon, SuccessIcon} from "@app/components/icon";
+import {onDidMount, onDidUpdate} from "@core/react-adapter";
 
-const onDidMount = function (callBack: EffectCallback) {
-    return useEffect(callBack, []);
-}
-
-export function RightSideLayout({newPost}: {newPost: IVideoPost}) {
+export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
 
     const [search, setSearch] = useState("");
     const [sortBy, setSortBy] = useState("latest");
@@ -38,7 +35,7 @@ export function RightSideLayout({newPost}: {newPost: IVideoPost}) {
         })
     })
 
-    useEffect(() => {
+    onDidUpdate(() => {
         if (newPost) {
             setPosts([...posts, newPost]);
         }

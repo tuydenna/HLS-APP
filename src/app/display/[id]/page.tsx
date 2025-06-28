@@ -1,43 +1,27 @@
 "use server"
 
 import MediaPayer from "@display/[id]/components/content/media-payer";
-import {PropRoute} from "../../../types/props";
-import {getPost,} from "../../../services/post-api";
-import VideoAuthor from "@display/[id]/components/content/video-author";
-import VideoComments from "@display/[id]/components/content/video-comments";
-import {IVideoPost} from "../../../types/video-post";
-import RightSideRelatedPosts from "@display/[id]/components/right-side";
+import {PropRoute} from "@interfaces/props";
+import {IVideoPost} from "@interfaces/video-post";
+import PostService from "@services/postv2-api";
+import {getCookieAuthHeader} from "@lib/next-adapter";
+import ListRelatedPosts from "@display/[id]/components/list/list-related-posts";
+import PostInfo from "@display/[id]/components/content/post-info";
 
 export default async function Page(props: PropRoute<{ id: string }>) {
 
     const postId: string = (await props.params).id
-    const post: IVideoPost = await getPost(postId)
+    const post: IVideoPost = await new PostService().setHeaders(await getCookieAuthHeader()).getOne(postId + "?authId=" + postId );
 
     return (
         <div className="flex p-5">
             <div className="flex-none w-2/3">
                 <MediaPayer video={post.video}/>
-                <div className="p-2">
-                    <section title="video-title">
-                        <p className="text-lg font-bold text-xl">
-                            {post.title}
-                        </p>
-                    </section>
-                    <VideoAuthor post={post} />
-                    <section title="description" className="mt-5">
-                        <div tabIndex={0} className="collapse bg-base-200">
-                            <div className="collapse-title text-[18px] font-medium">Description</div>
-                            <div className="collapse-content text-[16px]">
-                                <p>
-                                    {post.description}
-                                </p>
-                            </div>
-                        </div>
-                    </section>
-                    <VideoComments comments={post.comments} postId={postId} />
-                </div>
+                <PostInfo post={post} />
             </div>
-            <RightSideRelatedPosts/>
+            <ListRelatedPosts/>
         </div>
     )
 }
+
+

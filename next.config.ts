@@ -11,6 +11,12 @@ const nextConfig: NextConfig = {
             },
             {
                 protocol: 'http',
+                hostname: 'localhost',
+                port: "3080",
+                pathname: '/avatars/**',
+            },
+            {
+                protocol: 'http',
                 hostname: 'aninex.com',
                 port: "",
                 pathname: '/images/srvc/**',

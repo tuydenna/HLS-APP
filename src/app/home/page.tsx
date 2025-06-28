@@ -7,12 +7,6 @@ import Content from "@app/home/components/content";
 
 export default async function HomePage () {
 
-    // const [posts, setPosts] = useState<never[]>([])
-
-    function upload() {
-        console.log("upload");
-    }
-
     return (
         <>
             <Header/>

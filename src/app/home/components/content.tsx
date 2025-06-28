@@ -1,11 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
-import {getPosts} from "../../../services/post-api";
-import {IVideoPost} from "../../../types/video-post";
-import moment from "moment/moment";
+import {IVideoPost} from "@interfaces/video-post";
+import {timeAgo} from "@util/helper";
+import PostService from "@services/postv2-api";
+import {getCookieAuthHeader} from "@lib/next-adapter";
 
 export default async function Content() {
-    const posts = await getPosts()
+
+    const posts: IVideoPost[] = await new PostService().setHeaders(await getCookieAuthHeader()).getMany();
+
     return (
         <div className="videos">
             <h1 style={{marginBottom: 10}}>Recommended</h1>
@@ -26,7 +29,7 @@ export default async function Content() {
                                     <div className="title">
                                         <h3>{post.title}</h3>
                                         <a href="">{post.author.name}</a>
-                                        <span>{post.views} Views • {moment(post.createdAt).fromNow()}</span>
+                                        <span>{post.views} Views • {timeAgo(post.createdAt)}</span>
                                     </div>
                                 </div>
                             </div>

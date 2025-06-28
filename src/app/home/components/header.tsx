@@ -1,9 +1,21 @@
 "use client"
 
 import Link from "next/link";
+import React, {useState} from "react";
+import {onDidMount} from "@core/react-adapter";
+import { IUser } from "@interfaces/user";
+import {getImageURL} from "@util/helper";
+import {DropdownProfile} from "@app/home/components/dropdown-profile";
 
 export default function Header() {
+    const [auth, setAuth] = useState<IUser | null>(null);
 
+    onDidMount(()=> {
+        const user = JSON.parse(localStorage.getItem("auth")!);
+        user.avatar = getImageURL(user.avatar);
+        setAuth(user);
+    })
+    console.log(auth);
     return (
         <div className="header">
             <div className="header__left">
@@ -21,12 +33,13 @@ export default function Header() {
                 </form>
             </div>
 
-            <div className="header__icons">
-                <Link href="/upload-studio"><i className="material-icons display-this">upload</i></Link>
+            <div className="header__icons flex space-between">
+                {/*<Link href="/upload-studio"><i className="material-icons display-this">upload</i></Link>
                 <i className="material-icons">videocam</i>
                 <i className="material-icons">apps</i>
-                <i className="material-icons">notifications</i>
-                <i className="material-icons display-this">account_circle</i>
+                <i className="material-icons">notifications</i>*/}
+                <DropdownProfile auth={auth} />
+
             </div>
         </div>
     )

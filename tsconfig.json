@@ -22,6 +22,7 @@
       "@app/*": ["./src/app/*"],
       "@util/*": ["./src/util/*"],
       "@display/*": ["./src/app/display/*"],
+      "@lib/*": ["./src/app/lib/*"],
       "@services/*": ["./src/services/*"],
       "@interfaces/*": ["./src/interfaces/*"]
     }
