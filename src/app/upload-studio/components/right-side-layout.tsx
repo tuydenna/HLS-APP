@@ -4,19 +4,18 @@ import {Card, CardContent} from "@app/components/ui/card";
 import {getImageURL, timeAgo} from "@util/helper";
 import {IVideoPost, PostStatus} from "@interfaces/video-post";
 import PostService from "@services/postv2-api";
-import {ErrorIcon, PendingIcon, SuccessIcon} from "@app/components/icon";
-import {onDidMount, onDidUpdate} from "@core/react-adapter";
+import {ErrorIcon, HomeIcon, PendingIcon, SuccessIcon} from "@app/components/icon";
+import {onDidMount, onDidUpdate} from "@app/lib/react-adapter";
+import {getAuth} from "@lib/utils";
+import {IUser} from "@interfaces/user";
+import Link from "next/link";
 
 export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
 
     const [search, setSearch] = useState("");
     const [sortBy, setSortBy] = useState("latest");
     const [posts, setPosts] = useState<IVideoPost[]>([]);
-
-    const author = {
-        name: "John Doe",
-        avatar: "https://i.pravatar.cc/40"
-    };
+    const author: IUser = getAuth()
 
     function renderPostStatus(status: PostStatus): JSX.Element {
         switch (status) {
@@ -57,8 +56,9 @@ export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-semibold">Your Posts</h3>
                 <div className="flex items-center gap-2">
-                    <img src={author.avatar} alt="profile" className="w-8 h-8 rounded-full" />
+                    <img src={getImageURL(author.avatar)} alt="profile" className="w-8 h-8 rounded-full" />
                     <span className="text-sm font-medium">{author.name}</span>
+                    <Link href="/"><HomeIcon className="cursor-pointer text-gray-400" /></Link>
                 </div>
             </div>
             <div className="flex items-center gap-2 mb-4">
@@ -79,7 +79,7 @@ export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
             </div>
             <ul className="space-y-3">
                 {filteredPosts.map((post, index) => (
-                    <Card key={index} className="cursor-pointer">
+                    <Card key={index} className="cursor-pointer py-1">
                         <CardContent className="p-4">
                             {post.thumbnail && (
                                 <div className="w-full aspect-video mb-3 overflow-hidden rounded">
@@ -91,17 +91,9 @@ export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
                                 </div>
                             )}
                             <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-2">
-                                    <img
-                                        src={post.author.avatar}
-                                        alt="avatar"
-                                        className="w-8 h-8 rounded-full"
-                                    />
-                                    <span className="text-sm font-medium">{post.author.name}</span>
-                                </div>
+                                <h4 className="font-semibold line-clamp-1">{post.title}</h4>
                                 <span className="text-xs text-gray-500">{renderPostStatus(post.status)}</span>
                             </div>
-                            <h4 className="font-semibold line-clamp-1">{post.title}</h4>
                             <p className="text-sm  text-wraptext-gray-500 line-clamp-2">{post.description}</p>
                             <div className="mt-2 text-xs text-gray-400 flex justify-between">
                                 <span>{timeAgo(post.createdAt)}</span>

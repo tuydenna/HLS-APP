@@ -7,8 +7,16 @@ export default class AuthService extends BaseService<IUser> {
         super("/authentications");
     }
 
-    register(user) {
+    register(user: IUser){
         return this.create(user, "register");
+    }
+
+    login(data: {username: string; password: string}) {
+        return this.create(data, "login");
+    }
+
+    logout() {
+        return this.update( "logout");
     }
 
 }

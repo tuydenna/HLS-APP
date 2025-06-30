@@ -62,7 +62,7 @@ export default class BaseService<T> {
         throw new ErrorException(res.status, (await res.json()).message);
     }
 
-    async update(id: string, data: any): Promise<T> {
+    async update(id: string, data: any = {}): Promise<T> {
         const res = await fetchAdapter.put(this.getBaseAPI(id),this.getHeaders(), data);
         if (res.ok) {
             return (await res.json()).data;

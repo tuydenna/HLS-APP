@@ -6,3 +6,5 @@ export class  ErrorException  extends Error {
         this.message = message;
     }
 }
+
+export type TErrorCatch = ErrorException | unknown

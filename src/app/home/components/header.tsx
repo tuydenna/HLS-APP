@@ -1,21 +1,20 @@
 "use client"
 
-import Link from "next/link";
 import React, {useState} from "react";
-import {onDidMount} from "@core/react-adapter";
+import {onDidMount} from "@app/lib/react-adapter";
 import { IUser } from "@interfaces/user";
 import {getImageURL} from "@util/helper";
 import {DropdownProfile} from "@app/home/components/dropdown-profile";
+import {getAuth} from "@lib/utils";
 
 export default function Header() {
     const [auth, setAuth] = useState<IUser | null>(null);
 
     onDidMount(()=> {
-        const user = JSON.parse(localStorage.getItem("auth")!);
+        const user: IUser = getAuth();
         user.avatar = getImageURL(user.avatar);
         setAuth(user);
     })
-    console.log(auth);
     return (
         <div className="header">
             <div className="header__left">

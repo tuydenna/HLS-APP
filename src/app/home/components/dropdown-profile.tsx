@@ -11,9 +11,30 @@ import {
 import React, { JSX } from "react"
 import {IUser} from "@interfaces/user";
 import { useRouter } from 'next/navigation'
+import AuthService from "@services/auth-service";
+import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
+import {RoutesList} from "@util/routes";
+import {redirectTo} from "@lib/react-adapter";
 
 export function DropdownProfile({auth}: {auth:  IUser | null}): JSX.Element {
-    const router = useRouter()
+    const router: AppRouterInstance = useRouter();
+
+    async function onLogout() {
+        try {
+            await new AuthService().logout();
+            redirectTo(router, RoutesList.LOGIN);
+        } catch (e) {
+
+        }
+    }
+
+    function toUploadStudio() {
+        return redirectTo(router, RoutesList.UPLOAD_STUDIO);
+    }
+
+     function toProfile() {
+        return redirectTo(router, RoutesList.PROFILE);
+    }
 
     return (
         <DropdownMenu>
@@ -26,13 +47,12 @@ export function DropdownProfile({auth}: {auth:  IUser | null}): JSX.Element {
             <DropdownMenuContent className="w-56 p-3" style={{padding: 10}} align="start">
                 <DropdownMenuLabel style={{padding: "6px 8px"}}>My Account</DropdownMenuLabel>
                 <DropdownMenuGroup>
-                    <DropdownMenuItem style={{padding: "6px 8px"}} onClick={(e) =>
-                        e.preventDefault() }>
+                    <DropdownMenuItem style={{padding: "6px 8px"}} onClick={toProfile}>
                         Profile
                         <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem style={{padding: "6px 8px"}} onClick={() => {router.push("/upload-studio")}}>
+                    <DropdownMenuItem style={{padding: "6px 8px"}} onClick={toUploadStudio}>
                         Studio
                         <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
                     </DropdownMenuItem>
@@ -42,7 +62,7 @@ export function DropdownProfile({auth}: {auth:  IUser | null}): JSX.Element {
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem style={{padding: "6px 8px"}}>
+                <DropdownMenuItem style={{padding: "6px 8px"}} onClick={onLogout}>
                     Log out
                     <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
                 </DropdownMenuItem>
