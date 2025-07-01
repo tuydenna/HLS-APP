@@ -38,7 +38,6 @@ export default function Header() {
                 <i className="material-icons">apps</i>
                 <i className="material-icons">notifications</i>*/}
                 <DropdownProfile auth={auth} />
-
             </div>
         </div>
     )

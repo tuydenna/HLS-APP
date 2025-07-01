@@ -24,7 +24,8 @@
       "@display/*": ["./src/app/display/*"],
       "@lib/*": ["./src/app/lib/*"],
       "@services/*": ["./src/services/*"],
-      "@interfaces/*": ["./src/interfaces/*"]
+      "@interfaces/*": ["./src/interfaces/*"],
+      "@components/*": ["./src/app/components/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "next.config.ts"],

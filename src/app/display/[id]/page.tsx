@@ -7,6 +7,7 @@ import PostService from "@services/postv2-api";
 import {getCookieAuthHeader} from "@lib/next-adapter";
 import ListRelatedPosts from "@display/[id]/components/list/list-related-posts";
 import PostInfo from "@display/[id]/components/content/post-info";
+import Header from "@components/layout/header2";
 
 export default async function Page(props: PropRoute<{ id: string }>) {
 
@@ -14,13 +15,17 @@ export default async function Page(props: PropRoute<{ id: string }>) {
     const post: IVideoPost = await new PostService().setHeaders(await getCookieAuthHeader()).getOne(postId + "?authId=" + postId );
 
     return (
-        <div className="flex p-5">
-            <div className="flex-none w-2/3">
-                <MediaPayer video={post.video}/>
-                <PostInfo post={post} />
+        <div className="relative">
+            <Header/>
+            <div className="flex p-5">
+                <div className="flex-none w-2/3">
+                    <MediaPayer video={post.video}/>
+                    <PostInfo post={post} />
+                </div>
+                <ListRelatedPosts/>
             </div>
-            <ListRelatedPosts/>
         </div>
+
     )
 }
 
