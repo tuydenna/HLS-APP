@@ -1,108 +1,58 @@
+// import "../css/content.css"
 import Link from "next/link";
 import Image from "next/image";
 import {IVideoPost} from "@interfaces/video-post";
-import {timeAgo} from "@util/helper";
+import {getImageURL, timeAgo} from "@util/helper";
 import PostService from "@services/postv2-api";
 import {getCookieAuthHeader} from "@lib/next-adapter";
+import {Card, CardDescription, CardFooter, CardHeader, CardTitle} from "@components/ui/card";
+import {AvatarUI} from "@components/ui/avatar";
+import React from "react";
+import HomeListPostsSkeleton from "@components/skeleton/home-list-posts-skeleton";
+import ImageLoaderWrapper from "@app/home/ImageLoaderWrapper";
 
 export default async function Content() {
 
     const posts: IVideoPost[] = await new PostService().setHeaders(await getCookieAuthHeader()).getMany();
 
-    return (
-        <div className="videos">
-            <h1 style={{marginBottom: 10}}>Recommended</h1>
-            <div className="videos__container mt-5">
-                {
-                    posts?.map((post: IVideoPost) => {
-                        return (
-                            <div className="video" key={post.id}>
-                                <div className="video__thumbnail">
-                                    <Link href={`/display/${post.id}`}>
-                                        <Image src={`http://localhost:3080${post.thumbnail}`} alt={post.title} width={200} height={100}/>
-                                    </Link>
-                                </div>
-                                <div className="video__details">
-                                    <div className="author" style={{minWidth:'15%'}}>
-                                        <Image src="http://aninex.com/images/srvc/web_de_icon.png" alt="" width={50} height={50}/>
-                                    </div>
-                                    <div className="title">
-                                        <h3>{post.title}</h3>
-                                        <a href="">{post.author.name}</a>
-                                        <span>{post.views} Views • {timeAgo(post.createdAt)}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        )
-                    })
-                }
+    console.log("posts", posts);
 
-                <div className="video">
-                    <div className="video__thumbnail">
-                        <Link href={"/display"}>
-                            <img src="https://img.youtube.com/vi/YpTmcCBBdTE/maxresdefault.jpg" alt=""/>
-                        </Link>
+    return (
+        posts.length ?
+            <div className="flex m-5 w-[80%] flex-wrap">
+                <ImageLoaderWrapper fallBack={<HomeListPostsSkeleton/>}>
+                    <div className={"flex flex-wrap"}>
+                        {
+                            posts?.map((post: IVideoPost) => {
+                                return (
+                                    <Card className="w-full max-w-sm m-[1vw] gap-2" key={post.id}>
+                                        <CardHeader>
+                                            <Link href={`/display/${post.id}`} className="aspect-video">
+                                                <Image className="w-full h-full object-cover"
+                                                       src={`http://localhost:3080/thumbnail/00a83777-6d20-4c87-b757-3effae11f956.png`}
+                                                       alt={''} width={200} height={100}/>
+                                            </Link>
+                                        </CardHeader>
+                                        <CardFooter className="flex-col gap-2">
+                                            <div className="flex items-center space-x-1 mb-6 md:mb-0 w-full">
+                                                <AvatarUI src={getImageURL(post.author.avatar)} fallbackName={post.author.name}/>
+                                                <div>
+                                                    <CardTitle className="text-sm line-clamp-2">{post.title}</CardTitle>
+                                                    <CardDescription>{post.author.name}</CardDescription>
+                                                    <CardDescription>{post.views} Views • {timeAgo(post.createdAt)}</CardDescription>
+                                                </div>
+                                            </div>
+                                        </CardFooter>
+                                    </Card>
+                                )
+                            })
+                        }
                     </div>
-                    <div className="video__details">
-                        <div className="author">
-                            <img src="http://aninex.com/images/srvc/web_de_icon.png" alt=""/>
-                        </div>
-                        <div className="title">
-                            <h3>Build A Password Generator with React JS - Beginners Tutorial</h3>
-                            <a href="">FutureCoders</a>
-                            <span>10M Views • 3 Months Ago</span>
-                        </div>
-                    </div>
-                </div> <div className="video">
-                    <div className="video__thumbnail">
-                        <Link href={"/display"}>
-                            <img src="https://img.youtube.com/vi/YpTmcCBBdTE/maxresdefault.jpg" alt=""/>
-                        </Link>
-                    </div>
-                    <div className="video__details">
-                        <div className="author">
-                            <img src="http://aninex.com/images/srvc/web_de_icon.png" alt=""/>
-                        </div>
-                        <div className="title">
-                            <h3>Build A Password Generator with React JS - Beginners Tutorial</h3>
-                            <a href="">FutureCoders</a>
-                            <span>10M Views • 3 Months Ago</span>
-                        </div>
-                    </div>
-                </div> <div className="video">
-                    <div className="video__thumbnail">
-                        <Link href={"/display"}>
-                            <img src="https://img.youtube.com/vi/YpTmcCBBdTE/maxresdefault.jpg" alt=""/>
-                        </Link>
-                    </div>
-                    <div className="video__details">
-                        <div className="author">
-                            <img src="http://aninex.com/images/srvc/web_de_icon.png" alt=""/>
-                        </div>
-                        <div className="title">
-                            <h3>Build A Password Generator with React JS - Beginners Tutorial</h3>
-                            <a href="">FutureCoders</a>
-                            <span>10M Views • 3 Months Ago</span>
-                        </div>
-                    </div>
-                </div> <div className="video">
-                    <div className="video__thumbnail">
-                        <Link href={"/display"}>
-                            <img src="https://img.youtube.com/vi/YpTmcCBBdTE/maxresdefault.jpg" alt=""/>
-                        </Link>
-                    </div>
-                    <div className="video__details">
-                        <div className="author">
-                            <img src="http://aninex.com/images/srvc/web_de_icon.png" alt=""/>
-                        </div>
-                        <div className="title">
-                            <h3>Build A Password Generator with React JS - Beginners Tutorial</h3>
-                            <a href="">FutureCoders</a>
-                            <span>10M Views • 3 Months Ago</span>
-                        </div>
-                    </div>
-                </div>
+                </ImageLoaderWrapper>
+
+
             </div>
-        </div>
+            :
+        <HomeListPostsSkeleton/>
     )
 }

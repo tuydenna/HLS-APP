@@ -7,7 +7,7 @@ import PostService from "@services/postv2-api";
 import {getCookieAuthHeader} from "@lib/next-adapter";
 import ListRelatedPosts from "@display/[id]/components/list/list-related-posts";
 import PostInfo from "@display/[id]/components/content/post-info";
-import Header from "@components/layout/header2";
+import Header from "@components/layout/header";
 
 export default async function Page(props: PropRoute<{ id: string }>) {
 

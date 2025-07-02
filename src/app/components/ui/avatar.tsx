@@ -1,9 +1,18 @@
 "use client"
 
-import * as React from "react"
+import {JSX} from "react"
 import * as AvatarPrimitive from "@radix-ui/react-avatar"
-
 import { cn } from "@app/lib/utils"
+
+function AvatarUI({src, fallbackName, widthClass="w-12", heightClass="h-12"}: {src: string | undefined, fallbackName: string | undefined, widthClass?: string , heightClass?: string}): JSX.Element {
+  return (
+      <Avatar className={cn("border-4 border-muted", widthClass, heightClass)}>
+        <AvatarImage src={src} alt={`${fallbackName}`}/>
+        <AvatarFallback
+            className="bg-violet-500">{fallbackName?.charAt(0) ?? "N/A"}</AvatarFallback>
+      </Avatar>
+  )
+}
 
 function Avatar({
   className,
@@ -50,4 +59,4 @@ function AvatarFallback({
   )
 }
 
-export { Avatar, AvatarImage, AvatarFallback }
+export {  AvatarUI }

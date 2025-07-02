@@ -3,8 +3,8 @@
 import React, {JSX, RefObject, useRef, useState} from "react";
 import {IComment} from "@interfaces/comment";
 import CommentService from "@services/comment-api";
-import {getAvatarFallbackName, getImageURL, timeAgo} from "@util/helper";
-import {Avatar, AvatarFallback, AvatarImage} from "@app/components/ui/avatar";
+import {getImageURL, timeAgo} from "@util/helper";
+import { AvatarUI} from "@app/components/ui/avatar";
 import {Textarea} from "@app/components/ui/textarea";
 import {Button} from "@app/components/ui/button";
 import {MessageCircle} from "lucide-react";
@@ -58,10 +58,7 @@ function CommentForm({ postId, addNewComment, auth }: {postId: string, addNewCom
 
     return (
         <div className="flex items-start space-x-4">
-            <Avatar>
-                <AvatarImage src={getImageURL(auth.avatar)} />
-                <AvatarFallback className="bg-orange-500">{getAvatarFallbackName(auth.name)}</AvatarFallback>
-            </Avatar>
+            <AvatarUI src={getImageURL(auth.avatar)} fallbackName={auth.name} />
             <div className="flex-1">
                 <Textarea
                     placeholder="Leave a comment..."
@@ -80,10 +77,7 @@ function CommentList({ comments }: {comments: IComment[]}) {
         <div className="mt-8 space-y-6">
             {comments.map((comment) => (
                 <div key={comment.id} className="flex items-start space-x-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <Avatar className="h-10 w-10">
-                        <AvatarImage src={getImageURL(comment.author.avatar)} />
-                        <AvatarFallback className="text-sm">{comment.author.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
+                    <AvatarUI src={getImageURL(comment.author.avatar)} fallbackName={comment.author.name} widthClass="w-10" heightClass="h-10"/>
                     <div className="flex-1">
                         <div className="flex items-center space-x-2">
                             <p className="font-semibold text-sm">{comment.author?.name}</p>

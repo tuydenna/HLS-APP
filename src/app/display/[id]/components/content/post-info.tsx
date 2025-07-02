@@ -10,7 +10,7 @@ import VideoDescription from "@display/[id]/components/content/video-desciption"
 import {IUser} from "@interfaces/user";
 import {getAuth} from "@lib/utils";
 import {onDidMount} from "@lib/react-adapter";
-import {PostInfoSkeleton} from "@display/[id]/components/skeleton/post-info-skeleton";
+import {PostInfoSkeleton} from "@components/skeleton/post-info-skeleton";
 
 export default function PostInfo({post}: {post: IVideoPost}) {
 

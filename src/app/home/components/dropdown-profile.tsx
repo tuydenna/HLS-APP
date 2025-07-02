@@ -15,6 +15,7 @@ import AuthService from "@services/auth-service";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 import {RoutesList} from "@util/routes";
 import {redirectTo} from "@lib/react-adapter";
+import {AvatarUI} from "@components/ui/avatar";
 
 export function DropdownProfile({auth}: {auth:  IUser | null}): JSX.Element {
     const router: AppRouterInstance = useRouter();
@@ -40,7 +41,7 @@ export function DropdownProfile({auth}: {auth:  IUser | null}): JSX.Element {
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <div className="flex items-center gap-2">
-                    <img src={auth?.avatar} alt="profile" className="w-8 h-8 rounded-full" />
+                    <AvatarUI src={auth?.avatar} fallbackName={auth?.name} widthClass="w-10" heightClass="h-10"/>
                     <span className="text-sm font-medium">{auth?.name}</span>
                 </div>
             </DropdownMenuTrigger>

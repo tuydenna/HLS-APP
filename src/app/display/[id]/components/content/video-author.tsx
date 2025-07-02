@@ -1,7 +1,7 @@
 "use client"
 
 import {IVideoPost} from "@interfaces/video-post";
-import {Avatar, AvatarFallback, AvatarImage} from "@app/components/ui/avatar";
+import { AvatarUI} from "@app/components/ui/avatar";
 import {CardDescription, CardTitle} from "@app/components/ui/card";
 import {Button} from "@app/components/ui/button";
 import {Heart} from "lucide-react";
@@ -27,11 +27,8 @@ export default function VideoAuthor ({post, auth}: {post: IVideoPost, auth: IUse
 
     return (
         <div className="flex flex-col md:flex-row items-center justify-between">
-            <div className="flex items-center space-x-1 mb-6 md:mb-0">
-                <Avatar className="h-20 w-20 border-4 border-muted">
-                    <AvatarImage src={getImageURL(post.author.avatar)} alt="@alexdoe" />
-                    <AvatarFallback className="bg-violet-500">{post.author.name.charAt(0)}</AvatarFallback>
-                </Avatar>
+            <div className="flex items-center space-x-2 mb-6 md:mb-0">
+               <AvatarUI src={getImageURL(post.author.avatar)} fallbackName={post.author.name} widthClass="w-20" heightClass="h-20"/>
                 <div>
                     <CardTitle className="text-xl">{post.author?.name}</CardTitle>
                     <CardDescription>1.2M Subscribers</CardDescription>

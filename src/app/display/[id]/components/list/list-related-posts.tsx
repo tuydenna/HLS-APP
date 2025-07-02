@@ -8,7 +8,7 @@ import {onDidMount} from "@lib/react-adapter";
 import PostService from "@services/postv2-api";
 import {
     ListRelatedPostsSkeleton,
-} from "@display/[id]/components/skeleton/list-related-posts-skeleton";
+} from "@components/skeleton/list-related-posts-skeleton";
 
 export default function ListRelatedPosts() {
 
