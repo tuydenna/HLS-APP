@@ -33,10 +33,12 @@ export default function Header() {
             </div>
 
             <div className="header__icons flex space-between">
-                {/*<Link href="/upload-studio"><i className="material-icons display-this">upload</i></Link>
-                <i className="material-icons">videocam</i>
-                <i className="material-icons">apps</i>
-                <i className="material-icons">notifications</i>*/}
+                {
+                    /*<Link href="/upload-studio"><i className="material-icons display-this">upload</i></Link>
+                    <i className="material-icons">videocam</i>
+                    <i className="material-icons">apps</i>
+                    <i className="material-icons">notifications</i>*/
+                }
                 <DropdownProfile auth={auth} />
             </div>
         </div>
