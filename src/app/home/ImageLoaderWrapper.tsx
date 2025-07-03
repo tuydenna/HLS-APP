@@ -1,14 +1,14 @@
 'use client';
 
-import React, {isValidElement, JSX, useState} from 'react';
+import { JSX, useState, cloneElement } from "react";
 import {onDidMount} from "@lib/react-adapter";
 
-export default function ImageLoaderWrapper({ fallBack, children }: { fallBack: JSX.Element, children: React.ReactElement }) {
+export default function ImageLoaderWrapper({ fallBack, children }: { fallBack: JSX.Element, children: JSX.Element }) {
     const [loaded, setLoaded] = useState(false);
 
     onDidMount(() => {
-        const images = Array.from(document.querySelectorAll('img'));
-        let count = 0;
+        const images: HTMLImageElement[] = Array.from(document.querySelectorAll('img'));
+        let count: number = 0;
 
         if (images.length === 0) setLoaded(true);
 
@@ -23,10 +23,13 @@ export default function ImageLoaderWrapper({ fallBack, children }: { fallBack: J
 
         function checkDone() {
             count++;
-            console.log('done', count, images.length);
             if (count === images.length) setLoaded(true);
         }
     });
+
+    function cloneChildren(children: JSX.Element) {
+       return cloneElement(children, {...children.props, style: {opacity: loaded ? 1 : 0}});
+    }
 
     return (
         <>
@@ -34,17 +37,7 @@ export default function ImageLoaderWrapper({ fallBack, children }: { fallBack: J
                 !loaded && fallBack
             }
             {
-                React.Children.map(children, (child) => {
-                    if (isValidElement(child)) {
-                        return React.cloneElement(child, {
-                            style: {
-                                ...(child.props.style || {}),
-                                opacity: loaded ? 1  : 0,
-                            },
-                        });
-                    }
-                    return child; // for non-element children
-                })
+                cloneChildren(children)
             }
         </>
     );

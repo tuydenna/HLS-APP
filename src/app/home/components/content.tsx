@@ -15,11 +15,9 @@ export default async function Content() {
 
     const posts: IVideoPost[] = await new PostService().setHeaders(await getCookieAuthHeader()).getMany();
 
-    console.log("posts", posts);
-
     return (
         posts.length ?
-            <div className="flex m-5 w-[80%] flex-wrap">
+            <div className="m-5 w-[80%]">
                 <ImageLoaderWrapper fallBack={<HomeListPostsSkeleton/>}>
                     <div className={"flex flex-wrap"}>
                         {
@@ -30,7 +28,7 @@ export default async function Content() {
                                             <Link href={`/display/${post.id}`} className="aspect-video">
                                                 <Image className="w-full h-full object-cover"
                                                        src={`http://localhost:3080/thumbnail/00a83777-6d20-4c87-b757-3effae11f956.png`}
-                                                       alt={''} width={200} height={100}/>
+                                                       alt={''} width={200} height={100} priority={true}/>
                                             </Link>
                                         </CardHeader>
                                         <CardFooter className="flex-col gap-2">
@@ -49,8 +47,6 @@ export default async function Content() {
                         }
                     </div>
                 </ImageLoaderWrapper>
-
-
             </div>
             :
         <HomeListPostsSkeleton/>
