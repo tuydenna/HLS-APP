@@ -2,14 +2,14 @@
 
 import "./css/media-player.css"
 import {JSX, RefObject, useEffect, useRef, useState} from "react";
-import DurationTimeLabel from "@display/[id]/components/content/video-controller/duration-time-label";
-import PlayButton from "@display/[id]/components/content/video-controller/play-button";
-import SoundButton from "@display/[id]/components/content/video-controller/sound-button";
-import PlayBackRateButton from "@display/[id]/components/content/video-controller/play-back-rate-button";
-import PlayInPictureButton from "@display/[id]/components/content/video-controller/play-in-picture-button";
-import PlayInTheatreButton from "@display/[id]/components/content/video-controller/play-in-theatre-button";
-import PlayFullScreenButton from "@display/[id]/components/content/video-controller/play-full-screen-button";
-import VideoTimeline from "@display/[id]/components/content/video-controller/video-timeline";
+import DurationTimeLabel from "@watch/[id]/components/content/video-controller/duration-time-label";
+import PlayButton from "@watch/[id]/components/content/video-controller/play-button";
+import SoundButton from "@watch/[id]/components/content/video-controller/sound-button";
+import PlayBackRateButton from "@watch/[id]/components/content/video-controller/play-back-rate-button";
+import PlayInPictureButton from "@watch/[id]/components/content/video-controller/play-in-picture-button";
+import PlayInTheatreButton from "@watch/[id]/components/content/video-controller/play-in-theatre-button";
+import PlayFullScreenButton from "@watch/[id]/components/content/video-controller/play-full-screen-button";
+import VideoTimeline from "@watch/[id]/components/content/video-controller/video-timeline";
 import {
     canPreFetchSegment,
     closeStreamSegmentIfPossible, getAndPlusOneSegmentIndex,
@@ -21,9 +21,9 @@ import {
     setIsFetchingChunk,
     setIsSeeking,
     videoConfig
-} from "@display/helper/media-source-helper";
+} from "@watch/helper/media-source-helper";
 import {IQueueConfigRef} from "@interfaces/video-config";
-import SpinnerIndicator from "@display/[id]/components/content/extentsion/spinner-indicator";
+import SpinnerIndicator from "@watch/[id]/components/content/extentsion/spinner-indicator";
 import {ErrorException} from "@interfaces/error-exeption";
 import {IVideo} from "@interfaces/video";
 import StreamService from "@services/stream-service";

@@ -19,6 +19,8 @@ import {IUser} from "@interfaces/user";
 import AuthService from "@services/auth-service";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 import {TErrorCatch} from "@interfaces/error-exeption";
+import Link from "next/link";
+import {RoutesList} from "@util/routes";
 
 export default function RegisterPage(): JSX.Element {
     // State to hold the avatar file for preview
@@ -78,7 +80,7 @@ export default function RegisterPage(): JSX.Element {
                     </form>
                 </CardContent>
                 <CardFooter className="flex justify-center text-sm text-gray-500">
-                    <p>Don't have an account? <a href="#" className="font-semibold text-primary hover:underline">Sign Up</a></p>
+                    <p>Don't have an account? <Link href={RoutesList.REGISTER} className="font-semibold text-primary hover:underline">Sign Up</Link></p>
                 </CardFooter>
             </Card>
         </div>

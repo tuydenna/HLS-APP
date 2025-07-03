@@ -1,11 +1,11 @@
 "use client"
 
-import React from "react";
-import {LeftSideLayout} from "@app/upload-studio/components/left-side-layout";
-import {RightSideLayout} from "@app/upload-studio/components/right-side-layout";
+import React, {JSX} from "react";
+import {LeftSideLayout} from "@studio/components/left-side-layout";
+import {RightSideLayout} from "@studio/components/right-side-layout";
 import {IVideoPost} from "@interfaces/video-post";
 
-export default function CreatePostDashboard() {
+export default function CreatePostDashboard(): JSX.Element {
 
     const [createPost, setCreatePost] = React.useState<IVideoPost>();
 

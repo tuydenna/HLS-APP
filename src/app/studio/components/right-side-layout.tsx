@@ -9,13 +9,14 @@ import {onDidMount, onDidUpdate} from "@app/lib/react-adapter";
 import {getAuth} from "@lib/utils";
 import {IUser} from "@interfaces/user";
 import Link from "next/link";
+import {AvatarUI} from "@components/ui/avatar";
 
 export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
 
     const [search, setSearch] = useState("");
     const [sortBy, setSortBy] = useState("latest");
     const [posts, setPosts] = useState<IVideoPost[]>([]);
-    const author: IUser = getAuth()
+    const [author, setAuthor]  = useState<IUser | null>(null);
 
     function renderPostStatus(status: PostStatus): JSX.Element {
         switch (status) {
@@ -32,6 +33,7 @@ export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
         new PostService().getMany().then(data=>{
             setPosts(data);
         })
+        setAuthor(getAuth());
     })
 
     onDidUpdate(() => {
@@ -56,8 +58,8 @@ export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-semibold">Your Posts</h3>
                 <div className="flex items-center gap-2">
-                    <img src={getImageURL(author.avatar)} alt="profile" className="w-8 h-8 rounded-full" />
-                    <span className="text-sm font-medium">{author.name}</span>
+                    <AvatarUI src={getImageURL(author?.avatar)} fallbackName={author?.name} widthClass="w-10" heightClass="h-10"/>
+                    <span className="text-sm font-medium">{author?.name}</span>
                     <Link href="/"><HomeIcon className="cursor-pointer text-gray-400" /></Link>
                 </div>
             </div>

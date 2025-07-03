@@ -7,8 +7,8 @@ export function getEnv(key: string) {
     throw Error(`unknown env key: ${key}`);
 }
 
-export function getImageURL(path: string): string {
-    return process.env.NEXT_PUBLIC_DEV_IMAGE + path;
+export function getImageURL(path: string | undefined): string{
+    return path ? process.env.NEXT_PUBLIC_DEV_IMAGE + path : "";
 }
 
 export function timeAgo(date: Date): string {

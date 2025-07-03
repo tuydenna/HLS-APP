@@ -1,5 +1,5 @@
 import BaseService from "@services/base-service";
-import {IUser} from "@interfaces/user";
+import {IRegisterDto, IUser} from "@interfaces/user";
 
 export default class AuthService extends BaseService<IUser> {
 
@@ -7,7 +7,7 @@ export default class AuthService extends BaseService<IUser> {
         super("/authentications");
     }
 
-    register(user: IUser){
+    register(user: IRegisterDto){
         return this.create(user, "register");
     }
 

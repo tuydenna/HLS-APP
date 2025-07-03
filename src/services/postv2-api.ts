@@ -8,7 +8,7 @@ export default class PostService extends BaseService<IVideoPost> {
         super("/posts");
     }
 
-    async likePost(postId: string, authId: string) {
+    async likePost(postId: string, authId: string):  Promise<IVideoPost> {
         const res = await fetchAdapter.put(this.getBaseAPI(postId + "/likes?authId=" + authId), this.getHeaders());
         if (res.ok) {
             return (await res.json()).data;
@@ -16,7 +16,7 @@ export default class PostService extends BaseService<IVideoPost> {
         throw new ErrorException(res.status, (await res.json()).data.message);
     }
 
-    async dislikePost(postId: string, authId: string) {
+    async dislikePost(postId: string, authId: string): Promise<IVideoPost> {
         const res = await fetchAdapter.put(this.getBaseAPI(postId + "/dislikes?authId=" + authId), this.getHeaders());
         if (res.ok) {
             return (await res.json()).data;

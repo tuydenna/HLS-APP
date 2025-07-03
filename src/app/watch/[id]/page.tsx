@@ -1,12 +1,12 @@
 "use server"
 
-import MediaPayer from "@display/[id]/components/content/media-payer";
+import MediaPayer from "@watch/[id]/components/content/media-payer";
 import {PropRoute} from "@interfaces/props";
 import {IVideoPost} from "@interfaces/video-post";
 import PostService from "@services/postv2-api";
 import {getCookieAuthHeader} from "@lib/next-adapter";
-import ListRelatedPosts from "@display/[id]/components/list/list-related-posts";
-import PostInfo from "@display/[id]/components/content/post-info";
+import ListRelatedPosts from "@watch/[id]/components/list/list-related-posts";
+import PostInfo from "@watch/[id]/components/content/post-info";
 import Header from "@components/layout/header";
 
 export default async function Page(props: PropRoute<{ id: string }>) {

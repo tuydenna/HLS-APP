@@ -1,4 +1,3 @@
-// import "../css/content.css"
 import Link from "next/link";
 import Image from "next/image";
 import {IVideoPost} from "@interfaces/video-post";
@@ -25,9 +24,9 @@ export default async function Content() {
                                 return (
                                     <Card className="w-full max-w-sm m-[1vw] gap-2" key={post.id}>
                                         <CardHeader>
-                                            <Link href={`/display/${post.id}`} className="aspect-video">
+                                            <Link href={`/watch/${post.id}`} className="aspect-video">
                                                 <Image className="w-full h-full object-cover"
-                                                       src={`http://localhost:3080/thumbnail/00a83777-6d20-4c87-b757-3effae11f956.png`}
+                                                       src={getImageURL(post.thumbnail)}
                                                        alt={''} width={200} height={100} priority={true}/>
                                             </Link>
                                         </CardHeader>

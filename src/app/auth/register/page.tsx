@@ -20,6 +20,10 @@ import AuthService from "@services/auth-service";
 import {IFileResWrap, IFileUpload} from "@interfaces/video";
 import {uploadFile} from "@util/file";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
+import {RoutesList} from "@util/routes";
+import Link from "next/link";
+import Image from "next/image";
+import {redirectTo} from "@lib/react-adapter";
 
 export default function RegisterPage(): JSX.Element {
     // State to hold the avatar file for preview
@@ -30,7 +34,7 @@ export default function RegisterPage(): JSX.Element {
 
     // Handle file selection and create a preview URL
     const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
+        const file: File | undefined = event.target.files?.[0];
         if (file) {
             setAvatarFile(file);
             const reader = new FileReader();
@@ -49,22 +53,25 @@ export default function RegisterPage(): JSX.Element {
         event.preventDefault();
         // Here you would handle the form data, e.g., send it to your API
         const formData = new FormData(event.currentTarget);
-        const name = formData.get('name');
-        const email = formData.get('email');
-        const password = formData.get('password');
+        const name: string = formData.get('name')!.toString();
+        const email: string = formData.get('email')!.toString();
+        const password: string = formData.get('password')!.toString();
         const confirmPassword = formData.get('confirm-password');
         // You can access the avatar file from the state: `avatarFile
 
         setIsErrorConfirmPass(false);
         if (password !== confirmPassword) {
-            setIsErrorConfirmPass(true);
+            return setIsErrorConfirmPass(true);
         }
+
+        if (!avatarFile) return alert("please upload a avatar");
 
         const resAvatar: IFileResWrap<IFileUpload> = await uploadFile(avatarFile!, "/avatar");
         const auth: IUser = await new AuthService().register({name, email, password, avatar: resAvatar.data.dir_path});
+
         if (auth) {
             localStorage.setItem('auth', JSON.stringify(auth));
-            router.push("/");
+            return redirectTo(router, '/');
         }
     };
 
@@ -82,7 +89,7 @@ export default function RegisterPage(): JSX.Element {
                                 <div className="w-28 h-28 rounded-full bg-gray-100 dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center relative overflow-hidden group">
                                     {avatarPreview ? (
                                         // Replaced next/image with standard img tag for compatibility
-                                        <img src={avatarPreview} alt="Avatar Preview" className="h-full w-full object-cover" />
+                                        <Image src={avatarPreview} alt="Avatar Preview" className="h-full w-full object-cover" width={100} height={100}/>
                                     ) : (
                                         <div className="text-center text-gray-500">
                                             <ImageUp className="mx-auto h-8 w-8 text-gray-400 group-hover:text-primary transition-colors" />
@@ -139,7 +146,7 @@ export default function RegisterPage(): JSX.Element {
                     </form>
                 </CardContent>
                 <CardFooter className="flex justify-center text-sm text-gray-500">
-                    <p>Already have an account? <a href="#" className="font-semibold text-primary hover:underline">Sign In</a></p>
+                    <p>Already have an account? <Link href={RoutesList.LOGIN} className="font-semibold text-primary hover:underline">Sign In</Link></p>
                 </CardFooter>
             </Card>
         </div>

@@ -24,7 +24,7 @@ export default function ListRelatedPosts() {
                 {
                     posts.map((post: IVideoPost) => {
                         return (
-                            <Link href={`/display/${post.id}`} key={post.id}>
+                            <Link href={`/watch/${post.id}`} key={post.id}>
                                 <div className="flex w-full post-hover h-30 mb-4" style={{height: "calc(10vh + 2rem)"}}>
                                     <div className={`flex-none w-[40%] rounded h-full bg-cover`}
                                          style={{backgroundImage: `url("${getImageURL(post.thumbnail)}")`}}></div>
