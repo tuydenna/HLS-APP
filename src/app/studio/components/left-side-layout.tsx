@@ -7,6 +7,7 @@ import React, {FormEvent, useState} from "react";
 import {IVideoPost} from "@interfaces/video-post";
 import PostService from "@services/postv2-api";
 import {uploadFile} from "@util/file";
+import {getAuth} from "@lib/utils";
 
 export function LeftSideLayout({setCreatedPost}: {setCreatedPost: Function}) {
 
@@ -57,13 +58,11 @@ export function LeftSideLayout({setCreatedPost}: {setCreatedPost: Function}) {
             const data = {
                 title,
                 description: desc,
-                authorId: "68591d71e78ed17f927cfee4",
+                authorId: getAuth().id,
                 videoId: videoRes.data.id,
-                thumbnail: thumbnailRes.data.dir_path
+                thumbnail: thumbnailRes.data.dirPath
             };
-            console.warn(data);
             const post: IVideoPost = await new PostService().create(data);
-            console.log("post", post);
             setPosts([post, ...posts])
             setCreatedPost(post);
             setTimeout(onResetForm, 3000)

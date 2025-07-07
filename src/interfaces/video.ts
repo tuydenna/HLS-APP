@@ -1,13 +1,15 @@
 export interface IVideo {
     id: string
     title: string
-    path: string
+    filePath: string
+    DirPath: string
     size: number
 }
 
 export interface IFileUpload {
     id: string | undefined
-    dir_path: string
+    filePath: string
+    dirPath: string
     size: number
 }
 

@@ -7,6 +7,7 @@ export function uploadFile(video: File, urlPath: string, onProgress?: (event: Pr
             xhr.upload.addEventListener("progress", onProgress)
         }
         xhr.open("POST", `http://localhost:3080/api/files${urlPath}`);
+        xhr.withCredentials = true;
         xhr.setRequestHeader("file-extension",  video.type.split("/")[1]);
         xhr.setRequestHeader("file-size", video.size.toString());
         xhr.setRequestHeader("file-name", video.name);

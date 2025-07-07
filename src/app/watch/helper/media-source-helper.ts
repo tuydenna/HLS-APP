@@ -1,5 +1,5 @@
 import {RefObject} from "react";
-import {IQueueConfigRef} from "../../../types/video-config";
+import {IQueueConfigRef} from "@interfaces/video-config";
 
 const videoConfig = {
     MIME_CODEC: 'video/mp4; codecs="avc1.64002A, mp4a.40.2"',

@@ -13,7 +13,6 @@ import ImageLoaderWrapper from "@app/home/ImageLoaderWrapper";
 export default async function Content() {
 
     const posts: IVideoPost[] = await new PostService().setHeaders(await getCookieAuthHeader()).getMany();
-
     return (
         posts.length ?
             <div className="m-5 w-[80%]">

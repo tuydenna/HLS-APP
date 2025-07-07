@@ -1,4 +1,4 @@
-import BaseService, {fetchAdapter} from "./base-service";
+import BaseService, {fetchAdapter} from "@services/base-service";
 import {ErrorException} from "@interfaces/error-exeption";
 
 export default class StreamService extends BaseService<null> {

@@ -16,6 +16,7 @@ import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-
 import {RoutesList} from "@util/routes";
 import {redirectTo} from "@lib/react-adapter";
 import {AvatarUI} from "@components/ui/avatar";
+import {getImageURL} from "@util/helper";
 
 export function DropdownProfile({auth}: {auth:  IUser | null}): JSX.Element {
     const router: AppRouterInstance = useRouter();
@@ -41,7 +42,7 @@ export function DropdownProfile({auth}: {auth:  IUser | null}): JSX.Element {
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <div className="flex items-center gap-2">
-                    <AvatarUI src={auth?.avatar} fallbackName={auth?.name} widthClass="w-10" heightClass="h-10"/>
+                    <AvatarUI src={getImageURL(auth?.avatar)} fallbackName={auth?.name} widthClass="w-10" heightClass="h-10"/>
                     <span className="text-sm font-medium">{auth?.name}</span>
                 </div>
             </DropdownMenuTrigger>

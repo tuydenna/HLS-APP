@@ -36,7 +36,8 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
     const queueConfigRef: RefObject<IQueueConfigRef> = useRef({segmentEnd: 0 , isFetchingChunk: false, isSeeking: false})
     const fileSegmentCurrentIndexRef: RefObject<number> = useRef(0)
     const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null)
-    const streamService = new StreamService();
+    const streamService: StreamService = new StreamService();
+    const prefixSegName: string = "seg_"
 
     const fetchAndAppendBuffer = async function (sourceBuffer: SourceBuffer, fileSegment: string): Promise<string | undefined> {
         let retryCount: number = 0;
@@ -145,7 +146,7 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
         if (!getIsSeeking(queueConfigRef) && canPreFetchSegment(queueConfigRef, sourceBufferRef, {currentTime: videoRef.current!.currentTime, videoSize: data.video.size})) {
             console.log("[prefetchSegmentChunkBuffer]");
             setIsFetchingChunk(queueConfigRef)
-            await fetchAndAppendBuffer(sourceBufferRef.current!, `segment_${fileSegmentCurrentIndexRef.current}.m4s`);
+            await fetchAndAppendBuffer(sourceBufferRef.current!, `${prefixSegName}${fileSegmentCurrentIndexRef.current}.m4s`);
             console.log("[prefetchSegmentChunkBuffer]:", sourceBufferRef.current?.buffered.length)
         } else {
             console.warn("[prefetchSegmentChunkBuffer]: no permission!")
@@ -173,7 +174,7 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
 
             await fetchAndAppendBuffer(sourceBuffer, "init.mp4");
             fileSegmentCurrentIndexRef.current = 0;
-            await fetchAndAppendBuffer(sourceBuffer, `segment_${fileSegmentCurrentIndexRef.current}.m4s`);
+            await fetchAndAppendBuffer(sourceBuffer, `${prefixSegName}${fileSegmentCurrentIndexRef.current}.m4s`);
         }
 
         if (videoEl) {

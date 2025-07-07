@@ -3,7 +3,6 @@
 import React, {useState} from "react";
 import {onDidMount} from "@app/lib/react-adapter";
 import { IUser } from "@interfaces/user";
-import {getImageURL} from "@util/helper";
 import {DropdownProfile} from "@app/home/components/dropdown-profile";
 import {getAuth} from "@lib/utils";
 import {Input} from "@components/ui/input";
@@ -14,9 +13,7 @@ export default function Header() {
     const [isFocused, setIsFocused] = useState<boolean>(false);
 
     onDidMount(()=> {
-        const user: IUser = getAuth();
-        user.avatar = getImageURL(user.avatar);
-        setAuth(user);
+        setAuth(getAuth());
     })
 
     return (
