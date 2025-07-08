@@ -14,5 +14,5 @@ export function middleware(request: NextRequest) {
 // See "Matching Paths" below to learn more
 export const config = {
     // matcher:  [RoutesList.HOME, RoutesList.UPLOAD_STUDIO, RoutesList.PROFILE, "/display/:id*"],
-    matcher: ["/", "/display/:id*"]
+    matcher: ["/", "/watch/:id*", "/studio"]
 }

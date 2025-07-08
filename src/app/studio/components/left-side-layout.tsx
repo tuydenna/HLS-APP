@@ -60,7 +60,7 @@ export function LeftSideLayout({setCreatedPost}: {setCreatedPost: Function}) {
                 description: desc,
                 authorId: getAuth().id,
                 videoId: videoRes.data.id,
-                thumbnail: thumbnailRes.data.dirPath
+                thumbnail: thumbnailRes.data.filePath
             };
             const post: IVideoPost = await new PostService().create(data);
             setPosts([post, ...posts])

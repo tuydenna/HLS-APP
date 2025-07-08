@@ -47,6 +47,8 @@ export default async function Content() {
                 </ImageLoaderWrapper>
             </div>
             :
-        <HomeListPostsSkeleton/>
+        <div className="flex justify-center items-center w-full">
+            No content ...
+        </div>
     )
 }

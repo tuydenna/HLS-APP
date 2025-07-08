@@ -18,11 +18,9 @@ export default function GlobalError({error, reset}: { error: Error, reset: () =>
     }, [error])
 
     return (
-        <html>
-        <body>
-        <h2>Something went wrong!</h2>
-        <button onClick={() => reset()}>Try again</button>
-        </body>
-        </html>
+        <div className="flex flex-col justify-center items-center fixed inset-1" >
+            <p className="text-red-500 text-lg">Something went wrong!</p>
+            <button className="cursor-pointer" onClick={() => reset()}>Try again</button>
+        </div>
     )
 }

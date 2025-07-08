@@ -67,7 +67,7 @@ export default function RegisterPage(): JSX.Element {
         if (!avatarFile) return alert("please upload a avatar");
 
         const resAvatar: IFileResWrap<IFileUpload> = await uploadFile(avatarFile!, "/avatar");
-        const auth: IUser = await new AuthService().register({name, email, password, avatar: resAvatar.data.dir_path});
+        const auth: IUser = await new AuthService().register({name, email, password, avatar: resAvatar.data.filePath});
 
         if (auth) {
             localStorage.setItem('auth', JSON.stringify(auth));
