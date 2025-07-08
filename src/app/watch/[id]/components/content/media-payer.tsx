@@ -169,8 +169,7 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
 
             const sourceBuffer: SourceBuffer = initSourceBuffer(mediaSourceRef.current!);
             sourceBufferRef.current = sourceBuffer;
-
-            setInitVideoDuration(mediaSourceRef.current!, 3 * 60 + 57)
+            setInitVideoDuration(mediaSourceRef.current!, data.video.duration)
 
             await fetchAndAppendBuffer(sourceBuffer, "init.mp4");
             fileSegmentCurrentIndexRef.current = 0;

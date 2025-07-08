@@ -4,6 +4,7 @@ export interface IVideo {
     filePath: string
     DirPath: string
     size: number
+    duration: number
 }
 
 export interface IFileUpload {

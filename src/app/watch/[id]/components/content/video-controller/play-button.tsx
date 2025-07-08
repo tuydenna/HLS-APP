@@ -53,6 +53,9 @@ export default function PlayButton({videoEl}: {videoEl: HTMLVideoElement | null}
             if (isPlay) {
                 videoEl.pause()
             } else {
+                if (videoEl.ended) {
+                    videoEl.currentTime = 0;
+                }
                 videoEl.play()
             }
             setIsPlay(!isPlay)
