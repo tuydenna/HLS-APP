@@ -3,7 +3,7 @@ import React, {JSX, useState} from "react";
 import {Card, CardContent} from "@app/components/ui/card";
 import {getImageURL, timeAgo} from "@util/helper";
 import {IVideoPost, PostStatus} from "@interfaces/video-post";
-import PostService from "@services/postv2-api";
+import PostService from "@services/post-service";
 import {ErrorIcon, HomeIcon, PendingIcon, SuccessIcon} from "@app/components/icon";
 import {onDidMount, onDidUpdate} from "@app/lib/react-adapter";
 import {getAuth} from "@lib/utils";

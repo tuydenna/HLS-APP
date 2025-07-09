@@ -4,7 +4,8 @@ import {IQueueConfigRef} from "@interfaces/video-config";
 const videoConfig = {
     MIME_CODEC: 'video/mp4; codecs="avc1.64002A, mp4a.40.2"',
     BUFFER_FETCH_GAP: 5,
-    CHUNK_SIZE:  1 * 10 ** 6
+    CHUNK_SIZE:  1 * 10 ** 6,
+    VIEW_COUNT_DELAY: 30
 }
 
 const isMediaSourceSupported = (mimeCodec: string) => {

@@ -33,11 +33,11 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
     const videoRef: RefObject<HTMLVideoElement | null> = useRef<HTMLVideoElement>(null)
     const mediaSourceRef: RefObject<MediaSource | null> = useRef<MediaSource>(null)
     const sourceBufferRef: RefObject<SourceBuffer | null> = useRef<SourceBuffer>(null)
-    const queueConfigRef: RefObject<IQueueConfigRef> = useRef({segmentEnd: 0 , isFetchingChunk: false, isSeeking: false})
+    const queueConfigRef: RefObject<IQueueConfigRef> = useRef({segmentEnd: 0, isFetchingChunk: false, isSeeking: false})
     const fileSegmentCurrentIndexRef: RefObject<number> = useRef(0)
     const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null)
+    const prefixSegName: string = "seg_";
     const streamService: StreamService = new StreamService();
-    const prefixSegName: string = "seg_"
 
     const fetchAndAppendBuffer = async function (sourceBuffer: SourceBuffer, fileSegment: string): Promise<string | undefined> {
         let retryCount: number = 0;
@@ -204,7 +204,7 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
             <div className="video-controls-container">
                 <VideoTimeline videoEl={videoEl} sourceBufferRef={sourceBufferRef} onSeekVideoDuration={handleSeekVideoDuration} />
                 <div className="controls">
-                    <PlayButton videoEl={videoEl}/>
+                    <PlayButton videoEl={videoEl} onSeekVideoDuration={handleSeekVideoDuration}/>
                     <SoundButton videoEl={videoEl}/>
                     <DurationTimeLabel videoEl={videoEl}/>
                     <button className="captions-btn">

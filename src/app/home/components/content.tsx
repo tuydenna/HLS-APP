@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import {IVideoPost} from "@interfaces/video-post";
 import {getImageURL, timeAgo} from "@util/helper";
-import PostService from "@services/postv2-api";
+import PostService from "@services/post-service";
 import {getCookieAuthHeader} from "@lib/next-adapter";
 import {Card, CardDescription, CardFooter, CardHeader, CardTitle} from "@components/ui/card";
 import {AvatarUI} from "@components/ui/avatar";

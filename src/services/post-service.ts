@@ -24,6 +24,14 @@ export default class PostService extends BaseService<IVideoPost> {
         throw new ErrorException(res.status, (await res.json()).data.message);
     }
 
+    async increaseView(postId: string): Promise<IVideoPost> {
+        const res = await fetchAdapter.put(this.getBaseAPI(postId + "/views"), this.getHeaders());
+        if (res.ok) {
+            return (await res.json()).data;
+        }
+        throw new ErrorException(res.status, (await res.json()).data.message);
+    }
+
 }
 
 

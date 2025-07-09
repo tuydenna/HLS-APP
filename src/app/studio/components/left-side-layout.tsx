@@ -5,7 +5,7 @@ import {Button} from "@app/components/ui/button";
 import {LoaderSpinner} from "@app/components/ui/loader-spinner";
 import React, {FormEvent, useState} from "react";
 import {IVideoPost} from "@interfaces/video-post";
-import PostService from "@services/postv2-api";
+import PostService from "@services/post-service";
 import {uploadFile} from "@util/file";
 import {getAuth} from "@lib/utils";
 

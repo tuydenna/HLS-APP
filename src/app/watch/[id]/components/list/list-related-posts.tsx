@@ -5,7 +5,7 @@ import {IVideoPost} from "@interfaces/video-post";
 import {getImageURL, timeAgo} from "@util/helper";
 import Link from "next/link";
 import {onDidMount} from "@lib/react-adapter";
-import PostService from "@services/postv2-api";
+import PostService from "@services/post-service";
 import {
     ListRelatedPostsSkeleton,
 } from "@components/skeleton/list-related-posts-skeleton";

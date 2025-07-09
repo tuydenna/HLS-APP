@@ -1,17 +1,17 @@
-import { useEffect, useState} from "react";
+import {RefObject, useRef, useState} from "react";
+import { useParams } from 'next/navigation';
+import {onDidUpdate} from "@lib/react-adapter";
+import {increaseWatchTime} from "@watch/helper/counting-lable-helper";
+import {IViewCountConfig} from "@interfaces/video-config";
+import {videoConfig} from "@watch/helper/media-source-helper";
+import PostService from "@services/post-service";
 
-export default function PlayButton({videoEl}: {videoEl: HTMLVideoElement | null}) {
-    const [isPlay, setIsPlay] = useState(false)
+export default function PlayButton({videoEl, onSeekVideoDuration}: {videoEl: HTMLVideoElement | null, onSeekVideoDuration: Function}) {
+    const [isPlay, setIsPlay] = useState(false);
+    const viewCountConfig: RefObject<IViewCountConfig> = useRef({watchTime: 0, lastTimeUpdate: 0, hasCountedView: false});
+    const {id} = useParams<{id: string}>();
 
-    useEffect(() => {
-        function playOrPauseVideo() {
-            if (isPlay) {
-                videoEl?.pause()
-            } else {
-                videoEl?.play()
-            }
-            setIsPlay(!isPlay)
-        }
+    onDidUpdate(() => {
         function playVideoInPictureMode() {
             if (videoEl) {
                 if (isPlay === false) {
@@ -19,6 +19,7 @@ export default function PlayButton({videoEl}: {videoEl: HTMLVideoElement | null}
                 }
             }
         }
+
         function pauseVideoInPictureMode() {
             if (videoEl) {
                 if (isPlay === true) {
@@ -26,24 +27,37 @@ export default function PlayButton({videoEl}: {videoEl: HTMLVideoElement | null}
                 }
             }
         }
+
         function pauseVideo() {
             videoEl?.pause();
             setIsPlay(false);
         }
+
+        async function onUpdateViewCount() {
+            increaseWatchTime(videoEl!, viewCountConfig);
+            if (!viewCountConfig.current.hasCountedView && viewCountConfig.current.watchTime >= videoConfig.VIEW_COUNT_DELAY) {
+                viewCountConfig.current.hasCountedView = true;
+                await new PostService().increaseView(id)
+            }
+        }
+
         if (videoEl) {
-            videoEl.addEventListener("leavepictureinpicture",playOrPauseVideo)
+            videoEl.addEventListener("leavepictureinpicture",togglePlay)
             videoEl.addEventListener("ended", pauseVideo)
-            videoEl.addEventListener("click", playOrPauseVideo)
+            videoEl.addEventListener("click", togglePlay)
             videoEl.addEventListener("play", playVideoInPictureMode)
             videoEl.addEventListener("pause", pauseVideoInPictureMode)
+            videoEl.addEventListener("timeupdate", onUpdateViewCount)
         }
+
         return () => {
             if (videoEl) {
-                videoEl.removeEventListener('leavepictureinpicture', playOrPauseVideo);
+                videoEl.removeEventListener('leavepictureinpicture', togglePlay);
                 videoEl.removeEventListener('ended', pauseVideo);
-                videoEl.removeEventListener('click', playOrPauseVideo);
+                videoEl.removeEventListener('click', togglePlay);
                 videoEl.removeEventListener('play', playVideoInPictureMode);
                 videoEl.removeEventListener('pause', pauseVideoInPictureMode);
+                videoEl.removeEventListener('timeupdate', onUpdateViewCount);
             }
         };
     }, [videoEl, isPlay]);
@@ -51,15 +65,18 @@ export default function PlayButton({videoEl}: {videoEl: HTMLVideoElement | null}
     const togglePlay = function () {
         if (videoEl) {
             if (isPlay) {
-                videoEl.pause()
+                increaseWatchTime(videoEl!, viewCountConfig);
+                videoEl.pause();
             } else {
                 if (videoEl.ended) {
-                    videoEl.currentTime = 0;
+                    onSeekVideoDuration(0)
                 }
+                viewCountConfig.current.lastTimeUpdate = videoEl.currentTime;
                 videoEl.play()
             }
             setIsPlay(!isPlay)
         }
+        return;
     }
 
     return (
@@ -72,9 +89,5 @@ export default function PlayButton({videoEl}: {videoEl: HTMLVideoElement | null}
             </svg>
         </button>
     )
-
 }
 
-function playOrPauseVideo(this: HTMLVideoElement, ev: MouseEvent) {
-    throw new Error("Function not implemented.");
-}

@@ -7,7 +7,7 @@ import {Button} from "@app/components/ui/button";
 import {Heart} from "lucide-react";
 import React, {useState} from "react";
 import {getImageURL} from "@util/helper";
-import PostService from "@services/postv2-api";
+import PostService from "@services/post-service";
 import {IUser} from "@interfaces/user";
 import {formatViewCount} from "@util/video-config";
 
