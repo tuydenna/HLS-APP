@@ -28,6 +28,7 @@ export const fetchAdapter = {
 export default class BaseService<T> {
     protected endPoint!: string;
     private headers: HeadersInit = {}
+    private lastEndpoint: string = "";
     private defaultHeaders: HeadersInit = {'Content-Type': 'application/json'}
 
      constructor(endpoint: string) {
@@ -35,8 +36,13 @@ export default class BaseService<T> {
     }
 
     getBaseAPI(endUrl: string  = ""): string {
-        return  process.env.NEXT_PUBLIC_DEV_API + this.endPoint + ( endUrl ?  "/" + endUrl : "") ;
+        if (endUrl.trim()) {
+            endUrl = endUrl.startsWith("/") ? endUrl : "/" + endUrl;
+            return process.env.NEXT_PUBLIC_DEV_API + this.endPoint + endUrl + this.lastEndpoint
+        }
+        return  process.env.NEXT_PUBLIC_DEV_API + this.endPoint + this.lastEndpoint ;
     }
+
 
     async getOne(id: string): Promise<T> {
         const res = await fetchAdapter.get(this.getBaseAPI(id), this.getHeaders());
@@ -73,6 +79,12 @@ export default class BaseService<T> {
     setHeaders(headers: HeadersInit) {
         this.headers = headers;
         return this;
+    }
+
+    setLastEndpoint(endpoint: string) {
+       if (endpoint.trim()) {
+           this.lastEndpoint = endpoint.startsWith("/") ? endpoint : "/" + endpoint;
+       }
     }
 
     protected getHeaders(): HeadersInit {

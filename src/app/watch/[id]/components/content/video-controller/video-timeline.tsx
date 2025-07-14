@@ -63,7 +63,6 @@ export default function VideoTimeline({videoEl, sourceBufferRef, onSeekVideoDura
                 console.error("sourceBuffer is null")
                 return;
             }
-            console.log("updatePreviewTimeline", sourceBuffer.buffered!.length);
             if (sourceBuffer.buffered!.length) {
                 const bufferTimeline: number  = sourceBuffer.buffered.end(sourceBuffer.buffered!.length - 1)
                 const previewTimeline: number = bufferTimeline / videoEl!.duration;

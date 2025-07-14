@@ -1,20 +1,50 @@
 "use client"
 
-import React, {useState} from "react";
+import React, {RefObject, useRef, useState} from "react";
 import {onDidMount} from "@app/lib/react-adapter";
 import { IUser } from "@interfaces/user";
 import {DropdownProfile} from "@app/home/components/dropdown-profile";
 import {getAuth} from "@lib/utils";
 import {Input} from "@components/ui/input";
 import {Card} from "@components/ui/card";
+import SearchService from "@services/search-service";
 
 export default function Header() {
     const [auth, setAuth] = useState<IUser | null>(null);
     const [isFocused, setIsFocused] = useState<boolean>(false);
+    const [isSearching, setIsSearching] = useState<boolean>(false);
+    const [searchList, setSearchList] = useState<string[]>([]);
+    const searchInputRef: RefObject<HTMLInputElement | null> = useRef<HTMLInputElement>(null);
+    let timeout: NodeJS.Timeout;
 
     onDidMount(()=> {
         setAuth(getAuth());
     })
+
+    function onTypeSearching() {
+        clearTimeout(timeout)
+        timeout = setTimeout(async () => {
+            const searchKey: string | undefined = searchInputRef.current?.value.trim();
+            if (searchKey) {
+                const posts: string[] = await new SearchService().searchAutocompletes(searchKey);
+                if (posts.length) {
+                    setIsSearching(true);
+                    setSearchList(posts);
+                }
+            } else {
+                setIsSearching(false);
+            }
+        }, 500)
+    }
+
+    function onSearch() {
+
+    }
+
+    function onLeaveSearch() {
+        setIsFocused(false);
+        setIsSearching(false);
+    }
 
     return (
         <div className="sticky top-0 right-0 left-0 z-10">
@@ -28,11 +58,25 @@ export default function Header() {
                         />
                     </div>
 
-                    <div className="header__search">
+                    <div className="header__search relative">
                         <form action="" className="flex">
-                            <Input id="search-input" onFocus={() => setIsFocused(true)} onBlur={()=> setIsFocused(false)} type="text" placeholder="Search ..." className="w-[calc(30vw)] border-0 border-y-1 border-l-1 rounded-none rounded-l-sm !ring-0" />
+                            <Input id="search-input" onFocus={() => setIsFocused(true)} onBlur={onLeaveSearch}  onKeyUp={onTypeSearching} type="text" ref={searchInputRef} placeholder="Search ..." className="w-[calc(30vw)] border-0 border-y-1 border-l-1 rounded-none rounded-l-sm !ring-0" />
                             <button type="submit"  className={`border-y-1 border-r-1 rounded-r-sm  ${isFocused ? "border-[var(--ring)]": ""}`}><i className="material-icons">search</i></button>
                         </form>
+                        {
+                            isSearching &&
+                            <div>
+                                <ul className="absolute text-sm z-10 w-full bg-white p-2 border border-gray-200 rounded-lg shadow-lg mt-1 max-h-60 overflow-y-auto">
+                                    {
+                                        searchList.map((title, index) => (
+                                            <li key={index} onClick={onSearch} className="px-4 py-2 hover:bg-gray-100 hover:rounded-sm cursor-pointer">
+                                                {title}
+                                            </li>
+                                        ))
+                                    }
+                                </ul>
+                            </div>
+                        }
                     </div>
 
                     <div className="header__icons flex space-between">

@@ -25,7 +25,6 @@ export default async function Page(props: PropRoute<{ id: string }>) {
                 <ListRelatedPosts/>
             </div>
         </div>
-
     )
 }
 

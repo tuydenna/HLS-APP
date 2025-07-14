@@ -15,23 +15,24 @@ export default function DurationTimeLabel({videoEl}: {videoEl: HTMLVideoElement 
             }
         }
 
+        function autoPlay() {
+            videoEl?.play();
+        }
+
         function timeupdateEvent() {
             const durationTime: string = formatVideoTimeUpdate(videoEl!.currentTime)
             setDurationTime(durationTime)
         }
 
         videoEl.addEventListener("loadedmetadata", initDuration)
-        videoEl.addEventListener("canplay", function () {
-            // videoEl.play()
-            // videoEl.muted = false
-            console.log("canplay")
-        })
         videoEl.addEventListener("timeupdate", timeupdateEvent)
+        videoEl.addEventListener("canplay", autoPlay)
 
         return () => {
             if (videoEl) {
                 videoEl.removeEventListener("loadedmetadata", initDuration)
                 videoEl.removeEventListener("timeupdate", timeupdateEvent)
+                videoEl.removeEventListener("canplay", autoPlay)
             }
         }
     }, [videoEl])
