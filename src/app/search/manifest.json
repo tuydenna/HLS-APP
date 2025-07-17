@@ -1,0 +1,297 @@
+[
+  {
+    "start": 0,
+    "end": 4960,
+    "type": "init"
+  },
+  {
+    "start": 4961,
+    "end": 1470534,
+    "type": "media"
+  },
+  {
+    "start": 1470535,
+    "end": 2704434,
+    "type": "media"
+  },
+  {
+    "start": 2704435,
+    "end": 3894420,
+    "type": "media"
+  },
+  {
+    "start": 3894421,
+    "end": 5216841,
+    "type": "media"
+  },
+  {
+    "start": 5216842,
+    "end": 6410406,
+    "type": "media"
+  },
+  {
+    "start": 6410407,
+    "end": 7587264,
+    "type": "media"
+  },
+  {
+    "start": 7587265,
+    "end": 8624674,
+    "type": "media"
+  },
+  {
+    "start": 8624675,
+    "end": 9872671,
+    "type": "media"
+  },
+  {
+    "start": 9872672,
+    "end": 11457134,
+    "type": "media"
+  },
+  {
+    "start": 11457135,
+    "end": 12966050,
+    "type": "media"
+  },
+  {
+    "start": 12966051,
+    "end": 14477966,
+    "type": "media"
+  },
+  {
+    "start": 14477967,
+    "end": 15853529,
+    "type": "media"
+  },
+  {
+    "start": 15853530,
+    "end": 17305405,
+    "type": "media"
+  },
+  {
+    "start": 17305406,
+    "end": 18527135,
+    "type": "media"
+  },
+  {
+    "start": 18527136,
+    "end": 19924726,
+    "type": "media"
+  },
+  {
+    "start": 19924727,
+    "end": 21420600,
+    "type": "media"
+  },
+  {
+    "start": 21420601,
+    "end": 22820732,
+    "type": "media"
+  },
+  {
+    "start": 22820733,
+    "end": 24322956,
+    "type": "media"
+  },
+  {
+    "start": 24322957,
+    "end": 25647271,
+    "type": "media"
+  },
+  {
+    "start": 25647272,
+    "end": 27137829,
+    "type": "media"
+  },
+  {
+    "start": 27137830,
+    "end": 28978204,
+    "type": "media"
+  },
+  {
+    "start": 28978205,
+    "end": 31016683,
+    "type": "media"
+  },
+  {
+    "start": 31016684,
+    "end": 32423973,
+    "type": "media"
+  },
+  {
+    "start": 32423974,
+    "end": 33998564,
+    "type": "media"
+  },
+  {
+    "start": 33998565,
+    "end": 36013806,
+    "type": "media"
+  },
+  {
+    "start": 36013807,
+    "end": 38007239,
+    "type": "media"
+  },
+  {
+    "start": 38007240,
+    "end": 40120306,
+    "type": "media"
+  },
+  {
+    "start": 40120307,
+    "end": 42260489,
+    "type": "media"
+  },
+  {
+    "start": 42260490,
+    "end": 44311373,
+    "type": "media"
+  },
+  {
+    "start": 44311374,
+    "end": 46320207,
+    "type": "media"
+  },
+  {
+    "start": 46320208,
+    "end": 48064284,
+    "type": "media"
+  },
+  {
+    "start": 48064285,
+    "end": 49304201,
+    "type": "media"
+  },
+  {
+    "start": 49304202,
+    "end": 51721194,
+    "type": "media"
+  },
+  {
+    "start": 51721195,
+    "end": 53982574,
+    "type": "media"
+  },
+  {
+    "start": 53982575,
+    "end": 55309330,
+    "type": "media"
+  },
+  {
+    "start": 55309331,
+    "end": 56752416,
+    "type": "media"
+  },
+  {
+    "start": 56752417,
+    "end": 58207235,
+    "type": "media"
+  },
+  {
+    "start": 58207236,
+    "end": 59481724,
+    "type": "media"
+  },
+  {
+    "start": 59481725,
+    "end": 60884348,
+    "type": "media"
+  },
+  {
+    "start": 60884349,
+    "end": 62442434,
+    "type": "media"
+  },
+  {
+    "start": 62442435,
+    "end": 65194641,
+    "type": "media"
+  },
+  {
+    "start": 65194642,
+    "end": 67445422,
+    "type": "media"
+  },
+  {
+    "start": 67445423,
+    "end": 68689956,
+    "type": "media"
+  },
+  {
+    "start": 68689957,
+    "end": 70038240,
+    "type": "media"
+  },
+  {
+    "start": 70038241,
+    "end": 72036778,
+    "type": "media"
+  },
+  {
+    "start": 72036779,
+    "end": 74470071,
+    "type": "media"
+  },
+  {
+    "start": 74470072,
+    "end": 76813693,
+    "type": "media"
+  },
+  {
+    "start": 76813694,
+    "end": 79159882,
+    "type": "media"
+  },
+  {
+    "start": 79159883,
+    "end": 80944802,
+    "type": "media"
+  },
+  {
+    "start": 80944803,
+    "end": 82318367,
+    "type": "media"
+  },
+  {
+    "start": 82318368,
+    "end": 84474211,
+    "type": "media"
+  },
+  {
+    "start": 84474212,
+    "end": 86668389,
+    "type": "media"
+  },
+  {
+    "start": 86668390,
+    "end": 88851830,
+    "type": "media"
+  },
+  {
+    "start": 88851831,
+    "end": 90377364,
+    "type": "media"
+  },
+  {
+    "start": 90377365,
+    "end": 92423727,
+    "type": "media"
+  },
+  {
+    "start": 92423728,
+    "end": 94905146,
+    "type": "media"
+  },
+  {
+    "start": 94905147,
+    "end": 96607760,
+    "type": "media"
+  },
+  {
+    "start": 96607761,
+    "end": null,
+    "type": "media"
+  }
+]

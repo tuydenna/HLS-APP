@@ -26,7 +26,7 @@ export function DropdownProfile({auth}: {auth:  IUser | null}): JSX.Element {
             await new AuthService().logout();
             redirectTo(router, RoutesList.LOGIN);
         } catch (e) {
-            throw e;
+
         }
     }
 

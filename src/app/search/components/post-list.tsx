@@ -9,19 +9,17 @@ import {AvatarUI} from "@components/ui/avatar";
 import { onDidUpdate} from "@lib/react-adapter";
 import SearchService from "@services/search-service";
 import {LoaderSpinner} from "@components/ui/loader-spinner";
-import { useParams } from 'next/navigation';
 
 export default function PostList({posts}: {posts: IVideoPost[]}) {
     const [postList, setPostList] = useState(posts);
     const defaultTake: number = 10;
     const isLoadingMoreRef: RefObject<boolean> = useRef(false);
     const isNoMorePost: RefObject<boolean> = useRef(false);
-    const {searchKey} = useParams<{searchKey: string}>();
 
     onDidUpdate(() => {
         async function loadMorePosts() {
             const skip: number = postList.length + defaultTake - 1;
-            const posts: IVideoPost[] = await new SearchService().searchPosts(searchKey, defaultTake, skip);
+            const posts: IVideoPost[] = await new SearchService().searchPosts("", defaultTake, skip);
             if (posts.length < defaultTake) {
                 isLoadingMoreRef.current = true;
             }

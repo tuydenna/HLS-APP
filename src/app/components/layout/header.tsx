@@ -1,13 +1,15 @@
 "use client"
 
-import React, {RefObject, useRef, useState} from "react";
-import {onDidMount} from "@app/lib/react-adapter";
+import React, {FormEvent, RefObject, useRef, useState} from "react";
+import {onDidMount, redirectTo} from "@app/lib/react-adapter";
 import { IUser } from "@interfaces/user";
 import {DropdownProfile} from "@app/home/components/dropdown-profile";
 import {getAuth} from "@lib/utils";
 import {Input} from "@components/ui/input";
 import {Card} from "@components/ui/card";
 import SearchService from "@services/search-service";
+import { useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
     const [auth, setAuth] = useState<IUser | null>(null);
@@ -15,10 +17,13 @@ export default function Header() {
     const [isSearching, setIsSearching] = useState<boolean>(false);
     const [searchList, setSearchList] = useState<string[]>([]);
     const searchInputRef: RefObject<HTMLInputElement | null> = useRef<HTMLInputElement>(null);
+    const {searchKey} = useParams<{searchKey: string}>();
     let timeout: NodeJS.Timeout;
+    const router = useRouter();
 
     onDidMount(()=> {
         setAuth(getAuth());
+        searchInputRef.current!.value = searchKey || ""
     })
 
     function onTypeSearching() {
@@ -37,8 +42,13 @@ export default function Header() {
         }, 500)
     }
 
-    function onSearch() {
+    function onSearch(searchKey: string) {
+        redirectTo(router, `/search/`+ searchKey)
+    }
 
+    function onSummit(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        onSearch(searchInputRef.current!.value);
     }
 
     function onLeaveSearch() {
@@ -59,7 +69,7 @@ export default function Header() {
                     </div>
 
                     <div className="header__search relative">
-                        <form action="" className="flex">
+                        <form action="" className="flex" onSubmit={onSummit}>
                             <Input id="search-input" onFocus={() => setIsFocused(true)} onBlur={onLeaveSearch}  onKeyUp={onTypeSearching} type="text" ref={searchInputRef} placeholder="Search ..." className="w-[calc(30vw)] border-0 border-y-1 border-l-1 rounded-none rounded-l-sm !ring-0" />
                             <button type="submit"  className={`border-y-1 border-r-1 rounded-r-sm  ${isFocused ? "border-[var(--ring)]": ""}`}><i className="material-icons">search</i></button>
                         </form>
@@ -69,7 +79,7 @@ export default function Header() {
                                 <ul className="absolute text-sm z-10 w-full bg-white p-2 border border-gray-200 rounded-lg shadow-lg mt-1 max-h-60 overflow-y-auto">
                                     {
                                         searchList.map((title, index) => (
-                                            <li key={index} onClick={onSearch} className="px-4 py-2 hover:bg-gray-100 hover:rounded-sm cursor-pointer">
+                                            <li key={index} onMouseDown={() => onSearch(title)} className="px-4 py-2 hover:bg-gray-100 hover:rounded-sm cursor-pointer">
                                                 {title}
                                             </li>
                                         ))
