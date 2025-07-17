@@ -31,14 +31,5 @@ export default function ImageLoaderWrapper({ fallBack, children }: { fallBack: J
        return cloneElement(children, {...children.props, style: {opacity: loaded ? 1 : 0}});
     }
 
-    return (
-        <>
-            {
-                !loaded && fallBack
-            }
-            {
-                cloneChildren(children)
-            }
-        </>
-    );
+    return loaded ? cloneChildren(children): fallBack;
 }

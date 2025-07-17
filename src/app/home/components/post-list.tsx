@@ -8,6 +8,7 @@ import {Card, CardDescription, CardFooter, CardHeader, CardTitle} from "@compone
 import {AvatarUI} from "@components/ui/avatar";
 import { onDidUpdate} from "@lib/react-adapter";
 import SearchService from "@services/search-service";
+import {LoaderSpinner} from "@components/ui/loader-spinner";
 
 export default function PostList({posts}: {posts: IVideoPost[]}) {
     const [postList, setPostList] = useState(posts);
@@ -39,10 +40,10 @@ export default function PostList({posts}: {posts: IVideoPost[]}) {
     }, [postList])
 
     return (
-        <div className={"flex flex-wrap"}>
-            {
-                postList?.map((post: IVideoPost) => {
-                    return (
+        <>
+            <div className={"flex flex-wrap"}>
+                {
+                    postList?.map((post: IVideoPost) => (
                         <Card className="w-full max-w-sm m-[1vw] gap-2" key={post.id}>
                             <CardHeader>
                                 <Link href={`/watch/${post.id}`} className="aspect-video">
@@ -62,9 +63,14 @@ export default function PostList({posts}: {posts: IVideoPost[]}) {
                                 </div>
                             </CardFooter>
                         </Card>
+                        )
                     )
-                })
-            }
-        </div>
+                }
+            </div>
+            <div className={`flex justify-center m-5  transition-all transition-discrete ${isLoadingMoreRef ? "block" : "hidden"}`}>
+                <LoaderSpinner className="h-5 w-5 text-indigo-600"/>
+                <p className="pl-1">Loading ...</p>
+            </div>
+        </>
     )
 }
