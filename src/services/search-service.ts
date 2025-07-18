@@ -17,8 +17,8 @@ export default class SearchService extends BaseService<IVideoPost> {
         throw new ErrorException(res.status, (await res.json()).data.message);
     }
 
-    async searchPosts(searchKey: string, take: number = 15, skip: number = 0): Promise<IVideoPost[]> {
-        const URLParams = new URLSearchParams(searchKey);
+    async searchPosts(searchKey: string = "", take: number = 15, skip: number = 0): Promise<IVideoPost[]> {
+        const URLParams = new URLSearchParams();
         URLParams.set("searchKey", searchKey);
         URLParams.set("skip", skip.toString());
         URLParams.set("take", take.toString());

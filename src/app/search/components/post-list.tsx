@@ -9,17 +9,19 @@ import {AvatarUI} from "@components/ui/avatar";
 import { onDidUpdate} from "@lib/react-adapter";
 import SearchService from "@services/search-service";
 import {LoaderSpinner} from "@components/ui/loader-spinner";
+import { useParams } from 'next/navigation';
 
 export default function PostList({posts}: {posts: IVideoPost[]}) {
     const [postList, setPostList] = useState(posts);
     const defaultTake: number = 10;
     const isLoadingMoreRef: RefObject<boolean> = useRef(false);
-    const isNoMorePost: RefObject<boolean> = useRef(false);
+    const isNoMorePost: RefObject<boolean> = useRef(posts.length < defaultTake );
+    const {searchKey} = useParams<{searchKey: string}>();
 
     onDidUpdate(() => {
         async function loadMorePosts() {
             const skip: number = postList.length + defaultTake - 1;
-            const posts: IVideoPost[] = await new SearchService().searchPosts("", defaultTake, skip);
+            const posts: IVideoPost[] = await new SearchService().searchPosts(searchKey, defaultTake, skip);
             if (posts.length < defaultTake) {
                 isLoadingMoreRef.current = true;
             }
@@ -29,7 +31,6 @@ export default function PostList({posts}: {posts: IVideoPost[]}) {
         async function onScroll() {
             const nearBottom: boolean = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
             if (nearBottom && !isLoadingMoreRef.current && !isNoMorePost.current) {
-                console.log("loading more posts");
                 isLoadingMoreRef.current = true;
                 await loadMorePosts();
             }
@@ -67,7 +68,7 @@ export default function PostList({posts}: {posts: IVideoPost[]}) {
                     )
                 }
             </div>
-            <div className={`flex justify-center m-5  transition-all transition-discrete ${isLoadingMoreRef ? "block" : "hidden"}`}>
+            <div className={`flex justify-center m-5  transition-all transition-discrete ${isLoadingMoreRef ? "hidden" : "block"}`}>
                 <LoaderSpinner className="h-5 w-5 text-indigo-600"/>
                 <p className="pl-1">Loading ...</p>
             </div>

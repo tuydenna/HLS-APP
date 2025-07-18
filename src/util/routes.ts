@@ -5,4 +5,5 @@ export const RoutesList = {
     LOGIN: '/auth/login',
     REGISTER: '/auth/register',
     PLAY_VIDEO: '/watch',
+    SEARCH: '/search/',
 }

@@ -3,13 +3,14 @@
 import React, {FormEvent, RefObject, useRef, useState} from "react";
 import {onDidMount, redirectTo} from "@app/lib/react-adapter";
 import { IUser } from "@interfaces/user";
-import {DropdownProfile} from "@app/home/components/dropdown-profile";
+import {DropdownProfile} from "@app/components/layout/dropdown-profile";
 import {getAuth} from "@lib/utils";
 import {Input} from "@components/ui/input";
 import {Card} from "@components/ui/card";
 import SearchService from "@services/search-service";
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
+import {RoutesList} from "@util/routes";
 
 export default function Header() {
     const [auth, setAuth] = useState<IUser | null>(null);
@@ -23,7 +24,7 @@ export default function Header() {
 
     onDidMount(()=> {
         setAuth(getAuth());
-        searchInputRef.current!.value = searchKey || ""
+        searchInputRef.current!.value = searchKey ? decodeURIComponent(searchKey) : ""
     })
 
     function onTypeSearching() {
@@ -43,7 +44,11 @@ export default function Header() {
     }
 
     function onSearch(searchKey: string) {
-        redirectTo(router, `/search/`+ searchKey)
+        if (searchKey.trim()) {
+            redirectTo(router, RoutesList.SEARCH + encodeURIComponent(searchKey.trim()));
+            return;
+        }
+        redirectTo(router, RoutesList.HOME);
     }
 
     function onSummit(e: FormEvent<HTMLFormElement>) {

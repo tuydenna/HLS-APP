@@ -1,7 +1,7 @@
 'use server'
 
-import LeftSidebar from "@app/home/components/left-sidebar";
-import Content from "@app/home/components/content";
+import LeftSidebar from "@app/search/components/left-sidebar";
+import Content from "@app/search/components/content";
 import Header from "@components/layout/header";
 
 export default async function SearchPage (props: any) {

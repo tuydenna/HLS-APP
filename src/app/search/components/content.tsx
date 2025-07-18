@@ -1,14 +1,16 @@
 import React from "react";
 import {IVideoPost} from "@interfaces/video-post";
-import PostService from "@services/post-service";
 import {getCookieAuthHeader} from "@lib/next-adapter";
 import HomeListPostsSkeleton from "@components/skeleton/home-list-posts-skeleton";
-import ImageLoaderWrapper from "@app/home/ImageLoaderWrapper";
-import PostList from "@app/home/components/post-list";
+import ImageLoaderWrapper from "@components/optimize/ImageLoaderWrapper";
+import PostList from "@app/search/components/post-list";
+import SearchService from "@services/search-service";
 
-export default async function Content() {
-
-    const posts: IVideoPost[] = await new PostService().setHeaders(await getCookieAuthHeader()).getMany();
+export default async function Content(props: {params?: Promise<{searchKey: string}>}) {
+    const param = await props.params;
+    const posts: IVideoPost[] = await new SearchService()
+        .setHeaders(await getCookieAuthHeader())
+        .searchPosts(param?.searchKey ? decodeURIComponent(param?.searchKey) : undefined);
     return (
         posts.length ?
             <div className="m-5 w-[80%]">
