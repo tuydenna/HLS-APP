@@ -1,4 +1,4 @@
-import {JSX, useEffect, useState, createRef, useRef, RefObject} from "react";
+import {JSX, useEffect, useState, createRef, useRef, RefObject, CSSProperties} from "react";
 
 export default function VideoTimeline({videoEl, sourceBufferRef, onSeekVideoDuration}: {videoEl: HTMLVideoElement | null, sourceBufferRef: RefObject<SourceBuffer | null>, onSeekVideoDuration: Function}): JSX.Element {
     const [timeline, setTimeline] = useState<number>(.0)
@@ -101,7 +101,7 @@ export default function VideoTimeline({videoEl, sourceBufferRef, onSeekVideoDura
     }, [videoEl, timeline, previewTimeline])
 
     return (
-        <div ref={timelineRef} className="timeline-container" style={{"--preview-position": previewTimeline , "--progress-position": timeline}}>
+        <div ref={timelineRef} className="timeline-container" style={{"--preview-position": previewTimeline , "--progress-position": timeline} as unknown as CSSProperties}>
             <div className="timeline">
                 <img className="preview-img" alt={""}/>
                 <div className="thumb-indicator"></div>
