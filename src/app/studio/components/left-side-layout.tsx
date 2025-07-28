@@ -6,8 +6,9 @@ import {LoaderSpinner} from "@app/components/ui/loader-spinner";
 import React, {FormEvent, useState} from "react";
 import {IVideoPost} from "@interfaces/video-post";
 import PostService from "@services/post-service";
-import {uploadFile} from "@util/file";
 import {getAuth} from "@lib/utils";
+import FileService from "@services/file-service";
+import {IFileResWrap, IFileUpload} from "@interfaces/video";
 
 export function LeftSideLayout({setCreatedPost}: {setCreatedPost: Function}) {
 
@@ -19,6 +20,7 @@ export function LeftSideLayout({setCreatedPost}: {setCreatedPost: Function}) {
     const [isSummiting, setIsSummiting] = useState(false);
     const [videoUploadPercentage, setVideoUploadPercentage] = useState(0);
     const [posts, setPosts] = useState<IVideoPost[]>([]);
+    const fileService: FileService = new FileService();
 
     function onCancelPublish() {
         setIsSummiting(false);
@@ -50,10 +52,10 @@ export function LeftSideLayout({setCreatedPost}: {setCreatedPost: Function}) {
         e.preventDefault();
         setIsSummiting(true);
         try {
-            const videoRes = await uploadFile(video!, "/video", (e) => {
+            const videoRes: IFileResWrap<IFileUpload> = await fileService.uploadVideo(video!, (e) => {
                 setVideoUploadPercentage((Math.floor(e.loaded / e.total * 100)));
             })
-            const thumbnailRes = await uploadFile(thumbnail!, "/thumbnail")
+            const thumbnailRes: IFileResWrap<IFileUpload> = await fileService.uploadThumbnail(thumbnail!);
 
             const data = {
                 title,

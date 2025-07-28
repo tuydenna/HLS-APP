@@ -18,12 +18,12 @@ import { UserCircle, Mail, KeyRound, ImageUp } from 'lucide-react';
 import {IUser} from "@interfaces/user";
 import AuthService from "@services/auth-service";
 import {IFileResWrap, IFileUpload} from "@interfaces/video";
-import {uploadFile} from "@util/file";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 import {RoutesList} from "@util/routes";
 import Link from "next/link";
 import Image from "next/image";
 import {redirectTo} from "@lib/react-adapter";
+import FileService from "@services/file-service";
 
 export default function RegisterPage(): JSX.Element {
     // State to hold the avatar file for preview
@@ -31,6 +31,8 @@ export default function RegisterPage(): JSX.Element {
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [isErrorConfirmPass, setIsErrorConfirmPass] = useState(false);
     const router: AppRouterInstance = useRouter();
+    const fileService: FileService = new FileService();
+    const authService: AuthService = new AuthService();
 
     // Handle file selection and create a preview URL
     const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,8 +68,8 @@ export default function RegisterPage(): JSX.Element {
 
         if (!avatarFile) return alert("please upload a avatar");
 
-        const resAvatar: IFileResWrap<IFileUpload> = await uploadFile(avatarFile!, "/avatar");
-        const auth: IUser = await new AuthService().register({name, email, password, avatar: resAvatar.data.filePath});
+        const resAvatar: IFileResWrap<IFileUpload> = await fileService.uploadAvatar(avatarFile!);
+        const auth: IUser = await authService.register({name, email, password, avatar: resAvatar.data.filePath});
 
         if (auth) {
             localStorage.setItem('auth', JSON.stringify(auth));
