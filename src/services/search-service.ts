@@ -22,14 +22,14 @@ export default class SearchService extends BaseService<IVideoPost> {
         URLParams.set("searchKey", searchKey);
         URLParams.set("skip", skip.toString());
         URLParams.set("take", take.toString());
-
         this.setLastEndpoint("/posts?" + URLParams.toString());
         const res = await fetchAdapter.get(this.getBaseAPI(), this.getHeaders());
 
         if (res.ok) {
             return (await res.json()).data;
         }
-        throw new ErrorException(res.status, (await res.json()).data.message);
+
+        throw new ErrorException(res.status,res.statusText || (await res.json()).data.message);
     }
 
 }
