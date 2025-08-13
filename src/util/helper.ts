@@ -8,7 +8,7 @@ export function getEnv(key: string) {
 }
 
 export function getImageURL(path: string | undefined): string{
-    return path ? process.env.NEXT_PUBLIC_DEV_IMAGE + path : "";
+    return path ? process.env.NEXT_PUBLIC_IMAGE_URL + path : "";
 }
 
 export function timeAgo(date: Date): string {

@@ -38,9 +38,9 @@ export default class BaseService<T> {
     getBaseAPI(endUrl: string  = ""): string {
         if (endUrl.trim()) {
             endUrl = endUrl.startsWith("/") ? endUrl : "/" + endUrl;
-            return process.env.NEXT_PUBLIC_DEV_API + this.endPoint + endUrl + this.lastEndpoint
+            return process.env.NEXT_PUBLIC_API_URL + this.endPoint + endUrl + this.lastEndpoint
         }
-        return  process.env.NEXT_PUBLIC_DEV_API + this.endPoint + this.lastEndpoint ;
+        return  process.env.NEXT_PUBLIC_API_URL + this.endPoint + this.lastEndpoint ;
     }
 
 
