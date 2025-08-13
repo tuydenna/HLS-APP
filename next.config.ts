@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     images: {
         remotePatterns: [
             {
+
                 protocol: process.env.NEXT_PUBLIC_STORAGE_PROTOCOL,
                 hostname: process.env.NEXT_PUBLIC_STORAGE_HOST,
                 port: process.env.NEXT_PUBLIC_STORAGE_PORT,
