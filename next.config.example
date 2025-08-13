@@ -27,7 +27,8 @@ const nextConfig: NextConfig = {
                 hostname: 'localhost',
                 port: "3080",
                 pathname: '/api/streaming/video/**',
-            },{
+            },
+            {
                 protocol: 'https',
                 hostname: 'img.daisyui.com',
                 port: "",
