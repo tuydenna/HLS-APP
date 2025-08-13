@@ -6,7 +6,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-
 export function getAuth(): IUser {
-  return JSON.parse(localStorage.getItem("auth")!)
+  const auth: string | null = localStorage.getItem("auth");
+  if (auth) {
+    return JSON.parse(auth)
+  }
+  window.location.href = "/auth/login";
+  return auth as unknown as IUser
 }
