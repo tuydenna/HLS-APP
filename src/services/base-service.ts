@@ -40,7 +40,7 @@ export default class BaseService<T> {
             endUrl = endUrl.startsWith("/") ? endUrl : "/" + endUrl;
             return process.env.NEXT_PUBLIC_API_URL + this.endPoint + endUrl + this.lastEndpoint
         }
-        return  process.env.NEXT_PUBLIC_DEV_API + this.endPoint + this.lastEndpoint ;
+        return  process.env.NEXT_PUBLIC_API_URL + this.endPoint + this.lastEndpoint ;
     }
 
 

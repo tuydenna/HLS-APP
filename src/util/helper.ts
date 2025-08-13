@@ -1,5 +1,4 @@
 export function getEnv(key: string) {
-    console.log("in fun", process.env[key]);
     if(process.env[key]) {
         return process.env[key]
     }
