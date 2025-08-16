@@ -9,7 +9,7 @@ const videoConfig = {
 }
 
 const isMediaSourceSupported = (mimeCodec: string) => {
-    return MediaSource.isTypeSupported(mimeCodec);
+    return "MediaSource" in window && MediaSource.isTypeSupported(mimeCodec);
 };
 
 const initMediaSourceExtension = (videoEl: HTMLVideoElement): MediaSource => {

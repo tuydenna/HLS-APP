@@ -34,4 +34,8 @@ function formatViewCount(views: number) {
     return views.toString();
 }
 
-export { formatVideoTimeUpdate, formatDuration, leadingZeroFormatter, formatViewCount };
+function IsSupportedMediaSource(): boolean {
+    return "MediaSource" in window
+}
+
+export { formatVideoTimeUpdate, formatDuration, leadingZeroFormatter, formatViewCount, IsSupportedMediaSource };
