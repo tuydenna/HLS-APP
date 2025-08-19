@@ -26,6 +26,10 @@ export default class StreamService extends BaseService<null> {
         return {fileSegment: res.headers.get("X-Segment-Name"), buffer: (await res.arrayBuffer())};
     }
 
+    getPlaylistEngPoint(videoId: string): string {
+        return this.getBaseAPI(videoId + "/playlist");
+    }
+
 }
 
 

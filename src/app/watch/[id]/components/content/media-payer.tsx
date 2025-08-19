@@ -185,7 +185,7 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
                 videoEl.addEventListener("timeupdate", prefetchSegmentChunkBuffer);
                 videoEl.addEventListener("error", logMediaEncoderError)
             } else {
-                videoEl.src = "http://192.168.100.53:3080/api/streams/fmp4/playlist/" + data.video.id
+                videoEl.src = streamService.getPlaylistEngPoint(data.video.id)
                 videoEl.preload = "metadata";
                 // videoEl.src = "/video/playlist.m3u8"
             }
@@ -226,7 +226,7 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
                     <PlayFullScreenButton videoEl={videoEl}/>
                 </div>
             </div>
-            <video ref={videoRef} controls={false} autoPlay={true} muted={true} preload={"metadata"}>
+            <video ref={videoRef} playsInline={true} controls={false} autoPlay={false} muted={true} preload={"metadata"}>
                 {/*<source src={"http://192.168.100.53:3080/api/streams/fmp4/playlist"} type="application/vnd.apple.mpegurl" />*/}
                 <track kind="captions" srcLang="en" src="/media_player/assets/subtitles.vtt"/>
             </video>

@@ -6,7 +6,7 @@ import {IViewCountConfig} from "@interfaces/video-config";
 import {videoConfig} from "@watch/helper/media-source-helper";
 import PostService from "@services/post-service";
 
-export default function PlayButton({videoEl, onSeekVideoDuration}: {videoEl: HTMLVideoElement | null, onSeekVideoDuration: Function}) {
+export default function PlayButton({videoEl, onSeekVideoDuration, isNoFullScreenRef}: {videoEl: HTMLVideoElement | null, onSeekVideoDuration: Function, isNoFullScreenRef: RefObject<boolean>}) {
     const [isPlay, setIsPlay] = useState(false);
     const viewCountConfig: RefObject<IViewCountConfig> = useRef({watchTime: 0, lastTimeUpdate: 0, hasCountedView: false});
     const {id} = useParams<{id: string}>();

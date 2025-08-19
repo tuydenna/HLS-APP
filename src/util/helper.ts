@@ -29,6 +29,10 @@ export function timeAgo(date: Date): string {
     return "just now";
 }
 
+export function isInFullScreenMode() {
+    return document.fullscreenElement !== null
+}
+
 export function getAvatarFallbackName(name: string) {
     return name.charAt(0).toUpperCase();
 }

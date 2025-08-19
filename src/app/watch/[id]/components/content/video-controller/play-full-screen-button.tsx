@@ -1,23 +1,40 @@
-export default function PlayFullScreenButton({videoEl}: {videoEl: HTMLVideoElement | null}) {
+import {isInFullScreenMode} from "@util/helper";
+
+export default function PlayFullScreenButton({videoEl}: { videoEl: HTMLVideoElement | null}) {
+
+    const exitFullScreen = function () {
+        document.exitFullscreen();
+    }
+
+    const enterFullScreen = function () {
+        const videContainerEl: Element | null = document.querySelector(".video-container");
+        if (videContainerEl && ("requestFullscreen" in videContainerEl)) { // For any Browsers
+            videContainerEl.requestFullscreen()
+        } else { // For Safari
+            // @ts-ignore
+            videoEl!.webkitEnterFullscreen()
+        }
+    }
 
      function toggleInFullScreenMode () {
+         let retryCount: number = 0;
          const retry = function () {
-             let retryCount: number = 0;
             try {
-                if (document.fullscreenElement === null) {
-                    document.querySelector(".video-container")?.requestFullscreen()
-                    return;
+                if (isInFullScreenMode()) {
+                   return exitFullScreen();
+                } else {
+                    return enterFullScreen();
                 }
-                document.exitFullscreen();
             } catch (error) {
                 console.warn("[Request FUll-Screen Failed]", error);
-                if (retryCount <= 5) {
-                    retry();
-                    return retryCount++;
+                alert(error)
+                if (retryCount < 2) {
+                    retryCount++;
+                    return retry();
                 }
             }
          }
-         retry()
+         return retry()
     }
 
     return (
