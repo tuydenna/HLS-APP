@@ -1,7 +1,7 @@
 import BaseService from "./base-service";
 import {IFileResWrap, IFileUpload} from "@interfaces/video";
-
 export default class FileService extends BaseService<IFileUpload> {
+    private xhrRequests: XMLHttpRequest[] = [];
 
     constructor() {
         super("/files");
@@ -22,9 +22,20 @@ export default class FileService extends BaseService<IFileUpload> {
         return this.xhrUpload(file, onProgress);
     }
 
+    abortUpload() {
+        console.log("[abortUpload]", this.xhrRequests);
+        for (const xhrRequest of this.xhrRequests) {
+            if (xhrRequest.readyState !== xhrRequest.DONE) {
+                xhrRequest.abort();
+            }
+        }
+        this.xhrRequests = [];
+    }
+
     private xhrUpload(file: File, onProgress?: (event: ProgressEvent<XMLHttpRequestEventTarget>) => void): Promise<IFileResWrap<IFileUpload>> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
+            this.xhrRequests.push(xhr);
             if (onProgress) {
                 xhr.upload.addEventListener("progress", onProgress)
             }

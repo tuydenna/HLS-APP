@@ -3,7 +3,7 @@ import React, {RefObject, useRef, useState} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {IVideoPost} from "@interfaces/video-post";
-import {getImageURL, timeAgo} from "@util/helper";
+import {geImageProxyAPI, getImageURL, timeAgo} from "@util/helper";
 import {Card, CardDescription, CardFooter, CardHeader, CardTitle} from "@components/ui/card";
 import {AvatarUI} from "@components/ui/avatar";
 import { onDidUpdate} from "@lib/react-adapter";
@@ -16,12 +16,12 @@ export default function PostList({posts}: {posts: IVideoPost[]}) {
     const defaultTake: number = 10;
     const isLoadingMoreRef: RefObject<boolean> = useRef(false);
     const isNoMorePost: RefObject<boolean> = useRef(posts.length < defaultTake );
-    const {searchKey} = useParams<{searchKey: string}>();
+    const params: {searchKey: string} | null  = useParams<{searchKey: string}>();
 
     onDidUpdate(() => {
         async function loadMorePosts() {
             const skip: number = postList.length + defaultTake - 1;
-            const posts: IVideoPost[] = await new SearchService().searchPosts(searchKey, defaultTake, skip);
+            const posts: IVideoPost[] = await new SearchService().searchPosts(params?.searchKey, defaultTake, skip);
             if (posts.length < defaultTake) {
                 isLoadingMoreRef.current = true;
             }
@@ -49,8 +49,8 @@ export default function PostList({posts}: {posts: IVideoPost[]}) {
                             <CardHeader>
                                 <Link href={`/watch/${post.id}`} className="aspect-video">
                                     <Image className="w-full h-full object-cover"
-                                           src={getImageURL(post.thumbnail)}
-                                           alt={''} width={200} height={100} priority={true}/>
+                                           src={geImageProxyAPI(getImageURL(post.thumbnail))}
+                                           alt={process.env.NEXT_PUBLIC_APP_NAME} width={200} height={100} priority={true} />
                                 </Link>
                             </CardHeader>
                             <CardFooter className="flex-col gap-2">

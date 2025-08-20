@@ -1,7 +1,7 @@
 
 'use client';
 
-import {JSX, useState } from 'react';
+import {ChangeEvent, FormEvent, JSX, useState} from 'react';
 import { useRouter } from 'next/navigation'
 import { Button } from '@app/components/ui/button';
 import {
@@ -35,7 +35,7 @@ export default function RegisterPage(): JSX.Element {
     const authService: AuthService = new AuthService();
 
     // Handle file selection and create a preview URL
-    const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleAvatarChange = (event: ChangeEvent<HTMLInputElement>) => {
         const file: File | undefined = event.target.files?.[0];
         if (file) {
             setAvatarFile(file);
@@ -51,7 +51,7 @@ export default function RegisterPage(): JSX.Element {
     };
 
     // Handle form submission
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         // Here you would handle the form data, e.g., send it to your API
         const formData = new FormData(event.currentTarget);

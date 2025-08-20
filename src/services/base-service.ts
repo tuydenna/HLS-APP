@@ -29,7 +29,7 @@ export default class BaseService<T> {
     protected endPoint!: string;
     private headers: HeadersInit = {}
     private lastEndpoint: string = "";
-    private defaultHeaders: HeadersInit = {'Content-Type': 'application/json'}
+    private defaultHeaders: HeadersInit = {'Content-Type': 'application/json'};
 
      constructor(endpoint: string) {
         this.endPoint = endpoint;

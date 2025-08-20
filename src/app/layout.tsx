@@ -25,7 +25,7 @@ export default function RootLayout({children}: Readonly<{ children: React.ReactN
             <meta httpEquiv="X-UA-Compatible" content="IE=edge"/>
             <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
             <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-            <link href="thumbnail\thumbnail-1723104411149-344292429.png" rel="icon"/>
+            <link href="/favicon.ico" rel="icon"/>
         </head>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
             {children}

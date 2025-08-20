@@ -3,26 +3,38 @@ import {Textarea} from "@app/components/ui/textarea";
 import {Select, SelectContent, SelectItem} from "@app/components/ui/select";
 import {Button} from "@app/components/ui/button";
 import {LoaderSpinner} from "@app/components/ui/loader-spinner";
-import React, {FormEvent, useState} from "react";
+import React, {FormEvent, RefObject, useRef, useState} from "react";
 import {IVideoPost} from "@interfaces/video-post";
 import PostService from "@services/post-service";
 import {getAuth} from "@lib/utils";
 import FileService from "@services/file-service";
 import {IFileResWrap, IFileUpload} from "@interfaces/video";
+import {onDidMount} from "@lib/react-adapter";
+import {Label} from "@components/ui/label";
 
 export function LeftSideLayout({setCreatedPost}: {setCreatedPost: Function}) {
 
-    const [title, setTitle] = useState("");
-    const [desc, setDesc] = useState("");
     const [status, setStatus] = useState("Draft");
     const [thumbnail, setThumbnail] = useState<File | null>(null);
     const [video, setVideo] = useState<File | null>(null);
     const [isSummiting, setIsSummiting] = useState(false);
     const [videoUploadPercentage, setVideoUploadPercentage] = useState(0);
     const [posts, setPosts] = useState<IVideoPost[]>([]);
-    const fileService: FileService = new FileService();
+    const fileServiceRef: RefObject<FileService> = useRef(new FileService());
+    const formRef: RefObject<HTMLFormElement | null> = useRef<HTMLFormElement>(null);
+    const [errorMsg, setError] = useState("");
+
+    onDidMount(() => {
+        window.addEventListener("beforeunload", function (ev: BeforeUnloadEvent) {
+            if (isSummiting || formRef.current?.checkValidity()) {
+                ev.preventDefault();
+                onCancelPublish();
+            }
+        });
+    })
 
     function onCancelPublish() {
+        fileServiceRef.current.abortUpload()
         setIsSummiting(false);
     }
 
@@ -41,25 +53,37 @@ export function LeftSideLayout({setCreatedPost}: {setCreatedPost: Function}) {
     };
 
     function onResetForm() {
-        setTitle("");
-        setDesc("");
+        formRef.current?.reset();
         setThumbnail(null);
         setVideo(null);
-        setIsSummiting(false)
+        setIsSummiting(false);
     }
 
     const onPublish = async (e: FormEvent<HTMLFormElement> ) => {
         e.preventDefault();
         setIsSummiting(true);
+
         try {
-            const videoRes: IFileResWrap<IFileUpload> = await fileService.uploadVideo(video!, (e) => {
+            //Validate form
+            if (!(formRef.current?.checkValidity() && thumbnail && video)) {
+                setError("Please provide all information before publishing!")
+                setIsSummiting(false);
+                return;
+            }
+
+            const formData = new FormData(e.currentTarget);
+            const title: string = formData.get('title')!.toString().trim();
+            const description: string = formData.get('description')!.toString().trim();
+
+            const videoRes: IFileResWrap<IFileUpload> = await fileServiceRef.current.uploadVideo(video!, (e) => {
                 setVideoUploadPercentage((Math.floor(e.loaded / e.total * 100)));
             })
-            const thumbnailRes: IFileResWrap<IFileUpload> = await fileService.uploadThumbnail(thumbnail!);
+
+            const thumbnailRes: IFileResWrap<IFileUpload> = await fileServiceRef.current.uploadThumbnail(thumbnail!);
 
             const data = {
                 title,
-                description: desc,
+                description,
                 authorId: getAuth().id,
                 videoId: videoRes.data.id,
                 thumbnail: thumbnailRes.data.filePath
@@ -69,19 +93,20 @@ export function LeftSideLayout({setCreatedPost}: {setCreatedPost: Function}) {
             setCreatedPost(post);
             setTimeout(onResetForm, 3000)
         } catch (e) {
-            console.warn(e)
+            console.error(e)
+            fileServiceRef.current.abortUpload();
             alert("Failed to create post, try again later");
             setIsSummiting(false);
         }
-
     };
 
     return (
         <div className="w-2/3 bg-white shadow-xl rounded-2xl p-6 space-y-4 relative">
             <h2 className="text-2xl font-bold">Create New Post</h2>
-            <form onSubmit={onPublish} className="space-y-4">
-                <Input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required={true} />
-                <Textarea placeholder="Description" value={desc} onChange={(e) => setDesc(e.target.value)}  required={true} />
+            <form ref={formRef} onSubmit={onPublish} className="space-y-4">
+                <Label className="text-red-500">{errorMsg}</Label>
+                <Input name="title" placeholder="Title" required={true} />
+                <Textarea name="description" placeholder="Description" required={true} />
                 <Select value={status} onValueChange={setStatus}>
                     <SelectContent>
                         <SelectItem value="Draft">Draft</SelectItem>

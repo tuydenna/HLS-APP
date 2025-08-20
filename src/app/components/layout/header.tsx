@@ -8,8 +8,7 @@ import {getAuth} from "@lib/utils";
 import {Input} from "@components/ui/input";
 import {Card} from "@components/ui/card";
 import SearchService from "@services/search-service";
-import { useParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import {RoutesList} from "@util/routes";
 
 export default function Header() {
@@ -18,13 +17,13 @@ export default function Header() {
     const [isSearching, setIsSearching] = useState<boolean>(false);
     const [searchList, setSearchList] = useState<string[]>([]);
     const searchInputRef: RefObject<HTMLInputElement | null> = useRef<HTMLInputElement>(null);
-    const {searchKey} = useParams<{searchKey: string}>();
+    const params: {searchKey: string} | null = useParams<{searchKey: string}>();
     let timeout: NodeJS.Timeout;
     const router = useRouter();
 
     onDidMount(()=> {
         setAuth(getAuth());
-        searchInputRef.current!.value = searchKey ? decodeURIComponent(searchKey) : ""
+        searchInputRef.current!.value = params?.searchKey ? decodeURIComponent(params.searchKey) : ""
     })
 
     function onTypeSearching() {

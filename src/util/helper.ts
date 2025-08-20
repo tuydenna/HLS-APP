@@ -7,7 +7,11 @@ export function getEnv(key: string) {
 }
 
 export function getImageURL(path: string | undefined): string{
-    return path ? process.env.NEXT_PUBLIC_IMAGE_URL + path : "";
+    return path ? process.env.NEXT_PUBLIC_STORAGE_PROTOCOL +"://" + process.env.NEXT_PUBLIC_STORAGE_HOST +":"+ process.env.NEXT_PUBLIC_STORAGE_PORT + process.env.NEXT_PUBLIC_STORAGE_PATH + path : "";
+}
+
+export function geImageProxyAPI(url: string): string{
+    return `/api/image-proxy?url=${encodeURIComponent(url)}`;
 }
 
 export function timeAgo(date: Date): string {

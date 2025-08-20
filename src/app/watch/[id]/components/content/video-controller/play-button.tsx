@@ -9,7 +9,7 @@ import PostService from "@services/post-service";
 export default function PlayButton({videoEl, onSeekVideoDuration}: {videoEl: HTMLVideoElement | null, onSeekVideoDuration: Function}) {
     const [isPlay, setIsPlay] = useState(false);
     const viewCountConfig: RefObject<IViewCountConfig> = useRef({watchTime: 0, lastTimeUpdate: 0, hasCountedView: false});
-    const {id} = useParams<{id: string}>();
+    const params: {id: string} | null = useParams<{id: string}>();
 
     onDidUpdate(() => {
         function playVideoInPictureMode() {
@@ -37,7 +37,7 @@ export default function PlayButton({videoEl, onSeekVideoDuration}: {videoEl: HTM
             increaseWatchTime(videoEl!, viewCountConfig);
             if (!viewCountConfig.current.hasCountedView && viewCountConfig.current.watchTime >= videoConfig.VIEW_COUNT_DELAY) {
                 viewCountConfig.current.hasCountedView = true;
-                await new PostService().increaseView(id)
+                await new PostService().increaseView(params!.id)
             }
         }
 

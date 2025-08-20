@@ -5,17 +5,16 @@ const nextConfig: NextConfig = {
     images: {
         remotePatterns: [
             {
-
                 protocol: process.env.NEXT_PUBLIC_STORAGE_PROTOCOL,
                 hostname: process.env.NEXT_PUBLIC_STORAGE_HOST,
                 port: process.env.NEXT_PUBLIC_STORAGE_PORT,
-                pathname: '/thumbnail/**',
+                pathname: process.env.NEXT_PUBLIC_STORAGE_PATH + '/thumbnail/**',
             },
             {
                 protocol: process.env.NEXT_PUBLIC_STORAGE_PROTOCOL,
                 hostname: process.env.NEXT_PUBLIC_STORAGE_HOST,
                 port: process.env.NEXT_PUBLIC_STORAGE_PORT,
-                pathname: '/avatars/**',
+                pathname: process.env.NEXT_PUBLIC_STORAGE_PATH + '/avatars/**',
             },
             {
                 protocol: 'http',
