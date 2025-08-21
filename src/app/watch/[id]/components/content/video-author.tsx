@@ -26,29 +26,22 @@ export default function VideoAuthor ({post, auth}: {post: IVideoPost, auth: IUse
     }
 
     return (
-        <div className="flex flex-col md:flex-row items-center justify-between">
+        <div className="flex md:flex-row md:items-center md:justify-between">
             <div className="flex items-center space-x-2 mb-6 md:mb-0">
-               <AvatarUI src={getImageURL(post.author.avatar)} fallbackName={post.author.name} widthClass="w-17" heightClass="h-17"/>
+               <AvatarUI src={getImageURL(post.author.avatar)} fallbackName={post.author.name} widthClass="w-15 md:w-17" heightClass="h-15 md:h-17"/>
                 <div>
-                    <CardTitle className="text-xl">{post.author?.name}</CardTitle>
+                    <CardTitle className="text-sm md:text-xl">{post.author?.name}</CardTitle>
                     <CardDescription>1.2M Subscribers</CardDescription>
                 </div>
             </div>
-            <div className="flex items-end space-x-8">
-                <div className="text-center">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-12 w-12 rounded-full group transition-transform transform hover:scale-110"
-                        onClick={onToggleLike}
-                    >
-                        <Heart className={"h-7 w-7 transition-colors " + (isLiked ? 'text-red-500 fill-red-500' : 'text-muted-foreground group-hover:text-red-400')} />
-                    </Button>
-                    <p className="text-lg font-semibold mt-1">{formatViewCount(likeCount)}</p>
+            <div className="flex grow justify-end md:items-end space-x-4 md:space-x-8 pt-2.5">
+                <div className="flex flex-col">
+                    <span onClick={onToggleLike} className={`text-sm md:text-lg ${isLiked ? "text-blue-400" : "text-muted-foreground"}  font-bold  hover:scale-110 cursor-pointer`}>Likes</span>
+                    <span className="text-center text-sm text-muted-foreground md:text-lg md:font-bold ">{formatViewCount(likeCount)}</span>
                 </div>
-                <div className="text-center">
-                    <p className="text-sm text-muted-foreground h-12 flex items-center">Views</p>
-                    <p className="text-lg font-semibold mt-1">{formatViewCount(post.views)}</p>
+                <div className="flex flex-col">
+                    <span className="text-sm md:text-lg text-muted-foreground font-bold">Views</span>
+                    <span className="text-center text-sm text-muted-foreground md:text-lg md:font-bold ">{formatViewCount(post.views)}</span>
                 </div>
             </div>
         </div>

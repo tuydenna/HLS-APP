@@ -21,13 +21,13 @@ export default function PostInfo({post}: {post: IVideoPost}) {
     })
 
     return (
-       <div className="bg-background text-foreground antialiased min-h-screen">
+       <div className="bg-background text-foreground antialiased min-h-full md:min-h-screen">
             <div className="w-full">
                 <Card className="gap-1 p-3">
                     {
                         auth ?
                              <>
-                                 <p className="text-lg font-bold">{post.title}</p>
+                                 <p className="text-sm md:text-lg font-bold">{post.title}</p>
                                  <VideoAuthor post={post} auth={auth!} />
                                  <Separator />
                                  <VideoDescription post={post} />

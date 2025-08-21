@@ -22,6 +22,13 @@ export const fetchAdapter = {
             credentials: "include",
             body: JSON.stringify(data)
         })
+    },
+    delete: function (url: string, headers: HeadersInit) {
+        return fetch(url, {
+            headers,
+            method: "DELETE",
+            credentials: "include"
+        })
     }
 }
 
@@ -70,6 +77,14 @@ export default class BaseService<T> {
 
     async update(id: string, data: any = {}): Promise<T> {
         const res = await fetchAdapter.put(this.getBaseAPI(id),this.getHeaders(), data);
+        if (res.ok) {
+            return (await res.json()).data;
+        }
+        throw new ErrorException(res.status, (await res.json()).message);
+    }
+
+    async delete(id: string): Promise<T> {
+        const res = await fetchAdapter.delete(this.getBaseAPI(id),this.getHeaders());
         if (res.ok) {
             return (await res.json()).data;
         }

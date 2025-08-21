@@ -63,18 +63,20 @@ export default function Header() {
     return (
         <div className="sticky top-0 right-0 left-0 z-10">
             <Card className="py-3 px-5 rounded-sm">
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                     <div className="header__left">
-                        <i id="menu" className="material-icons">menu</i>
+                        {/*<i id="menu" className="material-icons">menu</i>*/}
                         <img
-                            src="https://1000logos.net/wp-content/uploads/2017/05/Youtube-logo.jpg"
+                            src="/favicon.ico"
                             alt=""
+                            width={30}
+                            height={30}
                         />
                     </div>
 
                     <div className="header__search relative">
                         <form action="" className="flex" onSubmit={onSummit}>
-                            <Input id="search-input" onFocus={() => setIsFocused(true)} onBlur={onLeaveSearch}  onKeyUp={onTypeSearching} type="text" ref={searchInputRef} placeholder="Search ..." className="w-[calc(30vw)] border-0 border-y-1 border-l-1 rounded-none rounded-l-sm !ring-0" />
+                            <Input id="search-input" onFocus={() => setIsFocused(true)} onBlur={onLeaveSearch}  onKeyUp={onTypeSearching} type="text" ref={searchInputRef} placeholder="Search ..." className="text-base md:text-sm w-full md:w-[calc(30vw)] border-0 border-y-1 border-l-1 rounded-none rounded-l-sm !ring-0" />
                             <button type="submit"  className={`border-y-1 border-r-1 rounded-r-sm  ${isFocused ? "border-[var(--ring)]": ""}`}><i className="material-icons">search</i></button>
                         </form>
                         {

@@ -17,6 +17,10 @@ export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
     const [sortBy, setSortBy] = useState("latest");
     const [posts, setPosts] = useState<IVideoPost[]>([]);
     const [author, setAuthor]  = useState<IUser | null>(null);
+    let holdTimeout: NodeJS.Timeout | null = null;
+    let isHolding: boolean = false;
+    const holdDuration = 1000; // 1 sec
+    const postService = new PostService();
 
     function renderPostStatus(status: PostStatus): JSX.Element {
         switch (status) {
@@ -42,6 +46,38 @@ export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
         }
     }, [newPost]);
 
+    async function deletePost(id: string) {
+        try {
+            await postService.delete(id);
+            setPosts(posts.filter(post => post.id !== id));
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    function onLongPress(e: any, id: string) {
+        e.preventDefault();
+        isHolding = true;
+        holdTimeout = setTimeout(async () => {
+            if (isHolding) {
+                const yes: boolean = confirm("Are you sure you want to delete this post?");
+                if (yes) {
+                    await deletePost(id);
+                }
+                isHolding = false;
+                clearTimeout(holdTimeout!)
+            }
+        }, holdDuration);
+    }
+
+    function removeLongPressTimeOut(e: any) {
+        e.preventDefault();
+        if (holdTimeout) {
+            clearTimeout(holdTimeout);
+            isHolding = false;
+        }
+    }
+
     const filteredPosts: IVideoPost[] = posts
         .filter((post) => post.title.toLowerCase().includes(search.toLowerCase()))
         .sort((a, b) => {
@@ -54,16 +90,16 @@ export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
         });
 
     return (
-        <div className="w-1/3 bg-gray-50 shadow-lg rounded-2xl p-4 overflow-y-auto max-h-[95vh]">
+        <div className="flex flex-col w-full md:w-1/3 bg-gray-50 shadow-lg rounded-2xl p-3 md:p-6 max-h-[95vh]">
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-semibold">Your Posts</h3>
                 <div className="flex items-center gap-2">
                     <AvatarUI src={getImageURL(author?.avatar)} fallbackName={author?.name} widthClass="w-10" heightClass="h-10"/>
-                    <span className="text-sm font-medium">{author?.name}</span>
+                    {/*<span className="text-sm font-medium">{author?.name}</span>*/}
                     <Link href="/"><HomeIcon className="cursor-pointer text-gray-400" /></Link>
                 </div>
             </div>
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex gap-2 mb-4">
                 <Input
                     placeholder="Search posts..."
                     className="flex-1"
@@ -79,32 +115,32 @@ export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
                     <option value="popular">Most Viewed</option>
                 </select>
             </div>
-            <ul className="space-y-3">
-                {filteredPosts.map((post, index) => (
-                    <Card key={index} className="cursor-pointer py-1">
-                        <CardContent className="p-4">
-                            {post.thumbnail && (
-                                <div className="w-full aspect-video mb-3 overflow-hidden rounded">
-                                    <img
-                                        src={getImageURL(post.thumbnail)}
-                                        alt="thumbnail"
-                                        className="w-full h-full object-cover object-center"
-                                    />
+            <div className="flex flex-col space-y-3 grow overflow-y-scroll custom-scrollbar clear-default-safari-long-press">
+                    {filteredPosts.map((post, index) => (
+                        <Card key={index} className="cursor-pointer py-1" onMouseDown={(event) => onLongPress(event, post.id)} onTouchStart={(event) => onLongPress(event, post.id)} onTouchEnd={removeLongPressTimeOut} onMouseUp={removeLongPressTimeOut}>
+                            <CardContent className="p-4">
+                                {post.thumbnail && (
+                                    <div className="w-full aspect-video mb-3 overflow-hidden rounded">
+                                        <img
+                                            src={getImageURL(post.thumbnail)}
+                                            alt="thumbnail"
+                                            className="w-full h-full object-cover object-center"
+                                        />
+                                    </div>
+                                )}
+                                <div className="flex items-center justify-between mb-2">
+                                    <h4 className="font-semibold line-clamp-1">{post.title}</h4>
+                                    <span className="text-xs text-gray-500">{renderPostStatus(post.status)}</span>
                                 </div>
-                            )}
-                            <div className="flex items-center justify-between mb-2">
-                                <h4 className="font-semibold line-clamp-1">{post.title}</h4>
-                                <span className="text-xs text-gray-500">{renderPostStatus(post.status)}</span>
-                            </div>
-                            <p className="text-sm  text-wraptext-gray-500 line-clamp-2">{post.description}</p>
-                            <div className="mt-2 text-xs text-gray-400 flex justify-between">
-                                <span>{timeAgo(post.createdAt)}</span>
-                                <span>{post.views} views</span>
-                            </div>
-                        </CardContent>
-                    </Card>
-                ))}
-            </ul>
+                                <p className="text-sm  text-wraptext-gray-500 line-clamp-2">{post.description}</p>
+                                <div className="mt-2 text-xs text-gray-400 flex justify-between">
+                                    <span>{timeAgo(post.createdAt)}</span>
+                                    <span>{post.views} views</span>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+            </div>
         </div>
     )
 }

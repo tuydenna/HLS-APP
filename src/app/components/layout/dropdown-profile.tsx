@@ -43,11 +43,13 @@ export function DropdownProfile({auth}: {auth:  IUser | null}): JSX.Element {
             <DropdownMenuTrigger asChild>
                 <div className="flex items-center gap-2">
                     <AvatarUI src={getImageURL(auth?.avatar)} fallbackName={auth?.name} widthClass="w-10" heightClass="h-10"/>
-                    <span className="text-sm font-medium">{auth?.name}</span>
+                    <span className="text-sm font-medium hidden md:block">{auth?.name}</span>
                 </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56 p-3" style={{padding: 10}} align="start">
-                <DropdownMenuLabel style={{padding: "6px 8px"}}>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel style={{padding: "6px 8px"}}>
+                    My Account<span className="text-sm font-bold md:hidden">: {auth?.name}</span>
+                </DropdownMenuLabel>
                 <DropdownMenuGroup>
                     <DropdownMenuItem style={{padding: "6px 8px"}} onClick={toProfile}>
                         Profile

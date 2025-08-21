@@ -42,10 +42,10 @@ export default function PostList({posts}: {posts: IVideoPost[]}) {
 
     return (
         <>
-            <div className={"flex flex-wrap"}>
+            <div className={"flex flex-col md:flex-row md:flex-wrap gap-2 m-3 md:m-0"}>
                 {
                     postList?.map((post: IVideoPost) => (
-                        <Card className="w-full max-w-sm m-[1vw] gap-2" key={post.id}>
+                        <Card className="w-full md:max-w-sm md:m-[1vw] gap-2" key={post.id}>
                             <CardHeader>
                                 <Link href={`/watch/${post.id}`} className="aspect-video">
                                     <Image className="w-full h-full object-cover"

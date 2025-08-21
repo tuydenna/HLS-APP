@@ -17,8 +17,8 @@ export default async function Page(props: PropRoute<{ id: string }>) {
     return (
         <div className="relative">
             <Header/>
-            <div className="flex p-5">
-                <div className="flex-none w-2/3">
+            <div className="flex flex-col md:flex-row p-2 md:p-5">
+                <div className="flex-none w-full md:w-2/3">
                     <MediaPayer video={post.video}/>
                     <PostInfo post={post} />
                 </div>

@@ -3,7 +3,7 @@
 import React, {JSX, RefObject, useRef, useState} from "react";
 import {IComment} from "@interfaces/comment";
 import CommentService from "@services/comment-api";
-import {getImageURL, timeAgo} from "@util/helper";
+import {getImageURL, isSmartPhone, timeAgo} from "@util/helper";
 import { AvatarUI} from "@app/components/ui/avatar";
 import {Textarea} from "@app/components/ui/textarea";
 import {Button} from "@app/components/ui/button";
@@ -25,7 +25,7 @@ export default function VideoComments ({postId, comments, auth}: {postId: string
 
     return (
        <>
-           <h3 className="text-xl font-semibold mb-6">Comments ({comments.length})</h3>
+           <h3 className="text-sm md:text-xl font-semibold mb-6">Comments ({comments.length})</h3>
            <CommentForm postId={postId} auth={auth} addNewComment={addNewComment}/>
            <CommentList comments={commentList} />
        </>
@@ -34,6 +34,7 @@ export default function VideoComments ({postId, comments, auth}: {postId: string
 
 function CommentForm({ postId, addNewComment, auth }: {postId: string, addNewComment: Function, auth: IUser}) {
     const commentRef: RefObject<HTMLTextAreaElement | null> = useRef(null);
+    let scrollY: number = 0;
 
     async function onLeaveComment() {
         const comment: string = commentRef.current!.value;
@@ -56,11 +57,26 @@ function CommentForm({ postId, addNewComment, auth }: {postId: string, addNewCom
         }
     }
 
+    function captureScrollPosition() {
+        if (isSmartPhone()) {
+            scrollY = window.scrollY;
+        }
+    }
+
+    function exitComment() {
+        if (isSmartPhone()) {
+            setTimeout(() => window.scrollTo({top: scrollY, behavior: "smooth"}), 100)
+        }
+    }
+
     return (
-        <div className="flex items-start space-x-4">
+        <div className="flex items-start space-x-2 md:space-x-4">
             <AvatarUI src={getImageURL(auth.avatar)} fallbackName={auth.name} />
             <div className="flex-1">
                 <Textarea
+                    onFocus={captureScrollPosition}
+                    onBlur={exitComment}
+                    className="text-base md:text-lg font-semibold leading-tight"
                     placeholder="Leave a comment..."
                     ref={commentRef}
                 />

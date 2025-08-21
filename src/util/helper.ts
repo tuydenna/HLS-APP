@@ -37,6 +37,10 @@ export function isInFullScreenMode() {
     return document.fullscreenElement !== null
 }
 
+export function isSmartPhone() {
+    return window.innerWidth < 768;
+}
+
 export function getAvatarFallbackName(name: string) {
     return name.charAt(0).toUpperCase();
 }

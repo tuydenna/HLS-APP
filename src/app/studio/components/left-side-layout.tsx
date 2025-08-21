@@ -101,7 +101,7 @@ export function LeftSideLayout({setCreatedPost}: {setCreatedPost: Function}) {
     };
 
     return (
-        <div className="w-2/3 bg-white shadow-xl rounded-2xl p-6 space-y-4 relative">
+        <div className="w-full md:w-2/3 bg-white shadow-xl rounded-2xl p-3 md:p-6 space-y-4 relative">
             <h2 className="text-2xl font-bold">Create New Post</h2>
             <form ref={formRef} onSubmit={onPublish} className="space-y-4">
                 <Label className="text-red-500">{errorMsg}</Label>

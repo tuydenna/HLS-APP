@@ -126,4 +126,29 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 5px; /* Adjust width as desired */
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Track background color */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #c8dfe0; /* Thumb color */
+    border-radius: 4px; /* Rounded thumb */
+  }
+
+  .clear-default-safari-long-press {
+    -webkit-touch-callout: none; /* Disable callout menu */
+    -webkit-user-select: none;   /* Prevent text selection */
+    user-select: none;
+  }
+
+}
+
+@supports (-webkit-touch-callout: none) {
+  ::-webkit-scrollbar {
+    display: none;
+  }
 }

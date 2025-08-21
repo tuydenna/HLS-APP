@@ -13,7 +13,7 @@ export default async function Content(props: {params?: Promise<{searchKey: strin
         .searchPosts(param?.searchKey ? decodeURIComponent(param?.searchKey) : undefined);
     return (
         posts.length ?
-            <div className="m-5 w-[80%]">
+            <div className="m-0 md:m-5 w-full md:w-[80%]">
                 <ImageLoaderWrapper fallBack={<HomeListPostsSkeleton/>}>
                     <PostList posts={posts} />
                 </ImageLoaderWrapper>
