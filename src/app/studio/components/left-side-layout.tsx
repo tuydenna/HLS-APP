@@ -101,9 +101,9 @@ export function LeftSideLayout({setCreatedPost}: {setCreatedPost: Function}) {
     };
 
     return (
-        <div className="w-full md:w-2/3 bg-white shadow-xl rounded-2xl p-3 md:p-6 space-y-4 relative">
+        <div className="flex flex-col w-full md:w-2/3 bg-white shadow-lg rounded-2xl p-3 md:p-6 space-y-4 relative">
             <h2 className="text-2xl font-bold">Create New Post</h2>
-            <form ref={formRef} onSubmit={onPublish} className="space-y-4">
+            <form ref={formRef} onSubmit={onPublish} className="space-y-4 flex grow flex-col">
                 <Label className="text-red-500">{errorMsg}</Label>
                 <Input name="title" placeholder="Title" required={true} />
                 <Textarea name="description" placeholder="Description" required={true} />
@@ -113,7 +113,7 @@ export function LeftSideLayout({setCreatedPost}: {setCreatedPost: Function}) {
                         <SelectItem value="Published">Published</SelectItem>
                     </SelectContent>
                 </Select>
-                <div className="flex">
+                <div className="flex grow">
                     <div
                         onDrop={(e: React.DragEvent<HTMLDivElement>) => handleDrop(e, "image")}
                         onDragOver={(e) => e.preventDefault()}
@@ -163,7 +163,9 @@ export function LeftSideLayout({setCreatedPost}: {setCreatedPost: Function}) {
                         )}
                     </div>
                 </div>
-                <Button type="submit" className="cursor-pointer">Publish</Button>
+                <div>
+                    <Button type="submit" className="cursor-pointer flex-none">Publish</Button>
+                </div>
             </form>
             {isSummiting && (
                 <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-xl z-10">

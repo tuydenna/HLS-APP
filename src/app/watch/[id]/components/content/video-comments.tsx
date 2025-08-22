@@ -76,7 +76,7 @@ function CommentForm({ postId, addNewComment, auth }: {postId: string, addNewCom
                 <Textarea
                     onFocus={captureScrollPosition}
                     onBlur={exitComment}
-                    className="text-base md:text-lg font-semibold leading-tight"
+                    className="text-base md:text-sm font-semibold leading-tight"
                     placeholder="Leave a comment..."
                     ref={commentRef}
                 />

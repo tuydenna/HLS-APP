@@ -90,7 +90,7 @@ export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
         });
 
     return (
-        <div className="flex flex-col w-full md:w-1/3 bg-gray-50 shadow-lg rounded-2xl p-3 md:p-6 max-h-[95vh]">
+        <div className="flex flex-col w-full md:w-1/3 bg-white shadow-lg rounded-2xl p-3 md:p-6 min-h-[50dvh] max-h-[95dvh] md:max-h-full">
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-semibold">Your Posts</h3>
                 <div className="flex items-center gap-2">
