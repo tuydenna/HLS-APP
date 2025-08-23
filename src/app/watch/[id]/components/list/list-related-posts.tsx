@@ -21,8 +21,8 @@ export default function ListRelatedPosts() {
 
     return (
         posts.length ?
-            <Card className="gap-1 p-3 mt-2 md:mt-0 md:ml-5">
-                <div className="flex flex-col grow">
+            <Card className="gap-1 p-3 mt-2 md:mt-0 md:ml-5 md:grow h-fit">
+                <div className="flex flex-col">
                     {
                         posts.map((post: IVideoPost) => {
                             return (

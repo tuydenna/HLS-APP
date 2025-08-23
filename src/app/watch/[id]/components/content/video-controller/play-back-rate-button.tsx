@@ -1,4 +1,4 @@
-import {RefObject, useState} from "react";
+import {useState} from "react";
 
 export default function PlayBackRateButton({videoEl}: {videoEl: HTMLVideoElement | null}) {
 
@@ -15,7 +15,7 @@ export default function PlayBackRateButton({videoEl}: {videoEl: HTMLVideoElement
     }
 
     return (
-        <button className="speed-btn wide-btn" onClick={changePlaybackSpeed}>
+        <button  className="speed-btnspeed-btn wide-btn text-base md:text-lg" onClick={changePlaybackSpeed}>
             {playBackRate}x
         </button>
     )

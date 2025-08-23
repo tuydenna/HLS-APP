@@ -80,11 +80,11 @@ export default function PlayButton({videoEl, onSeekVideoDuration}: {videoEl: HTM
     }
 
     return (
-        <button className="play-pause-btn" onClick={togglePlay}>
-            <svg className="play-icon" viewBox="0 0 24 24" style={{display: isPlay ? "none" : "block"}}>
+        <button className="play-pause-btn contents" onClick={togglePlay}>
+            <svg  width="40" height="40"  className="play-icon " viewBox="0 0 24 24" style={{display: isPlay ? "none" : "block"}}>
                 <path fill="currentColor" d="M8,5.14V19.14L19,12.14L8,5.14Z"/>
             </svg>
-            <svg className="pause-icon" viewBox="0 0 24 24" style={{display: isPlay ? "block" : "none"}}>
+            <svg  width="40" height="40" className="pause-icon" viewBox="0 0 24 24" style={{display: isPlay ? "block" : "none"}}>
                 <path fill="currentColor" d="M14,19H18V5H14M6,19H10V5H6V19Z"/>
             </svg>
         </button>
