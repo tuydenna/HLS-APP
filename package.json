@@ -1,11 +1,11 @@
 {
-  "name": "YOU DIN TV",
+  "name": "DIN TV",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -H 192.168.100.53 ",
+    "dev": "next dev -H 192.168.18.8",
     "build": "next build",
-    "start": "next start -H 192.168.100.53  -p 3000",
+    "start": "next start -H 192.168.18.8  -p 3000",
     "lint": "next lint"
   },
   "devDependencies": {

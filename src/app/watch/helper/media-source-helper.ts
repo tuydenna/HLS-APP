@@ -8,6 +8,7 @@ const videoConfig = {
     VIEW_COUNT_DELAY: 30
 }
 
+
 const isMediaSourceSupported = (mimeCodec: string) => {
     return "MediaSource" in window && MediaSource.isTypeSupported(mimeCodec);
 };
@@ -26,6 +27,12 @@ function setInitVideoDuration(mediaSource: MediaSource, duration: number) {
     mediaSource.duration = duration;
     return duration
 
+}
+
+function clearSourceBuffer(sourceBuffer: SourceBuffer) {
+    const bufferEndTime: number = sourceBuffer.buffered.end(sourceBuffer.buffered!.length - 1)
+    const bufferStartTime: number = sourceBuffer.buffered.start(0);
+    sourceBuffer.remove(bufferStartTime, bufferEndTime);
 }
 
 function setIsFetchingChunk(queueConfigRef: RefObject<IQueueConfigRef>, isFetchingChunk: boolean = true): boolean {
@@ -113,5 +120,6 @@ export {
     getSegmentEnd,
     streamIsOpen,
     closeStreamSegmentIfPossible,
-    canPreFetchSegment
+    canPreFetchSegment,
+    clearSourceBuffer
 };

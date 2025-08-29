@@ -10,10 +10,15 @@ interface IQueueConfigRef {
     isSeeking: boolean,
 }
 
+interface VideoConfigRef {
+    scale: string
+    prefixSegName: string
+}
+
 interface IViewCountConfig {
     watchTime: number
     lastTimeUpdate: number
     hasCountedView: boolean
 }
 
-export type {IPlaylist, IQueueConfigRef, IViewCountConfig}
+export type {IPlaylist, IQueueConfigRef, IViewCountConfig, VideoConfigRef}

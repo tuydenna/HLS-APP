@@ -10,6 +10,7 @@ import {Card} from "@components/ui/card";
 import SearchService from "@services/search-service";
 import { useRouter, useParams } from 'next/navigation';
 import {RoutesList} from "@util/routes";
+import Link from "next/link";
 
 export default function Header() {
     const [auth, setAuth] = useState<IUser | null>(null);
@@ -66,12 +67,15 @@ export default function Header() {
                 <div className="flex justify-between items-center">
                     <div className="header__left">
                         {/*<i id="menu" className="material-icons">menu</i>*/}
-                        <img
-                            src="/favicon.ico"
-                            alt=""
-                            width={30}
-                            height={30}
-                        />
+                        <Link href="/">
+                            <img
+                                src="/favicon.ico"
+                                alt=""
+                                width={30}
+                                height={30}
+                            />
+                        </Link>
+
                     </div>
 
                     <div className="header__search relative">

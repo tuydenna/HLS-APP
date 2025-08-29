@@ -1,9 +1,10 @@
 import {ErrorException} from "@interfaces/error-exeption";
 
 export const fetchAdapter = {
-    get: function (url: string, headers: HeadersInit) {
+    get: function (url: string, headers: HeadersInit, signal?: AbortSignal) {
         return fetch(url, {
             headers,
+            signal,
             credentials: "include"
         });
     },

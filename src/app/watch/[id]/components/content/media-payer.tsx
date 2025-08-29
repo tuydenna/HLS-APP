@@ -11,7 +11,7 @@ import PlayInTheatreButton from "@watch/[id]/components/content/video-controller
 import PlayFullScreenButton from "@watch/[id]/components/content/video-controller/play-full-screen-button";
 import VideoTimeline from "@watch/[id]/components/content/video-controller/video-timeline";
 import {
-    canPreFetchSegment,
+    canPreFetchSegment, clearSourceBuffer,
     closeStreamSegmentIfPossible, getAndPlusOneSegmentIndex,
     getIsSeeking,
     initMediaSourceExtension,
@@ -22,11 +22,12 @@ import {
     setIsSeeking,
     videoConfig
 } from "@watch/helper/media-source-helper";
-import {IQueueConfigRef} from "@interfaces/video-config";
+import {IQueueConfigRef, VideoConfigRef} from "@interfaces/video-config";
 import SpinnerIndicator from "@watch/[id]/components/content/extentsion/spinner-indicator";
 import {ErrorException} from "@interfaces/error-exeption";
 import {IVideo} from "@interfaces/video";
 import StreamService from "@services/stream-service";
+import SettingButton from "@watch/[id]/components/content/video-controller/setting-button";
 
 export default function MediaPayer(data: {video: IVideo}):JSX.Element {
 
@@ -34,9 +35,9 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
     const mediaSourceRef: RefObject<MediaSource | null> = useRef<MediaSource>(null)
     const sourceBufferRef: RefObject<SourceBuffer | null> = useRef<SourceBuffer>(null)
     const queueConfigRef: RefObject<IQueueConfigRef> = useRef({segmentEnd: 0, isFetchingChunk: false, isSeeking: false})
+    const videoConfigRef: RefObject<VideoConfigRef> = useRef({scale: "360p", prefixSegName: "seg_"})
     const fileSegmentCurrentIndexRef: RefObject<number> = useRef(0)
     const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null)
-    const prefixSegName: string = "seg_";
     const streamService: StreamService = new StreamService();
 
     const fetchAndAppendBuffer = async function (sourceBuffer: SourceBuffer, fileSegment: string): Promise<string | undefined> {
@@ -44,7 +45,6 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
         const retry = async function (): Promise<string | undefined> {
             try {
                 const chunk: ArrayBuffer = await streamService.getSegmentFileBuffer(data.video.id, fileSegment);
-                console.log(chunk.toString());
                 return await new Promise((resolve, reject) => {
                     if (sourceBuffer && !sourceBuffer.updating) {
                         sourceBuffer?.appendBuffer(chunk);
@@ -79,7 +79,7 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
         let retryCount: number = 0;
         const retry = async function (): Promise<string | undefined> {
             try {
-                const res = await streamService.getSeekingSegmentFileBuffer(data.video.id, currentTime);
+                const res = await streamService.getSeekingSegmentFileBuffer(data.video.id, currentTime, videoConfigRef.current.scale);
                 return await new Promise((resolve, reject) => {
                     if (sourceBuffer && !sourceBuffer.updating) {
                         sourceBuffer?.appendBuffer(res.buffer);
@@ -131,11 +131,43 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
                 return
             }
 
-            sourceBuffer.remove(bufferStartTime, bufferEndTime);
+            clearSourceBuffer(sourceBuffer);
+
             sourceBuffer.addEventListener("updateend", async () => {
                 videoEl!.currentTime = currentTime;
                 await fetchSeekingAndAppendBuffer(sourceBuffer, currentTime)
                 setIsSeeking(queueConfigRef, false)
+            }, {once: true});
+        } else {
+            console.error("[sourceBuffer]: is null", sourceBuffer)
+        }
+    }
+
+    const handleChangeVideoScale = async (): Promise<void> => {
+        streamService.abortOngoingStream();
+        setIsSeeking(queueConfigRef);
+        setIsFetchingChunk(queueConfigRef, false);
+
+        let sourceBuffer: SourceBuffer | null = sourceBufferRef.current;
+        const currentTime: number = videoEl!.currentTime;
+
+        if (sourceBuffer) {
+            if (sourceBuffer.updating) {
+                sourceBuffer.abort()
+                console.warn("aborting");
+            }
+
+            clearSourceBuffer(sourceBuffer);
+
+            sourceBuffer.addEventListener("updateend", async () => {
+                await fetchAndAppendBuffer(sourceBuffer, getParamSegmentFilePath("init.mp4"));
+                await fetchSeekingAndAppendBuffer(sourceBuffer, currentTime);
+
+                sourceBufferRef.current = sourceBuffer;
+
+                setIsSeeking(queueConfigRef, false);
+                await prefetchSegmentChunkBuffer();
+
                 console.log("[handleSeekVideoDuration]: ", sourceBuffer.buffered.length, sourceBuffer.buffered.start(0), sourceBuffer.buffered.end(0));
             }, {once: true});
         } else {
@@ -143,15 +175,18 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
         }
     }
 
-    async function prefetchSegmentChunkBuffer() {
+    const prefetchSegmentChunkBuffer = async function () {
         if (!getIsSeeking(queueConfigRef) && canPreFetchSegment(queueConfigRef, sourceBufferRef, {currentTime: videoRef.current!.currentTime, videoSize: data.video.size})) {
-            console.log("[prefetchSegmentChunkBuffer]");
             setIsFetchingChunk(queueConfigRef)
-            await fetchAndAppendBuffer(sourceBufferRef.current!, `${prefixSegName}${fileSegmentCurrentIndexRef.current}.m4s`);
-            console.log("[prefetchSegmentChunkBuffer]:", sourceBufferRef.current?.buffered.length)
+            await fetchAndAppendBuffer(sourceBufferRef.current!, getParamSegmentFilePath());
+            // console.log("[prefetchSegmentChunkBuffer]:", sourceBufferRef.current?.buffered.length)
         } else {
             console.warn("[prefetchSegmentChunkBuffer]: no permission!")
         }
+    }
+
+    const getParamSegmentFilePath = function (segmentName?: string): string {
+        return  segmentName ? `${segmentName}?scale=${videoConfigRef.current.scale}` : `${videoConfigRef.current.prefixSegName + fileSegmentCurrentIndexRef.current}.m4s?scale=${videoConfigRef.current.scale}`;
     }
 
     useEffect(() => {
@@ -172,9 +207,9 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
             sourceBufferRef.current = sourceBuffer;
             setInitVideoDuration(mediaSourceRef.current!, data.video.duration)
 
-            await fetchAndAppendBuffer(sourceBuffer, "init.mp4");
+            await fetchAndAppendBuffer(sourceBuffer, getParamSegmentFilePath("init.mp4"));
             fileSegmentCurrentIndexRef.current = 0;
-            await fetchAndAppendBuffer(sourceBuffer, `${prefixSegName}${fileSegmentCurrentIndexRef.current}.m4s`);
+            await fetchAndAppendBuffer(sourceBuffer, getParamSegmentFilePath());
         }
 
         if (videoEl) {
@@ -220,13 +255,15 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
                                   d="M18,11H16.5V10.5H14.5V13.5H16.5V13H18V14A1,1 0 0,1 17,15H14A1,1 0 0,1 13,14V10A1,1 0 0,1 14,9H17A1,1 0 0,1 18,10M11,11H9.5V10.5H7.5V13.5H9.5V13H11V14A1,1 0 0,1 10,15H7A1,1 0 0,1 6,14V10A1,1 0 0,1 7,9H10A1,1 0 0,1 11,10M19,4H5C3.89,4 3,4.89 3,6V18A2,2 0 0,0 5,20H19A2,2 0 0,0 21,18V6C21,4.89 20.1,4 19,4Z"/>
                         </svg>
                     </button>
+                    <SettingButton videoConfigRef={videoConfigRef} handleChangeVideoScale={handleChangeVideoScale}/>
                     <PlayBackRateButton videoEl={videoEl}/>
                     <PlayInPictureButton videoEl={videoEl}/>
                     <PlayInTheatreButton videoEl={videoEl}/>
                     <PlayFullScreenButton videoEl={videoEl}/>
                 </div>
             </div>
-            <video ref={videoRef} playsInline={true} controls={false} autoPlay={false} muted={true} preload={"metadata"}>
+            <video ref={videoRef} playsInline={true} controls={false} autoPlay={false} muted={true}
+                   preload={"metadata"}>
                 {/*<source src={"http://192.168.100.53:3080/api/streams/fmp4/playlist"} type="application/vnd.apple.mpegurl" />*/}
                 <track kind="captions" srcLang="en" src="/media_player/assets/subtitles.vtt"/>
             </video>
