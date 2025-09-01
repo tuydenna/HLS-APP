@@ -21,4 +21,10 @@ interface IViewCountConfig {
     hasCountedView: boolean
 }
 
-export type {IPlaylist, IQueueConfigRef, IViewCountConfig, VideoConfigRef}
+interface IScaleOptions {
+    readonly "360p": "360p"
+    readonly "720p": "720p"
+    readonly "1080p": "1080p"
+}
+
+export type {IPlaylist, IScaleOptions, IQueueConfigRef, IViewCountConfig, VideoConfigRef}

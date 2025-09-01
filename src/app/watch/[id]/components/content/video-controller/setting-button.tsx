@@ -1,9 +1,11 @@
 import {RefObject, useState} from "react";
-import {VideoConfigRef} from "@interfaces/video-config";
+import {IScaleOptions, VideoConfigRef} from "@interfaces/video-config";
+import {ScaleOptions} from "@constant/video-config";
 
 export default function SettingButton({videoConfigRef, handleChangeVideoScale}: {videoConfigRef: RefObject<VideoConfigRef>, handleChangeVideoScale: Function}) {
 
     const [isOpen, setIsOpen] = useState(false);
+    const [scale, setScale] = useState("360p");
 
     const toggleIsOpen = function () {
         setIsOpen(!isOpen);
@@ -12,15 +14,25 @@ export default function SettingButton({videoConfigRef, handleChangeVideoScale}: 
     const onChangeScale = function (scale: string) {
         videoConfigRef.current.scale = scale;
         handleChangeVideoScale()
+        setScale(scale);
     }
 
     return (
         <div onClick={toggleIsOpen}  className="relative cursor-pointer">
-            <div className={`absolute top-[-150px] bg-[#00000096] p-3 ${isOpen ? 'block' : 'hidden'}`}>
+            <div className={`absolute top-[-150px] bg-[#00000096] rounded-sm py-3 ${isOpen ? 'block' : 'hidden'}`}>
                 <ul>
-                    <li className="px-2 py-1 hover:bg-gray-400" onClick={()=> onChangeScale("1080p")}>1080p</li>
-                    <li className="px-2 py-1 hover:bg-gray-400" onClick={()=> onChangeScale("720p")}>720p</li>
-                    <li className="px-2 py-1 hover:bg-gray-400" onClick={()=> onChangeScale("360p")}>360p</li>
+                    <li className="flex items-center px-5 py-1  hover:bg-[#515659]" onClick={()=> onChangeScale("1080p")}>
+                        <span className={`w-2 h-2 mr-2 bg-white rounded ${scale === ScaleOptions["1080p"] ? "visible" : "invisible"}`}></span>
+                        1080p
+                    </li>
+                    <li className="flex items-center px-5 py-1 hover:bg-[#515659]" onClick={()=> onChangeScale("720p")}>
+                        <span className={`w-2 h-2 mr-2 bg-white rounded ${scale === ScaleOptions["720p"] ? "visible" : "invisible"}`}></span>
+                        720p
+                    </li>
+                    <li className="flex items-center px-5 py-1 hover:bg-[#515659]" onClick={()=> onChangeScale("360p")}>
+                        <span className={`w-2 h-2 mr-2 bg-white rounded ${scale === ScaleOptions["360p"] ? "visible" : "invisible"}`}></span>
+                        360p
+                    </li>
                 </ul>
             </div>
             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none">
