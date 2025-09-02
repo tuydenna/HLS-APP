@@ -6,7 +6,7 @@ export default class StreamService extends BaseService<null> {
     private abortController!: AbortController;
 
     constructor() {
-        super("/streams/fmp4");
+        super("/v2/streams/fmp4");
     }
 
     async getSegmentFileBuffer(videoId: string, segmentFile: string): Promise<ArrayBuffer> {
@@ -29,8 +29,8 @@ export default class StreamService extends BaseService<null> {
         return {fileSegment: res.headers.get("X-Segment-Name"), buffer: (await res.arrayBuffer())};
     }
 
-    getPlaylistEndPoint(videoId: string): string {
-        return this.getBaseAPI(videoId + "/playlist");
+    getPlaylistEndPoint(videoId: string, scale?: string): string {
+        return this.getBaseAPI(videoId + "/playlist?scale=" + scale);
     }
 
     abortOngoingStream() {

@@ -15,7 +15,7 @@ import {
     closeStreamSegmentIfPossible, getAndPlusOneSegmentIndex,
     getIsSeeking,
     initMediaSourceExtension,
-    initSourceBuffer,
+    initSourceBuffer, isIOS,
     isMediaSourceSupported, logMediaEncoderError,
     setInitVideoDuration,
     setIsFetchingChunk,
@@ -111,6 +111,14 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
     }
 
     const handleSeekVideoDuration = async (currentTime: number): Promise<void> => {
+
+        if (isIOS(videoConfig.MIME_CODEC)) {
+            videoEl!.pause();
+            videoEl!.currentTime = currentTime;
+            videoEl!.play();
+            return;
+        }
+
         setIsSeeking(queueConfigRef);
         setIsFetchingChunk(queueConfigRef, false);
 
@@ -135,8 +143,8 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
 
             sourceBuffer.addEventListener("updateend", async () => {
                 videoEl!.currentTime = currentTime;
-                await fetchSeekingAndAppendBuffer(sourceBuffer, currentTime)
-                setIsSeeking(queueConfigRef, false)
+                await fetchSeekingAndAppendBuffer(sourceBuffer, currentTime);
+                setIsSeeking(queueConfigRef, false);
             }, {once: true});
         } else {
             console.error("[sourceBuffer]: is null", sourceBuffer)
@@ -144,12 +152,22 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
     }
 
     const handleChangeVideoScale = async (): Promise<void> => {
+        const currentTime: number = videoEl!.currentTime;
+        // videoEl!.pause();
+
+        if (isIOS(videoConfig.MIME_CODEC)) {
+            videoEl!.src = streamService.getPlaylistEndPoint(data.video.id, videoConfigRef.current.scale);
+            videoEl!.currentTime = currentTime;
+            videoEl!.load();
+            if (!videoEl?.paused) videoEl!.play();
+            return;
+        }
+
         streamService.abortOngoingStream();
         setIsSeeking(queueConfigRef);
         setIsFetchingChunk(queueConfigRef, false);
 
         let sourceBuffer: SourceBuffer | null = sourceBufferRef.current;
-        const currentTime: number = videoEl!.currentTime;
 
         if (sourceBuffer) {
             if (sourceBuffer.updating) {
@@ -168,6 +186,17 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
                 setIsSeeking(queueConfigRef, false);
                 await prefetchSegmentChunkBuffer();
 
+                videoEl!.currentTime = currentTime;
+
+                if(videoEl?.paused) {
+                    alert("Paused");
+                    videoEl!.pause();
+                } else {
+                    videoEl!.play();
+                }
+                videoEl!.pause();
+
+                // if (!videoEl?.paused) videoEl!.play();
                 console.log("[handleSeekVideoDuration]: ", sourceBuffer.buffered.length, sourceBuffer.buffered.start(0), sourceBuffer.buffered.end(0));
             }, {once: true});
         } else {
@@ -213,15 +242,15 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
         }
 
         if (videoEl) {
-            if (isMediaSourceSupported(videoConfig.MIME_CODEC)) {
+            if (isIOS(videoConfig.MIME_CODEC)) {
+                videoEl.src = streamService.getPlaylistEndPoint(data.video.id, videoConfigRef.current.scale);
+                videoEl.preload = "metadata";
+            } else {
                 const mediaSource: MediaSource = initMediaSourceExtension(videoEl);
                 mediaSourceRef.current = mediaSource;
                 mediaSource.addEventListener('sourceopen', createBufferPipelineAndInitSegmentMetadata);
                 videoEl.addEventListener("timeupdate", prefetchSegmentChunkBuffer);
                 videoEl.addEventListener("error", logMediaEncoderError)
-            } else {
-                videoEl.src = streamService.getPlaylistEndPoint(data.video.id)
-                videoEl.preload = "metadata";
                 // videoEl.src = "/video/playlist.m3u8"
             }
         }

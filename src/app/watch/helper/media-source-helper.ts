@@ -13,6 +13,10 @@ const isMediaSourceSupported = (mimeCodec: string) => {
     return "MediaSource" in window && MediaSource.isTypeSupported(mimeCodec);
 };
 
+const isIOS = (mimeCodec: string) => {
+    return !("MediaSource" in window && MediaSource.isTypeSupported(mimeCodec));
+};
+
 const initMediaSourceExtension = (videoEl: HTMLVideoElement): MediaSource => {
     const mediaSource: MediaSource = new MediaSource();
     videoEl.src = URL.createObjectURL(mediaSource);
@@ -112,6 +116,7 @@ export {
     setIsSeeking,
     getIsSeeking,
     isMediaSourceSupported,
+    isIOS,
     setInitVideoDuration,
     initSourceBuffer,
     initMediaSourceExtension,
