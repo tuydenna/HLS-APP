@@ -44,7 +44,14 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
         let retryCount: number = 0;
         const retry = async function (): Promise<string | undefined> {
             try {
-                const chunk: ArrayBuffer = await streamService.getSegmentFileBuffer(data.video.id, fileSegment);
+                const chunk: ArrayBuffer | null = await streamService.getSegmentFileBuffer(data.video.id, fileSegment);
+
+                if (chunk == null) {
+                    mediaSourceRef.current?.endOfStream();
+                    console.warn("[fetchAndAppendBuffer]: stream is ended!");
+                    return;
+                }
+
                 return await new Promise((resolve, reject) => {
                     if (sourceBuffer && !sourceBuffer.updating) {
                         sourceBuffer?.appendBuffer(chunk);
@@ -59,11 +66,6 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
                 });
             } catch (e: ErrorException | unknown) {
                 if (e instanceof ErrorException) {
-                    if (e.code == 404) {
-                        mediaSourceRef.current?.endOfStream();
-                        console.error("[fetchAndAppendBufferV2]: ", e);
-                        return;
-                    }
                     if (retryCount <= 5) {
                         retryCount++;
                         return await retry()
@@ -111,18 +113,22 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
     }
 
     const handleSeekVideoDuration = async (currentTime: number): Promise<void> => {
-
+        // Config for IOS
         if (isIOS(videoConfig.MIME_CODEC)) {
-            videoEl!.pause();
+
             videoEl!.currentTime = currentTime;
-            videoEl!.play();
             return;
+        }
+
+        //Already Ended video stream
+        if (videoEl?.ended) {
+            return handleReplay(currentTime);
         }
 
         setIsSeeking(queueConfigRef);
         setIsFetchingChunk(queueConfigRef, false);
 
-        let sourceBuffer = sourceBufferRef.current;
+        let sourceBuffer: SourceBuffer | null = sourceBufferRef.current;
 
         if (sourceBuffer) {
             if (sourceBuffer.updating) {
@@ -153,13 +159,11 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
 
     const handleChangeVideoScale = async (): Promise<void> => {
         const currentTime: number = videoEl!.currentTime;
-        // videoEl!.pause();
 
         if (isIOS(videoConfig.MIME_CODEC)) {
             videoEl!.src = streamService.getPlaylistEndPoint(data.video.id, videoConfigRef.current.scale);
             videoEl!.currentTime = currentTime;
             videoEl!.load();
-            if (!videoEl?.paused) videoEl!.play();
             return;
         }
 
@@ -188,15 +192,6 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
 
                 videoEl!.currentTime = currentTime;
 
-                if(videoEl?.paused) {
-                    alert("Paused");
-                    videoEl!.pause();
-                } else {
-                    videoEl!.play();
-                }
-                videoEl!.pause();
-
-                // if (!videoEl?.paused) videoEl!.play();
                 console.log("[handleSeekVideoDuration]: ", sourceBuffer.buffered.length, sourceBuffer.buffered.start(0), sourceBuffer.buffered.end(0));
             }, {once: true});
         } else {
@@ -216,6 +211,21 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
 
     const getParamSegmentFilePath = function (segmentName?: string): string {
         return  segmentName ? `${segmentName}?scale=${videoConfigRef.current.scale}` : `${videoConfigRef.current.prefixSegName + fileSegmentCurrentIndexRef.current}.m4s?scale=${videoConfigRef.current.scale}`;
+    }
+
+    const handleReplay = async (currentTime: number = 0): Promise<void> => {
+        let sourceBuffer: SourceBuffer | null = sourceBufferRef.current;
+
+        if (sourceBuffer) {
+            if (sourceBuffer.updating) {
+                sourceBuffer.abort()
+                console.warn("aborting");
+            }
+            clearSourceBuffer(sourceBuffer);
+        }
+
+        videoEl!.currentTime = currentTime;
+        videoEl!.play();
     }
 
     useEffect(() => {
@@ -275,7 +285,7 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
             <div className="video-controls-container">
                 <VideoTimeline videoEl={videoEl} sourceBufferRef={sourceBufferRef} onSeekVideoDuration={handleSeekVideoDuration} />
                 <div className="controls">
-                    <PlayButton videoEl={videoEl} onSeekVideoDuration={handleSeekVideoDuration}/>
+                    <PlayButton videoEl={videoEl} handleReplay={handleReplay}/>
                     <SoundButton videoEl={videoEl}/>
                     <DurationTimeLabel videoEl={videoEl}/>
                     {/*<button className="captions-btns">*/}
@@ -291,7 +301,7 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
                     <PlayFullScreenButton videoEl={videoEl}/>
                 </div>
             </div>
-            <video ref={videoRef} playsInline={true} controls={false} autoPlay={false} muted={true}
+            <video ref={videoRef} playsInline={true} controls={false} autoPlay={true} muted={false}
                    preload={"metadata"}>
                 {/*<source src={"http://192.168.100.53:3080/api/streams/fmp4/playlist"} type="application/vnd.apple.mpegurl" />*/}
                 <track kind="captions" srcLang="en" src="/media_player/assets/subtitles.vtt"/>

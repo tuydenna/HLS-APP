@@ -16,7 +16,7 @@ export default function DurationTimeLabel({videoEl}: {videoEl: HTMLVideoElement 
         }
 
         function autoPlay() {
-            videoEl?.play();
+
         }
 
         function timeupdateEvent() {

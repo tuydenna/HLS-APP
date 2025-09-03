@@ -9,14 +9,14 @@ export default class StreamService extends BaseService<null> {
         super("/v2/streams/fmp4");
     }
 
-    async getSegmentFileBuffer(videoId: string, segmentFile: string): Promise<ArrayBuffer> {
+    async getSegmentFileBuffer(videoId: string, segmentFile: string): Promise<ArrayBuffer | null> {
         this.abortController = new AbortController();
         const res = await fetchAdapter.get(this.getBaseAPI(videoId + "/" + segmentFile), this.getHeaders(), this.abortController.signal);
         if (!res.ok) {
             const json = await res.json();
             throw new ErrorException(res.status, json.message);
         }
-        return (await res.arrayBuffer());
+        return (res.status === 204) ? null : (await res.arrayBuffer());
     }
 
     async getSeekingSegmentFileBuffer(videoId: string, currentTime: number, scale: string): Promise<{fileSegment: string | null, buffer: ArrayBuffer}> {

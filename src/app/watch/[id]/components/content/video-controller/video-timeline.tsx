@@ -3,11 +3,11 @@ import {JSX, useEffect, useState, createRef, useRef, RefObject, CSSProperties} f
 export default function VideoTimeline({videoEl, sourceBufferRef, onSeekVideoDuration}: {videoEl: HTMLVideoElement | null, sourceBufferRef: RefObject<SourceBuffer | null>, onSeekVideoDuration: Function}): JSX.Element {
     const [timeline, setTimeline] = useState<number>(.0)
     const [previewTimeline, setPreviewTimeline] = useState<number>(.0)
-    const isScrubbingRef: RefObject<HTMLDivElement | boolean> = useRef(false)
+    const seekConfigRef: RefObject<{isPlayed: boolean, isScrubbing: boolean}> = useRef({isPlayed: false, isScrubbing: false})
     const timelineRef: RefObject<HTMLDivElement | null> = createRef<HTMLDivElement | null>()
     const defaultPreviewTimelineRef: RefObject<number> = useRef<number>(0)
 
-    useEffect(()=>{
+    useEffect(()=> {
         const timelineEl: HTMLDivElement = timelineRef.current!;
 
         function getCurrentTimelinePosition(e:MouseEvent): number {
@@ -24,12 +24,13 @@ export default function VideoTimeline({videoEl, sourceBufferRef, onSeekVideoDura
 
         function mouseDownScrubbing(e: MouseEvent) {
             e.preventDefault()
-            isScrubbingRef.current = true;
-            videoEl!.pause()
+            seekConfigRef.current.isScrubbing = true;
+            seekConfigRef.current.isPlayed = !videoEl?.paused;
+            videoEl!.pause();
         }
 
         function mouseMoveOnTimeline(e: MouseEvent) {
-            if (isScrubbingRef.current) {
+            if (seekConfigRef.current.isScrubbing) {
                 setTimeline(getCurrentTimelinePosition(e));
             } else {
                 setPreviewTimeline(getCurrentTimelinePosition(e));
@@ -37,18 +38,19 @@ export default function VideoTimeline({videoEl, sourceBufferRef, onSeekVideoDura
         }
 
         function mouseMoveOnDocument(e: MouseEvent) {
-            if (isScrubbingRef.current) {
+            if (seekConfigRef.current.isScrubbing) {
                 setTimeline(getCurrentTimelinePosition(e))
             }
         }
 
         function onSeekingVideo(e: MouseEvent) {
-            if (isScrubbingRef.current) {
+            if (seekConfigRef.current.isScrubbing) {
                 const currentTimeline: number = getCurrentTimelinePosition(e)
-                isScrubbingRef.current = false;
+                seekConfigRef.current.isScrubbing = false;
                 setTimeline(currentTimeline);
                 const currentTime: number = currentTimeline * videoEl!.duration
                 onSeekVideoDuration(currentTime);
+                if (seekConfigRef.current.isPlayed) videoEl!.play();
             }
         }
 

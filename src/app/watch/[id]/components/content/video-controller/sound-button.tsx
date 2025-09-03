@@ -2,7 +2,7 @@ import {useState} from "react";
 
 export default function SoundButton({videoEl}: {videoEl: HTMLVideoElement | null}) {
 
-    const [isMuted, setIsMuted] = useState(true)
+    const [isMuted, setIsMuted] = useState(false)
     const [volume, setVolume] = useState(1)
 
     const toggleMuted = function () {

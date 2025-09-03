@@ -1,4 +1,3 @@
-
 'use client';
 
 import {JSX, useState} from 'react';
@@ -39,7 +38,7 @@ export default function RegisterPage(): JSX.Element {
 
         try {
             const auth: IUser = await new AuthService().login({username: email, password});
-            console.log(auth);
+            console.log("auth", auth);
             if (auth) {
                 localStorage.setItem('auth', JSON.stringify(auth));
                 router.push("/");

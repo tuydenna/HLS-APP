@@ -24,10 +24,12 @@ const initMediaSourceExtension = (videoEl: HTMLVideoElement): MediaSource => {
 }
 
 const initSourceBuffer = (mediaSource: MediaSource): SourceBuffer => {
+    if (mediaSource.activeSourceBuffers.length >= 1) return mediaSource.sourceBuffers[0];
     return mediaSource.addSourceBuffer(videoConfig.MIME_CODEC)
 }
 
 function setInitVideoDuration(mediaSource: MediaSource, duration: number) {
+    if (mediaSource.activeSourceBuffers.length >= 1)  return duration;
     mediaSource.duration = duration;
     return duration
 

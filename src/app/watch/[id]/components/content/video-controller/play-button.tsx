@@ -6,7 +6,7 @@ import {IViewCountConfig} from "@interfaces/video-config";
 import {videoConfig} from "@watch/helper/media-source-helper";
 import PostService from "@services/post-service";
 
-export default function PlayButton({videoEl, onSeekVideoDuration}: {videoEl: HTMLVideoElement | null, onSeekVideoDuration: Function}) {
+export default function PlayButton({videoEl, handleReplay}: {videoEl: HTMLVideoElement | null, handleReplay: Function}) {
     const [isPlay, setIsPlay] = useState(false);
     const viewCountConfig: RefObject<IViewCountConfig> = useRef({watchTime: 0, lastTimeUpdate: 0, hasCountedView: false});
     const params: {id: string} | null = useParams<{id: string}>();
@@ -63,20 +63,15 @@ export default function PlayButton({videoEl, onSeekVideoDuration}: {videoEl: HTM
     }, [videoEl, isPlay]);
 
     const togglePlay = function () {
-        if (videoEl) {
-            if (isPlay) {
-                increaseWatchTime(videoEl!, viewCountConfig);
-                videoEl.pause();
-            } else {
-                if (videoEl.ended) {
-                    onSeekVideoDuration(0)
-                }
-                viewCountConfig.current.lastTimeUpdate = videoEl.currentTime;
-                videoEl.play()
-            }
-            setIsPlay(!isPlay)
+        if (!videoEl) return;
+
+        if (isPlay) {
+            increaseWatchTime(videoEl!, viewCountConfig);
+            videoEl.pause();
+        } else if(videoEl.ended) {
+            handleReplay()
         }
-        return;
+        setIsPlay(!isPlay)
     }
 
     return (
