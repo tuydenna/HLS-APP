@@ -69,7 +69,11 @@ export default function PlayButton({videoEl, handleReplay}: {videoEl: HTMLVideoE
             increaseWatchTime(videoEl!, viewCountConfig);
             videoEl.pause();
         } else if(videoEl.ended) {
-            handleReplay()
+            videoEl.play();
+            handleReplay();
+            setIsPlay(isPlay);
+        } else {
+            videoEl.play();
         }
         setIsPlay(!isPlay)
     }

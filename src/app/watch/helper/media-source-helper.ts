@@ -1,5 +1,5 @@
 import {RefObject} from "react";
-import {IQueueConfigRef} from "@interfaces/video-config";
+import {IQueueConfigRef, IVideoConfigRef} from "@interfaces/video-config";
 
 const videoConfig = {
     MIME_CODEC: 'video/mp4; codecs="avc1.64002A, mp4a.40.2"',
@@ -32,13 +32,26 @@ function setInitVideoDuration(mediaSource: MediaSource, duration: number) {
     if (mediaSource.activeSourceBuffers.length >= 1)  return duration;
     mediaSource.duration = duration;
     return duration
+}
 
+function resetIsEndStream(videoConfigRef: RefObject<IVideoConfigRef>) {
+    videoConfigRef.current.isEndStream = false;
+}
+
+function isEndStream (videoConfigRef: RefObject<IVideoConfigRef>): boolean {
+    return videoConfigRef.current.isEndStream;
+}
+
+function isBeginSeekToNewPosition(videoEl: HTMLVideoElement | null): boolean {
+    return videoEl!.currentTime > 0
 }
 
 function clearSourceBuffer(sourceBuffer: SourceBuffer) {
-    const bufferEndTime: number = sourceBuffer.buffered.end(sourceBuffer.buffered!.length - 1)
-    const bufferStartTime: number = sourceBuffer.buffered.start(0);
-    sourceBuffer.remove(bufferStartTime, bufferEndTime);
+    if (sourceBuffer.buffered.length) {
+        const bufferEndTime: number = sourceBuffer.buffered.end(sourceBuffer.buffered!.length - 1)
+        const bufferStartTime: number = sourceBuffer.buffered.start(0);
+        sourceBuffer.remove(bufferStartTime, bufferEndTime);
+    }
 }
 
 function setIsFetchingChunk(queueConfigRef: RefObject<IQueueConfigRef>, isFetchingChunk: boolean = true): boolean {
@@ -80,14 +93,22 @@ const closeStreamSegmentIfPossible = function (mediaSourceRef: RefObject<MediaSo
     return false
 }
 
+function hasEnoughBuffer(sourceBuffer: SourceBuffer, currentTime: number): boolean {
+    if (sourceBuffer.buffered.length) {
+        const bufferedDuration: number = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1);
+        return currentTime + videoConfig.BUFFER_FETCH_GAP >= bufferedDuration;
+    }
+    return false;
+
+}
+
 function canPreFetchSegment (queueConfigRef: RefObject<IQueueConfigRef>, sourceBufferRef: RefObject<SourceBuffer | null>, {videoSize, currentTime}: {videoSize: number, currentTime: number}): boolean {
     const sourceBuffer: SourceBuffer | null = sourceBufferRef.current;
     if (!sourceBuffer) {
         console.error("[prefetchSegmentChunkBuffer]: sourceBuffer is null");
         return false
     }
-    const bufferedDuration: number = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1)
-    return !!(!getIsFetchingChunk(queueConfigRef) && currentTime && (currentTime + videoConfig.BUFFER_FETCH_GAP >= bufferedDuration)) && streamIsOpen(queueConfigRef, videoSize)
+    return !!(!getIsFetchingChunk(queueConfigRef) && currentTime && hasEnoughBuffer(sourceBuffer, currentTime)) && streamIsOpen(queueConfigRef, videoSize)
 }
 
 function findSegment(currentTime: number) {
@@ -114,6 +135,9 @@ export {
     logMediaEncoderError,
     getAndPlusOneSegmentIndex,
     videoConfig,
+    isEndStream,
+    resetIsEndStream,
+    isBeginSeekToNewPosition,
     findSegment,
     setIsSeeking,
     getIsSeeking,

@@ -3,7 +3,7 @@ import {JSX, useEffect, useState, createRef, useRef, RefObject, CSSProperties} f
 export default function VideoTimeline({videoEl, sourceBufferRef, onSeekVideoDuration}: {videoEl: HTMLVideoElement | null, sourceBufferRef: RefObject<SourceBuffer | null>, onSeekVideoDuration: Function}): JSX.Element {
     const [timeline, setTimeline] = useState<number>(.0)
     const [previewTimeline, setPreviewTimeline] = useState<number>(.0)
-    const seekConfigRef: RefObject<{isPlayed: boolean, isScrubbing: boolean}> = useRef({isPlayed: false, isScrubbing: false})
+    const seekConfigRef: RefObject<{isPlayed: boolean, isScrubbing: boolean, seekTimeout: NodeJS.Timeout | undefined}> = useRef({isPlayed: false, isScrubbing: false, seekTimeout: undefined})
     const timelineRef: RefObject<HTMLDivElement | null> = createRef<HTMLDivElement | null>()
     const defaultPreviewTimelineRef: RefObject<number> = useRef<number>(0)
 
@@ -49,8 +49,11 @@ export default function VideoTimeline({videoEl, sourceBufferRef, onSeekVideoDura
                 seekConfigRef.current.isScrubbing = false;
                 setTimeline(currentTimeline);
                 const currentTime: number = currentTimeline * videoEl!.duration
-                onSeekVideoDuration(currentTime);
-                if (seekConfigRef.current.isPlayed) videoEl!.play();
+                clearTimeout(seekConfigRef.current.seekTimeout)
+                seekConfigRef.current.seekTimeout  = setTimeout(function (){
+                    onSeekVideoDuration(currentTime);
+                    if (seekConfigRef.current.isPlayed) videoEl!.play();
+                }, 1000)
             }
         }
 
@@ -73,10 +76,22 @@ export default function VideoTimeline({videoEl, sourceBufferRef, onSeekVideoDura
             }
         }
 
+        function isReplay() {
+            return videoEl!.currentTime === 0;
+        }
+
+        function resetVideoTimelineOnReplay() {
+            if (isReplay()) {
+                setTimeline(.0)
+                resetPreviewTimeline();
+            }
+        }
+
         if (!videoEl) return
 
         videoEl.addEventListener("timeupdate", updateTimeline)
         videoEl.addEventListener("progress", updatePreviewTimeline)
+        videoEl.addEventListener("seeking", resetVideoTimelineOnReplay);
 
         if (!timelineEl) return
 
@@ -91,6 +106,7 @@ export default function VideoTimeline({videoEl, sourceBufferRef, onSeekVideoDura
             if (videoEl) {
                 videoEl.removeEventListener("timeupdate", updateTimeline)
                 videoEl.removeEventListener("progress", updatePreviewTimeline)
+                videoEl.removeEventListener("seeking", resetVideoTimelineOnReplay);
             }
             if (timelineEl) {
                 timelineEl.removeEventListener("mousedown", mouseDownScrubbing)

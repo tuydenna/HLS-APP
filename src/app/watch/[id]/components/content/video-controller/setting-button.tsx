@@ -1,8 +1,8 @@
 import {RefObject, useState} from "react";
-import {IScaleOptions, VideoConfigRef} from "@interfaces/video-config";
+import {IVideoConfigRef} from "@interfaces/video-config";
 import {ScaleOptions} from "@constant/video-config";
 
-export default function SettingButton({videoConfigRef, handleChangeVideoScale}: {videoConfigRef: RefObject<VideoConfigRef>, handleChangeVideoScale: Function}) {
+export default function SettingButton({videoConfigRef, handleChangeVideoScale}: {videoConfigRef: RefObject<IVideoConfigRef>, handleChangeVideoScale: Function}) {
 
     const [isOpen, setIsOpen] = useState(false);
     const [scale, setScale] = useState("360p");

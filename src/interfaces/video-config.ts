@@ -10,9 +10,10 @@ interface IQueueConfigRef {
     isSeeking: boolean,
 }
 
-interface VideoConfigRef {
+interface IVideoConfigRef {
     scale: string
     prefixSegName: string
+    isEndStream: boolean
 }
 
 interface IViewCountConfig {
@@ -27,4 +28,4 @@ interface IScaleOptions {
     readonly "1080p": "1080p"
 }
 
-export type {IPlaylist, IScaleOptions, IQueueConfigRef, IViewCountConfig, VideoConfigRef}
+export type {IPlaylist, IScaleOptions, IQueueConfigRef, IViewCountConfig, IVideoConfigRef}

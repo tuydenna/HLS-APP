@@ -13,7 +13,7 @@ export default class PostService extends BaseService<IVideoPost> {
         if (res.ok) {
             return (await res.json()).data;
         }
-        throw new ErrorException(res.status, (await res.json()).data.message);
+        throw new ErrorException(res.status, (await res.json()).message);
     }
 
     async dislikePost(postId: string, authId: string): Promise<IVideoPost> {
@@ -21,7 +21,7 @@ export default class PostService extends BaseService<IVideoPost> {
         if (res.ok) {
             return (await res.json()).data;
         }
-        throw new ErrorException(res.status, (await res.json()).data.message);
+        throw new ErrorException(res.status, (await res.json()).message);
     }
 
     async increaseView(postId: string): Promise<IVideoPost> {
@@ -29,7 +29,7 @@ export default class PostService extends BaseService<IVideoPost> {
         if (res.ok) {
             return (await res.json()).data;
         }
-        throw new ErrorException(res.status, (await res.json()).data.message);
+        throw new ErrorException(res.status, (await res.json()).message);
     }
 
 }

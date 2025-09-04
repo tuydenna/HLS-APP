@@ -20,7 +20,8 @@ export default class StreamService extends BaseService<null> {
     }
 
     async getSeekingSegmentFileBuffer(videoId: string, currentTime: number, scale: string): Promise<{fileSegment: string | null, buffer: ArrayBuffer}> {
-        const res = await fetchAdapter.get(this.getBaseAPI("seeks/" + videoId + "/" + currentTime + "?scale=" + scale), this.getHeaders());
+        this.abortController = new AbortController();
+        const res = await fetchAdapter.get(this.getBaseAPI("seeks/" + videoId + "/" + currentTime + "?scale=" + scale), this.getHeaders(), this.abortController.signal);
         if (!res.ok) {
             const json = await res.json();
             throw new ErrorException(res.status, json.message);
