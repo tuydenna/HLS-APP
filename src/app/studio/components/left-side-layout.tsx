@@ -53,6 +53,7 @@ export function LeftSideLayout({setCreatedPost}: {setCreatedPost: Function}) {
     };
 
     function onResetForm() {
+        setError("");
         formRef.current?.reset();
         setThumbnail(null);
         setVideo(null);
@@ -106,14 +107,14 @@ export function LeftSideLayout({setCreatedPost}: {setCreatedPost: Function}) {
             <form ref={formRef} onSubmit={onPublish} className="space-y-4 flex grow flex-col">
                 <Label className="text-red-500">{errorMsg}</Label>
                 <Input name="title" placeholder="Title" required={true} />
-                <Textarea name="description" placeholder="Description" required={true} />
+                <Textarea name="description" placeholder="Description" rows={5} className="overflow-y-scroll max-h-40 " required={true} />
                 <Select value={status} onValueChange={setStatus}>
                     <SelectContent>
                         <SelectItem value="Draft">Draft</SelectItem>
                         <SelectItem value="Published">Published</SelectItem>
                     </SelectContent>
                 </Select>
-                <div className="flex grow">
+                <div className="flex grow h-[300px]">
                     <div
                         onDrop={(e: React.DragEvent<HTMLDivElement>) => handleDrop(e, "image")}
                         onDragOver={(e) => e.preventDefault()}
@@ -143,7 +144,7 @@ export function LeftSideLayout({setCreatedPost}: {setCreatedPost: Function}) {
                     <div
                         onDrop={(e) => handleDrop(e, "video")}
                         onDragOver={(e) => e.preventDefault()}
-                        className="border-2 border-dashed p-4 rounded-xl text-center cursor-pointer  w-[60%]"
+                        className=" border-2 border-dashed p-4 rounded-xl text-center cursor-pointer w-[60%]"
                     >
                         <p>Drop video here or click to upload</p>
                         <Input
@@ -156,8 +157,9 @@ export function LeftSideLayout({setCreatedPost}: {setCreatedPost: Function}) {
                         <label htmlFor="video-upload" className="inline-block px-4 py-2 mt-2 bg-blue-100 rounded cursor-pointer text-sm text-blue-600">
                             Select Video
                         </label>
+
                         {video && (
-                            <video controls className="w-full mt-2 rounded">
+                            <video controls className="h-[75%] w-full mt-2 rounded">
                                 <source src={URL.createObjectURL(video)} />
                             </video>
                         )}
