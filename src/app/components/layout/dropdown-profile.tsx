@@ -51,22 +51,22 @@ export function DropdownProfile({auth}: {auth:  IUser | null}): JSX.Element {
                     My Account<span className="text-sm font-bold md:hidden">: {auth?.name}</span>
                 </DropdownMenuLabel>
                 <DropdownMenuGroup>
-                    <DropdownMenuItem style={{padding: "6px 8px"}} onClick={toProfile}>
+                    <DropdownMenuItem className="cursor-pointer px-[6px] py-2"  onClick={toProfile}>
                         Profile
                         <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem style={{padding: "6px 8px"}} onClick={toUploadStudio}>
+                    <DropdownMenuItem className="cursor-pointer px-[6px] py-2" onClick={toUploadStudio}>
                         Studio
                         <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
                     </DropdownMenuItem>
-                    <DropdownMenuItem style={{padding: "6px 8px"}}>
+                    <DropdownMenuItem className="cursor-pointer px-[6px] py-2">
                         Settings
                         <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem style={{padding: "6px 8px"}} onClick={onLogout}>
+                <DropdownMenuItem className="cursor-pointer px-[6px] py-2" onClick={onLogout}>
                     Log out
                     <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
                 </DropdownMenuItem>

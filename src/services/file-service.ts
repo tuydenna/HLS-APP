@@ -43,7 +43,7 @@ export default class FileService extends BaseService<IFileUpload> {
             xhr.withCredentials = true;
             xhr.setRequestHeader("file-extension",  file.type.split("/")[1]);
             xhr.setRequestHeader("file-size", file.size.toString());
-            xhr.setRequestHeader("file-name", file.name);
+            xhr.setRequestHeader("file-name", encodeURIComponent(file.name));
             xhr.setRequestHeader("content-type", "octet-stream");
             xhr.responseType = "json";
             xhr.send(file)

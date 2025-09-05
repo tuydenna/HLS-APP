@@ -1,6 +1,15 @@
+import {onDidMount} from "@lib/react-adapter";
+import {isPIPMode} from "@watch/helper/media-source-helper";
 
 export default function PlayInPictureButton({videoEl}: {videoEl: HTMLVideoElement | null}) {
 
+    onDidMount(function () {
+        if (isPIPMode()) {
+            console.log("PIP");
+            playInPictureMode()
+        }
+    })
+    
     const playInPictureMode = function () {
         if (videoEl) {
             videoEl.requestPictureInPicture()

@@ -99,7 +99,7 @@ export default function Header() {
                         }
                     </div>
 
-                    <div className="header__icons flex space-between">
+                    <div className="header__icons flex space-between cursor-pointer">
                         {
                             /*<Link href="/upload-studio"><i className="material-icons display-this">upload</i></Link>
                             <i className="material-icons">videocam</i>

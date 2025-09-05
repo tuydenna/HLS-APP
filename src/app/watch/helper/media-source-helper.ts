@@ -17,6 +17,10 @@ const isIOS = (mimeCodec: string) => {
     return !("MediaSource" in window && MediaSource.isTypeSupported(mimeCodec));
 };
 
+function isPIPMode() {
+    return !!document.pictureInPictureElement;
+}
+
 const initMediaSourceExtension = (videoEl: HTMLVideoElement): MediaSource => {
     const mediaSource: MediaSource = new MediaSource();
     videoEl.src = URL.createObjectURL(mediaSource);
@@ -132,6 +136,7 @@ function getAndPlusOneSegmentIndex(fileSegment: string) {
 }
 
 export {
+    isPIPMode,
     logMediaEncoderError,
     getAndPlusOneSegmentIndex,
     videoConfig,
