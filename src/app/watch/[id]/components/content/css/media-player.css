@@ -139,6 +139,7 @@ video {
 
 .volume-slider {
     width: 0;
+    max-width: 80px;
     transform-origin: left;
     transform: scaleX(0);
     transition: width 150ms ease-in-out, transform 150ms ease-in-out;
@@ -146,7 +147,7 @@ video {
 
 .volume-container:hover .volume-slider,
 .volume-slider:focus-within {
-    width: 100px;
+    width: 80px;
     transform: scaleX(1);
 }
 
@@ -260,4 +261,66 @@ video {
 .video-container.scrubbing .timeline,
 .timeline-container:hover .timeline {
     height: 100%;
+}
+
+/* Styling the main input element */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    /*width: 100%;*/
+    height: 5px;
+    background: transparent;
+    outline: none;
+    cursor: pointer;
+    margin: 10px 0;
+    --value: 1; /* Initial value */
+}
+
+/* Styling the track (the horizontal bar) */
+input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(
+            to right,
+            #eff7ff 0%,
+            #eff7ff calc(var(--value) * 100%),
+            rgba(192, 191, 191, 0.45) calc(var(--value) * 100%),
+            rgba(192, 191, 191, 0.45) 100%
+    );
+}
+
+/* For Firefox */
+input[type="range"]::-moz-range-track {
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(
+            to right,
+            #eff7ff 0%,
+            #eff7ff calc(var(--value) * 100%),
+            rgba(192, 191, 191, 0.45) calc(var(--value) * 100%),
+            rgba(192, 191, 191, 0.45) 100%
+    );
+}
+
+/* Styling the thumb (the movable circle) */
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: #ffffff; /* The thumb color */
+    border-radius: 50%;
+    margin-top: -6px; /* Adjust vertical position to center it on the track */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease;
+}
+
+/* For Firefox */
+input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: #ffffff; /* The thumb color */
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease;
 }

@@ -40,8 +40,8 @@ export default function DurationTimeLabel({videoEl}: {videoEl: HTMLVideoElement 
     return (
         <div className="duration-container">
             <div className="current-time">{durationTime}</div>
-            / {duration}
-            <div className="total-time"></div>
+            <span>/</span>
+            <div className="total-time">{duration}</div>
         </div>
     )
 

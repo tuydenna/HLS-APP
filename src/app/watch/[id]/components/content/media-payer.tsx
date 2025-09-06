@@ -309,7 +309,7 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
                     <SettingButton videoConfigRef={videoConfigRef} handleChangeVideoScale={handleChangeVideoScale}/>
                     <PlayBackRateButton videoEl={videoEl}/>
                     <PlayInPictureButton videoEl={videoEl}/>
-                    <PlayInTheatreButton videoEl={videoEl}/>
+                    {/*<PlayInTheatreButton videoEl={videoEl}/>*/}
                     <PlayFullScreenButton videoEl={videoEl}/>
                 </div>
             </div>
