@@ -29,10 +29,10 @@ export default function VideoDescription({post}: {post: IVideoPost}) {
             <pre ref={descRef} className={`text-muted-foreground leading-relaxed text-wrap line-clamp-3`}>
                 {post.description}
             </pre>
-            <button id="toggle-read-more" onClick={toggleReadMore} className={`${isMoreDesc ? "block" : "hidden"} absolute bottom-2 right-2 z-10  pl-4 bg-gray-100 text-blue-500 font-semibold cursor-pointer`}>
+            <button id="toggle-read-more" onClick={toggleReadMore} className={`${isMoreDesc ? "block" : "hidden"} absolute bottom-2 right-2 pl-4 bg-gray-100 text-blue-500 font-semibold cursor-pointer`}>
                 ...see more
             </button>
-            <button id="toggle-read-more" onClick={toggleReadMore} className={`${isMoreDesc ? "hidden" : "block"} absolute bottom-2 right-2 z-10  pl-4 bg-gray-100 text-blue-500 font-semibold cursor-pointer`}>
+            <button id="toggle-read-more" onClick={toggleReadMore} className={`${isMoreDesc ? "hidden" : "block"} absolute bottom-2 right-2 pl-4 bg-gray-100 text-blue-500 font-semibold cursor-pointer`}>
                 ...see less
             </button>
         </div>

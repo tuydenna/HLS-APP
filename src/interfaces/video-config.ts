@@ -28,4 +28,9 @@ interface IScaleOptions {
     readonly "1080p": "1080p"
 }
 
-export type {IPlaylist, IScaleOptions, IQueueConfigRef, IViewCountConfig, IVideoConfigRef}
+interface ISettingOption {
+    name: string,
+    value: string | number
+}
+
+export type {IPlaylist, IScaleOptions, IQueueConfigRef, IViewCountConfig, IVideoConfigRef, ISettingOption}

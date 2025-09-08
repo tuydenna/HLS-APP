@@ -1,53 +1,75 @@
 import {RefObject, useState} from "react";
-import {IVideoConfigRef} from "@interfaces/video-config";
-import {ScaleOptions} from "@constant/video-config";
+import {ISettingOption, IVideoConfigRef} from "@interfaces/video-config";
+import {PlaybackSetting, ScaleSetting} from "@constant/video-config";
+import {createPortal} from "react-dom";
 
-export default function SettingButton({videoConfigRef, handleChangeVideoScale}: {videoConfigRef: RefObject<IVideoConfigRef>, handleChangeVideoScale: Function}) {
+export default function SettingButton({videoEl, videoConfigRef, handleChangeVideoScale}: {videoEl: HTMLVideoElement | null, videoConfigRef: RefObject<IVideoConfigRef>, handleChangeVideoScale: Function}) {
 
     const [scale, setScale] = useState("360p");
-    const [option, setOption] = useState<string>("")
+    const [playbackRate, setPlaybackRate] = useState("Normal");
+    const [setting, setSetting] = useState<string>("")
 
     const toggleIsOpen = function () {
-        setOption(option === "main" ? "" : "main");
+        setSetting(setting === "main" ? "" : "main");
     }
 
-    const onChangeScale = function (scale: string) {
+    const onConfigScale = function (scale: string) {
         videoConfigRef.current.scale = scale;
         handleChangeVideoScale()
         setScale(scale);
-        setOption("")
+        setSetting("");
     }
 
-    const changeOption = function (option: string) {
-        setOption(option);
+    const onConfigPlayback = function (rate: number) {
+        if (videoEl) {
+            videoEl.playbackRate = rate;
+            const playbackOption = PlaybackSetting.find(setting => setting.value === rate);
+            if (playbackOption) {
+                setPlaybackRate(playbackOption.name);
+            }
+            setSetting("");
+        }
     }
 
-    function ScaleOptionsUI() {
-        const scaleOptions = [
-            {size: "1080p"},
-            {size: "720p"},
-            {size: "360p"}
-        ];
+    const onConfigSetting = function (setting: string) {
+        setSetting(setting);
+    }
+
+    function getChildData(): [string, Function, Readonly<ISettingOption[]>] {
+        switch (setting) {
+            case "scale":
+               return ["Quality", onConfigScale, ScaleSetting]
+            case "playback":
+                return ["Playback Speed", onConfigPlayback, PlaybackSetting]
+            default:
+                return ["", ()=>{}, ScaleSetting]
+        }
+    }
+
+    function ChildSettingUI() {
+
+        const [label, callback, settingOptions] = getChildData()
+
         return (
-            <div className="bg-[#00000096] text-white text-base md:text-sm rounded-lg p-4 w-80 font-sans">
-                <div onClick={()=> changeOption("main")}   className="  cursor-pointer flex items-center justify-between pb-2 mb-2 hover:bg-[#000000d6]">
+            <div>
+                <div onClick={()=> onConfigSetting("main")} className="cursor-pointer flex items-center justify-between pb-2 mb-2">
                     <div className="flex items-center">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <polyline points="15 18 9 12 15 6"></polyline>
                         </svg>
-                        <span className="font-semibold">Quality</span>
+                        <span className="font-semibold">{label}</span>
                     </div>
                 </div>
-                <div className="space-y-4 ">
+                <div>
                     {
-                        scaleOptions.map((option, index) => {
+                        settingOptions.map((setting: ISettingOption, index) => {
                             return (
-                                <div key={index} onClick={() => onChangeScale(option.size)} className="flex cursor-pointer hover:bg-[#4B566652] items-center justify-between py-2 border-t border-zinc-700">
+                                <div key={index} onClick={() => callback(setting.value)} className="m-0 flex cursor-pointer hover:bg-[#4B566652] items-center justify-between py-2 border-t border-zinc-700">
                                     <div className={`flex items-center}`}  >
-                                        <svg className={`${scale === option.size ? "visible" : "invisible"} mr-2`} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <svg className={`${scale === setting.name ? "visible" : "invisible"} mr-2`} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                             <polyline points="20 6 9 17 4 12"></polyline>
                                         </svg>
-                                        <span >{option.size}</span>
+                                        <span className="capitalize">{setting.name}</span>
                                     </div>
                                 </div>
                             )
@@ -60,8 +82,8 @@ export default function SettingButton({videoConfigRef, handleChangeVideoScale}: 
 
     function MainSettingUI() {
         return (
-            <div className="bg-[#00000096] text-white text-base md:text-sm rounded-lg p-4 w-80 font-sans">
-                <div className="flex items-center justify-between pb-2 mb-2 hover:bg-[#000000d6]">
+            <div>
+                <div className="flex items-center justify-between pb-2 mb-2 ">
                     <div className="flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white mr-2" fill="none"
                              viewBox="0 0 24 24" stroke="currentColor">
@@ -78,8 +100,8 @@ export default function SettingButton({videoConfigRef, handleChangeVideoScale}: 
                                className="toggle-label block overflow-hidden h-6 rounded-full bg-zinc-600 cursor-pointer"></label>
                     </div>
                 </div>
-                <div className="space-y-4">
-                    <div  className="flex cursor-pointer  hover:bg-[#4B566652] items-center justify-between py-2 border-t border-zinc-700">
+                <div>
+                    <div  className="m-0 flex cursor-pointer hover:bg-[#4B566652] items-center justify-between py-2 border-t border-zinc-700">
                         <div className="flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white mr-2" fill="none"
                                  viewBox="0 0 24 24" stroke="currentColor">
@@ -89,14 +111,14 @@ export default function SettingButton({videoConfigRef, handleChangeVideoScale}: 
                             <span >Subtitles/CC (1)</span>
                         </div>
                         <div className="flex items-center">
-                            <span className="text-zinc-400  mr-2">Off</span>
+                            <span className="text-zinc-400 mr-2 capitalize">off</span>
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-zinc-400" fill="none"
                                  viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/>
                             </svg>
                         </div>
                     </div>
-                    <div className="flex cursor-pointer hover:bg-[#4B566652] items-center justify-between py-2 border-t border-zinc-700">
+                    <div className="m-0 flex cursor-pointer hover:bg-[#4B566652] items-center justify-between py-2 border-t  border-zinc-700">
                         <div className="flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white mr-2" fill="none"
                                  viewBox="0 0 24 24" stroke="currentColor">
@@ -106,14 +128,14 @@ export default function SettingButton({videoConfigRef, handleChangeVideoScale}: 
                             <span >Sleep timer</span>
                         </div>
                         <div className="flex items-center">
-                            <span className="text-zinc-400  mr-2">Off</span>
+                            <span className="text-zinc-400 mr-2 capitalize">off</span>
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-zinc-400" fill="none"
                                  viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/>
                             </svg>
                         </div>
                     </div>
-                    <div className="flex cursor-pointer hover:bg-[#4B566652] items-center justify-between py-2 border-t border-zinc-700">
+                    <div onClick={() => onConfigSetting("playback")} className="m-0  flex cursor-pointer hover:bg-[#4B566652] items-center justify-between py-2 border-t border-zinc-700">
                         <div className="flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white mr-2" fill="none"
                                  viewBox="0 0 24 24" stroke="currentColor">
@@ -123,14 +145,14 @@ export default function SettingButton({videoConfigRef, handleChangeVideoScale}: 
                             <span>Playback speed</span>
                         </div>
                         <div className="flex items-center">
-                            <span className="text-zinc-400  mr-2">Normal</span>
+                            <span className="text-zinc-400 mr-2 capitalize">{playbackRate}</span>
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-zinc-400" fill="none"
                                  viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/>
                             </svg>
                         </div>
                     </div>
-                    <div onClick={() => changeOption("scale")} className="flex cursor-pointer hover:bg-[#4B566652] items-center justify-between py-2 border-t border-zinc-700">
+                    <div onClick={() => onConfigSetting("scale")} className="m-0 flex cursor-pointer hover:bg-[#4B566652] items-center justify-between py-2 border-t border-zinc-700">
                         <div className="flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white mr-2" fill="none"
                                  viewBox="0 0 24 24" stroke="currentColor">
@@ -140,7 +162,7 @@ export default function SettingButton({videoConfigRef, handleChangeVideoScale}: 
                             <span>Quality</span>
                         </div>
                         <div className="flex items-center">
-                            <span className="text-zinc-400 mr-2">720p60</span>
+                            <span className="text-zinc-400 mr-2">{scale}</span>
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-zinc-400" fill="none"
                                  viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/>
@@ -154,15 +176,20 @@ export default function SettingButton({videoConfigRef, handleChangeVideoScale}: 
 
     return (
         <>
-            <div
-                className={`absolute right-5 z-10 w-max top-[-45vh] rounded-sm py-3 `}>
-                {
-                    option == "main" && MainSettingUI()
-                }
-                {
-                    option == "scale" && ScaleOptionsUI()
-                }
-            </div>
+            {setting &&
+                createPortal(
+                        setting &&
+                    <div className={`p-4 z-10 w-80 absolute right-[1%] md:right-5 top-[101%] md:top-auto md:bottom-[10%] py-3 bg-gray-600 md:bg-[#00000096] text-white text-base md:text-sm rounded-lg font-sans`}>
+                        {
+                            setting == "main" && MainSettingUI()
+                        }
+                        {
+                            (setting == "scale" || setting == "playback") && ChildSettingUI()
+                        }
+                    </div>,
+                    document.getElementById("video-container")
+                )
+            }
             <div onClick={toggleIsOpen} className=" cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none">
                     <button>setting</button>
@@ -172,6 +199,29 @@ export default function SettingButton({videoConfigRef, handleChangeVideoScale}: 
                 </svg>
             </div>
         </>
+    );
 
+    return (
+        <>
+            {
+                setting &&
+                <div className={`p-4 w-80 absolute right-5 top-[100%] md:top-[-400px] py-3 bg-gray-600 md:bg-[#00000096] text-white text-base md:text-sm rounded-lg font-sans`}>
+                    {
+                        setting == "main" && MainSettingUI()
+                    }
+                    {
+                        (setting == "scale" || setting == "playback") && ChildSettingUI()
+                    }
+                </div>
+            }
+            <div onClick={toggleIsOpen} className=" cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none">
+                    <button>setting</button>
+                    <path fillRule="evenodd" clipRule="evenodd"
+                          d="M10.65 3L9.93163 3.53449L9.32754 5.54812L7.47651 4.55141L6.5906 4.68143L4.68141 6.59062L4.55139 7.47652L5.5481 9.32755L3.53449 9.93163L3 10.65V13.35L3.53449 14.0684L5.54811 14.6725L4.55142 16.5235L4.68144 17.4094L6.59063 19.3186L7.47653 19.4486L9.32754 18.4519L9.93163 20.4655L10.65 21H13.35L14.0684 20.4655L14.6725 18.4519L16.5235 19.4486L17.4094 19.3185L19.3186 17.4094L19.4486 16.5235L18.4519 14.6724L20.4655 14.0684L21 13.35V10.65L20.4655 9.93163L18.4519 9.32754L19.4486 7.47654L19.3186 6.59063L17.4094 4.68144L16.5235 4.55142L14.6725 5.54812L14.0684 3.53449L13.35 3H10.65ZM10.4692 6.96284L11.208 4.5H12.792L13.5308 6.96284L13.8753 7.0946C13.9654 7.12908 14.0543 7.16597 14.142 7.2052L14.4789 7.35598L16.7433 6.13668L17.8633 7.25671L16.644 9.52111L16.7948 9.85803C16.834 9.9457 16.8709 10.0346 16.9054 10.1247L17.0372 10.4692L19.5 11.208V12.792L17.0372 13.5308L16.9054 13.8753C16.8709 13.9654 16.834 14.0543 16.7948 14.1419L16.644 14.4789L17.8633 16.7433L16.7433 17.8633L14.4789 16.644L14.142 16.7948C14.0543 16.834 13.9654 16.8709 13.8753 16.9054L13.5308 17.0372L12.792 19.5H11.208L10.4692 17.0372L10.1247 16.9054C10.0346 16.8709 9.94569 16.834 9.85803 16.7948L9.52111 16.644L7.25671 17.8633L6.13668 16.7433L7.35597 14.4789L7.2052 14.142C7.16597 14.0543 7.12908 13.9654 7.0946 13.8753L6.96284 13.5308L4.5 12.792L4.5 11.208L6.96284 10.4692L7.0946 10.1247C7.12907 10.0346 7.16596 9.94571 7.20519 9.85805L7.35596 9.52113L6.13666 7.2567L7.25668 6.13667L9.5211 7.35598L9.85803 7.2052C9.9457 7.16597 10.0346 7.12908 10.1247 7.0946L10.4692 6.96284ZM14.25 12C14.25 13.2426 13.2426 14.25 12 14.25C10.7574 14.25 9.75 13.2426 9.75 12C9.75 10.7574 10.7574 9.75 12 9.75C13.2426 9.75 14.25 10.7574 14.25 12ZM15.75 12C15.75 14.0711 14.0711 15.75 12 15.75C9.92893 15.75 8.25 14.0711 8.25 12C8.25 9.92893 9.92893 8.25 12 8.25C14.0711 8.25 15.75 9.92893 15.75 12Z"
+                          fill="white"/>
+                </svg>
+            </div>
+        </>
     )
 }
