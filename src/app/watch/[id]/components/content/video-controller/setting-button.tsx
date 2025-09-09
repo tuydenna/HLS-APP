@@ -35,20 +35,20 @@ export default function SettingButton({videoEl, videoConfigRef, handleChangeVide
         setSetting(setting);
     }
 
-    function getOptionData(): [string, Function, Readonly<ISettingOption[]>] {
+    function getOptionData(): [string, Function, Readonly<ISettingOption[]>, string] {
         switch (setting) {
             case "scale":
-               return ["Quality", onConfigScale, ScaleSetting]
+               return ["Quality", onConfigScale, ScaleSetting, scale]
             case "playback":
-                return ["Playback Speed", onConfigPlayback, PlaybackSetting]
+                return ["Playback Speed", onConfigPlayback, PlaybackSetting, playbackRate]
             default:
-                return ["", ()=>{}, ScaleSetting]
+                return ["", ()=>{}, ScaleSetting, ""]
         }
     }
 
     function OptionSettingUI() {
 
-        const [label, callback, settingOptions] = getOptionData()
+        const [label, callback, settingOptions, selected] = getOptionData()
 
         return (
             <div>
@@ -64,12 +64,9 @@ export default function SettingButton({videoEl, videoConfigRef, handleChangeVide
                     {
                         settingOptions.map((setting: ISettingOption, index: number) => {
                             return (
-                                <div key={index} onClick={() => callback(setting.value)} className="m-0 flex cursor-pointer hover:bg-[#4B566652] items-center justify-between py-2 border-t border-zinc-700">
+                                <div key={index} onClick={() => callback(setting.value)} className="m-0 flex cursor-pointer hover:bg-[#4B566652] active:bg-[#556377] items-center justify-between py-3 border-t border-zinc-700">
                                     <div className={`flex items-center}`}  >
-                                        <svg className={`${scale === setting.name ? "visible" : "invisible"} mr-2`} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                            <polyline points="20 6 9 17 4 12"></polyline>
-                                        </svg>
-                                        <svg className={`${playbackRate === setting.name ? "visible" : "invisible"} mr-2`} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <svg className={`${selected === setting.name ? "visible" : "invisible"} mr-2`} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                             <polyline points="20 6 9 17 4 12"></polyline>
                                         </svg>
                                         <span className="capitalize">{setting.name}</span>
@@ -99,7 +96,7 @@ export default function SettingButton({videoEl, videoConfigRef, handleChangeVide
                     </div>
                 </div>
                 <div>
-                    <div  className="m-0 flex cursor-pointer hover:bg-[#4B566652] items-center justify-between py-2 border-t border-zinc-700">
+                    <div  className="m-0 flex cursor-pointer hover:bg-[#4B566652] active:bg-[#556377] items-center justify-between py-3 border-t border-zinc-700">
                         <div className="flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"/>
@@ -113,7 +110,7 @@ export default function SettingButton({videoEl, videoConfigRef, handleChangeVide
                             </svg>
                         </div>
                     </div>
-                    <div className="m-0 flex cursor-pointer hover:bg-[#4B566652] items-center justify-between py-2 border-t  border-zinc-700">
+                    <div className="m-0 flex cursor-pointer hover:bg-[#4B566652] active:bg-[#556377] items-center justify-between py-3 border-t  border-zinc-700">
                         <div className="flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -127,7 +124,7 @@ export default function SettingButton({videoEl, videoConfigRef, handleChangeVide
                             </svg>
                         </div>
                     </div>
-                    <div onClick={() => onConfigSetting("playback")} className="m-0  flex cursor-pointer hover:bg-[#4B566652] items-center justify-between py-2 border-t border-zinc-700">
+                    <div onClick={() => onConfigSetting("playback")} className="m-0  flex cursor-pointer hover:bg-[#4B566652] active:bg-[#556377] items-center justify-between py-3 border-t border-zinc-700">
                         <div className="flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.173a.5.5 0 00-.256.444V14a.5.5 0 00.256.444l.873.5a.5.5 0 00.627-.14l2-2a.5.5 0 00-.01-.707l-2-2a.5.5 0 00-.627-.14l-.873.5zm-5.752 0a.5.5 0 01.256.444V14a.5.5 0 01-.256.444l-.873.5a.5.5 0 01-.627-.14l-2-2a.5.5 0 01-.01-.707l2-2a.5.5 0 01.627-.14l.873.5z"/>
@@ -141,7 +138,7 @@ export default function SettingButton({videoEl, videoConfigRef, handleChangeVide
                             </svg>
                         </div>
                     </div>
-                    <div onClick={() => onConfigSetting("scale")} className="m-0 flex cursor-pointer hover:bg-[#4B566652] items-center justify-between py-2 border-t border-zinc-700">
+                    <div onClick={() => onConfigSetting("scale")} className="m-0 flex cursor-pointer hover:bg-[#4B566652] active:bg-[#556377] items-center justify-between py-3 border-t border-zinc-700">
                         <div className="flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20.25a.75.75 0 01-.75.75H4.75a.75.75 0 01-.75-.75V3.75a.75.75 0 01.75-.75h4.5a.75.75 0 01.75.75v16.5zm-6.5-6.5a.75.75 0 01-.75.75h-.25a.75.75 0 01-.75-.75v-2.5a.75.75 0 01.75-.75h.25a.75.75 0 01.75.75v2.5zm1.5-6.5a.75.75 0 01-.75.75h-.25a.75.75 0 01-.75-.75V4.75a.75.75 0 01.75-.75h.25a.75.75 0 01.75.75v2.5zm6.5-1.5a.75.75 0 01-.75.75h-.25a.75.75 0 01-.75-.75v-2.5a.75.75 0 01.75-.75h.25a.75.75 0 01.75.75v2.5zm-6.5-1.5a.75.75 0 01-.75.75h-.25a.75.75 0 01-.75-.75V4.75a.75.75 0 01.75-.75h.25a.75.75 0 01.75.75v2.5z"/>

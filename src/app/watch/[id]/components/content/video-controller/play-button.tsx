@@ -36,8 +36,12 @@ export default function PlayButton({videoEl, handleReplay}: {videoEl: HTMLVideoE
         async function onUpdateViewCount() {
             increaseWatchTime(videoEl!, viewCountConfig);
             if (!viewCountConfig.current.hasCountedView && viewCountConfig.current.watchTime >= videoConfig.VIEW_COUNT_DELAY) {
-                viewCountConfig.current.hasCountedView = true;
-                await new PostService().increaseView(params!.id)
+               try {
+                   viewCountConfig.current.hasCountedView = true;
+                   await new PostService().increaseView(params!.id)
+               } catch (e) {
+                   console.log("[onUpdateViewCount]:", e);
+               }
             }
         }
 

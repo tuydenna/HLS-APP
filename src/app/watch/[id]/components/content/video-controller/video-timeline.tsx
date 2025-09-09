@@ -65,7 +65,7 @@ export default function VideoTimeline({videoEl, sourceBufferRef, onSeekVideoDura
         function updatePreviewTimeline() {
             const sourceBuffer: SourceBuffer | null = sourceBufferRef.current;
             if (!sourceBuffer) {
-                console.error("sourceBuffer is null")
+                console.log("[updatePreviewTimeline]:", "sourceBuffer is null")
                 return;
             }
             if (sourceBuffer.buffered!.length) {
