@@ -5,7 +5,6 @@ import {JSX, RefObject, useEffect, useRef, useState} from "react";
 import DurationTimeLabel from "@watch/[id]/components/content/video-controller/duration-time-label";
 import PlayButton from "@watch/[id]/components/content/video-controller/play-button";
 import SoundButton from "@watch/[id]/components/content/video-controller/sound-button";
-import PlayBackRateButton from "@watch/[id]/components/content/video-controller/play-back-rate-button";
 import PlayInPictureButton from "@watch/[id]/components/content/video-controller/play-in-picture-button";
 import PlayInTheatreButton from "@watch/[id]/components/content/video-controller/play-in-theatre-button";
 import PlayFullScreenButton from "@watch/[id]/components/content/video-controller/play-full-screen-button";
@@ -313,8 +312,7 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
                     <PlayFullScreenButton videoEl={videoEl}/>
                 </div>
             </div>
-            <video ref={videoRef} playsInline={true} controls={false} autoPlay={true} muted={false}
-                   preload={"metadata"}>
+            <video ref={videoRef} playsInline={true} controls={false} autoPlay={true} muted={false} preload={"metadata"}>
                 {/*<source src={"http://192.168.100.53:3080/api/streams/fmp4/playlist"} type="application/vnd.apple.mpegurl" />*/}
                 <track kind="captions" srcLang="en" src="/media_player/assets/subtitles.vtt"/>
             </video>

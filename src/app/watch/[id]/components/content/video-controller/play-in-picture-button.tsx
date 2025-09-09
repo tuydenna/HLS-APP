@@ -1,19 +1,27 @@
-import {onDidMount} from "@lib/react-adapter";
+import {onDidMount, onDidUpdate} from "@lib/react-adapter";
 import {isPIPMode} from "@watch/helper/media-source-helper";
 
 export default function PlayInPictureButton({videoEl}: {videoEl: HTMLVideoElement | null}) {
 
     onDidMount(function () {
-        if (isPIPMode()) {
-            console.log("PIP");
-            playInPictureMode()
+        const prevVideo: HTMLVideoElement | null = document.pictureInPictureElement as HTMLVideoElement;
+        if (isPIPMode() && prevVideo) {
+            prevVideo.pause();
+            document.exitPictureInPicture();
         }
     })
+
+    onDidUpdate(function () {
+        if (isPIPMode()) {
+            videoEl?.addEventListener("canplay", () => {
+                videoEl.requestPictureInPicture();
+            }, {once: true});
+        }
+    }, [videoEl])
     
     const playInPictureMode = function () {
-        if (videoEl) {
-            videoEl.requestPictureInPicture()
-        }
+        if (isPIPMode()) return;
+        videoEl?.requestPictureInPicture();
     }
 
     return (

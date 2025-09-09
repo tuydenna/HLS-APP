@@ -1,5 +1,5 @@
-import {InputHTMLAttributes, RefObject, useRef, useState} from "react";
-import {onDidMount} from "@lib/react-adapter";
+import {RefObject, useRef, useState} from "react";
+import {onDidUpdate} from "@lib/react-adapter";
 
 export default function SoundButton({videoEl}: {videoEl: HTMLVideoElement | null}) {
 
@@ -7,29 +7,42 @@ export default function SoundButton({videoEl}: {videoEl: HTMLVideoElement | null
     const [volume, setVolume] = useState(1)
     const volumeSliderRef: RefObject<null | HTMLInputElement>  = useRef(null);
 
-    onDidMount(function () {
-        // volumeSliderRef.current?.addEventListener("change", function () {
-        //
-        // })
-    })
+    onDidUpdate(function () {
+        if (!videoEl) return
+        const {isMuted, volume} = getSoundConfig();
+        setIsMuted(isMuted);
+        configVolume(volume);
+    }, [videoEl]);
 
     const toggleMuted = function () {
-        if (videoEl) {
-            videoEl.muted = !isMuted;
-            if (isMuted) {
-                setVolume(1)
-            } else {
-                setVolume(0)
-            }
-            setIsMuted(!isMuted)
+        videoEl!.muted = !isMuted;
+        if (isMuted) {
+            configVolume(1)
+        } else {
+            configVolume(0)
         }
+        setIsMuted(!isMuted)
     }
+
     const changeVolume = function ({target}: { target: HTMLInputElement}) {
-        if (videoEl) {
-            videoEl.volume = +target.value;
-            volumeSliderRef.current?.style.setProperty("--value", target.value);
-            setVolume(+target.value)
-        }
+        configVolume(+target.value);
+    }
+
+    function configVolume(volume: number) {
+        videoEl!.volume = volume;
+        volumeSliderRef.current?.style.setProperty("--value", volume.toString());
+        storeSoundConfig({isMuted, volume: volume});
+        setVolume(volume);
+    }
+
+    function storeSoundConfig(config: {volume: number, isMuted: boolean}) {
+        localStorage.setItem("sound_config", JSON.stringify(config));
+    }
+
+    function getSoundConfig(): {volume: number, isMuted: boolean} {
+        const config: string | null = localStorage.getItem("sound_config");
+        if (config) return JSON.parse(config);
+        return {volume: 1, isMuted: false};
     }
 
     return (
