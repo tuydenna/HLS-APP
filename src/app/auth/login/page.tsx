@@ -51,7 +51,7 @@ export default function RegisterPage(): JSX.Element {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 p-4 font-sans">
+        <div className="flex items-center justify-center h-dvh  bg-gray-50 dark:bg-gray-900 p-4 font-sans">
             <Card className="w-full max-w-md shadow-lg">
                 <CardHeader className="text-center">
                     <CardTitle className="text-2xl font-bold tracking-tight">Sign In</CardTitle>
@@ -75,7 +75,7 @@ export default function RegisterPage(): JSX.Element {
                                 <Input name="password" type="password" placeholder="••••••••" className="pl-10" required />
                             </div>
                         </div>
-                        <Button type="submit" className="w-full !mt-8">login</Button>
+                        <Button type="submit" className="h-12 md:h-10 w-full !mt-8 cursor-pointer active:bg-gray-400">login</Button>
                     </form>
                 </CardContent>
                 <CardFooter className="flex justify-center text-sm text-gray-500">

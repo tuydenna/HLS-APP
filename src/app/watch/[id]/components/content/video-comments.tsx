@@ -90,9 +90,9 @@ function CommentForm({ postId, addNewComment, auth }: {postId: string, addNewCom
 
 function CommentList({ comments }: {comments: IComment[]}) {
     return (
-        <div className="mt-8 space-y-6">
+        <div className="mt-8 space-y-4 md:space-y-6">
             {comments.map((comment) => (
-                <div key={comment.id} className="flex items-start space-x-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div key={comment.id} className="flex items-start space-x-4 p-2 md:p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                     <AvatarUI src={getImageURL(comment.author.avatar)} fallbackName={comment.author.name} widthClass="w-10" heightClass="h-10"/>
                     <div className="flex-1">
                         <div className="flex items-center space-x-2">
