@@ -8,6 +8,15 @@ export default class PostService extends BaseService<IVideoPost> {
         super("/posts");
     }
 
+    async getAuthorizedPosts() {
+        this.setLastEndpoint("/authors");
+        const res = await fetchAdapter.get(this.getBaseAPI(), this.getHeaders());
+        if (res.ok) {
+            return (await res.json()).data;
+        }
+        throw new ErrorException(res.status, (await res.json()).message);
+    }
+
     async likePost(postId: string, authId: string):  Promise<IVideoPost> {
         const res = await fetchAdapter.put(this.getBaseAPI(postId + "/likes?authId=" + authId), this.getHeaders());
         if (res.ok) {

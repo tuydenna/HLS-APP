@@ -34,7 +34,7 @@ export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
     }
 
     onDidMount(() => {
-        new PostService().getMany().then(data=>{
+        new PostService().getAuthorizedPosts().then(data=>{
             setPosts(data);
         })
         setAuthor(getAuth());
