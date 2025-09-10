@@ -22,17 +22,6 @@ export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
     const holdDuration = 1000; // 1 sec
     const postService = new PostService();
 
-    function renderPostStatus(status: PostStatus): JSX.Element {
-        switch (status) {
-            case PostStatus.Pending:
-                return <PendingIcon/>
-            case PostStatus.Published:
-                return <SuccessIcon/>
-            default:
-                return <ErrorIcon/>
-        }
-    }
-
     onDidMount(() => {
         new PostService().getAuthorizedPosts().then(data=>{
             setPosts(data);
@@ -46,6 +35,44 @@ export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
         }
     }, [newPost]);
 
+    const onmousedownLongPress = function (e: any, post: IVideoPost) {
+        e.preventDefault();
+        isHolding = true;
+        holdTimeout = setTimeout(async () => {
+            if (isHolding) {
+                if (post.status === PostStatus.Pending) {
+                    alert("Wait pending post is being process...");
+                    return;
+                }
+                const yes: boolean = confirm("Are you sure you want to delete this post?");
+                if (yes) {
+                    await deletePost(post.id);
+                }
+                isHolding = false;
+                clearTimeout(holdTimeout!)
+            }
+        }, holdDuration);
+    }
+
+    const onmouseupLongPress = function (e: any) {
+        e.preventDefault();
+        if (holdTimeout) {
+            clearTimeout(holdTimeout);
+            isHolding = false;
+        }
+    }
+
+    const filteredPosts: IVideoPost[] = posts
+        ?.filter((post) => post.title.toLowerCase().includes(search.toLowerCase()))
+        .sort((a, b) => {
+            if (sortBy === "latest") {
+                return +new Date(b.createdAt) - +new Date(a.createdAt);
+            } else if (sortBy === "popular") {
+                return b.views - a.views;
+            }
+            return 0;
+        });
+
     async function deletePost(id: string) {
         try {
             await postService.delete(id);
@@ -55,39 +82,16 @@ export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
         }
     }
 
-    function onLongPress(e: any, id: string) {
-        e.preventDefault();
-        isHolding = true;
-        holdTimeout = setTimeout(async () => {
-            if (isHolding) {
-                const yes: boolean = confirm("Are you sure you want to delete this post?");
-                if (yes) {
-                    await deletePost(id);
-                }
-                isHolding = false;
-                clearTimeout(holdTimeout!)
-            }
-        }, holdDuration);
-    }
-
-    function removeLongPressTimeOut(e: any) {
-        e.preventDefault();
-        if (holdTimeout) {
-            clearTimeout(holdTimeout);
-            isHolding = false;
+    function renderPostStatus(status: PostStatus): JSX.Element {
+        switch (status) {
+            case PostStatus.Pending:
+                return <PendingIcon/>
+            case PostStatus.Published:
+                return <SuccessIcon/>
+            default:
+                return <ErrorIcon/>
         }
     }
-
-    const filteredPosts: IVideoPost[] = posts
-        .filter((post) => post.title.toLowerCase().includes(search.toLowerCase()))
-        .sort((a, b) => {
-            if (sortBy === "latest") {
-                return +new Date(b.createdAt) - +new Date(a.createdAt);
-            } else if (sortBy === "popular") {
-                return b.views - a.views;
-            }
-            return 0;
-        });
 
     return (
         <div className="flex flex-col w-full md:w-1/3 bg-white shadow-lg rounded-2xl p-3 md:p-6 min-h-[50dvh] max-h-[95dvh] md:max-h-full">
@@ -117,7 +121,7 @@ export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
             </div>
             <div className="flex flex-col space-y-3 grow overflow-y-scroll custom-scrollbar clear-default-safari-long-press">
                     {filteredPosts.map((post, index) => (
-                        <Card key={index} className="cursor-pointer py-1" onMouseDown={(event) => onLongPress(event, post.id)} onTouchStart={(event) => onLongPress(event, post.id)} onTouchEnd={removeLongPressTimeOut} onMouseUp={removeLongPressTimeOut}>
+                        <Card key={index} className="cursor-pointer py-1" onMouseDown={(event) => onmousedownLongPress(event, post)} onTouchStart={(event) => onmousedownLongPress(event, post)} onTouchEnd={onmouseupLongPress} onMouseUp={onmouseupLongPress}>
                             <CardContent className="p-4">
                                 {post.thumbnail && (
                                     <div className="w-full aspect-video mb-3 overflow-hidden rounded">
