@@ -2,7 +2,7 @@ import "../css/side-bar-menu.css"
 
 export default function LeftSidebar() {
     return (
-        <div className="sidebar w-[20%] hidden md:block">
+        <div className="w-[20%] hidden md:block">
             <div className="sidebar__categories">
                 <div className="sidebar__category">
                     <i className="material-icons">home</i>

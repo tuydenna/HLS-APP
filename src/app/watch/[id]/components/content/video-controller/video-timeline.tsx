@@ -1,54 +1,52 @@
-import {JSX, useEffect, useState, createRef, useRef, RefObject, CSSProperties} from "react";
+import {JSX, useEffect, createRef, useRef, RefObject} from "react";
 
 export default function VideoTimeline({videoEl, sourceBufferRef, onSeekVideoDuration}: {videoEl: HTMLVideoElement | null, sourceBufferRef: RefObject<SourceBuffer | null>, onSeekVideoDuration: Function}): JSX.Element {
-    const [timeline, setTimeline] = useState<number>(.0)
-    const [previewTimeline, setPreviewTimeline] = useState<number>(.0)
     const seekConfigRef: RefObject<{isPlayed: boolean, isScrubbing: boolean, seekTimeout: NodeJS.Timeout | undefined}> = useRef({isPlayed: false, isScrubbing: false, seekTimeout: undefined})
     const timelineRef: RefObject<HTMLDivElement | null> = createRef<HTMLDivElement | null>()
     const defaultPreviewTimelineRef: RefObject<number> = useRef<number>(0)
 
     useEffect(()=> {
-        const timelineEl: HTMLDivElement = timelineRef.current!;
+        const timelineEl: HTMLDivElement | null = timelineRef.current;
 
-        function getCurrentTimelinePosition(e:MouseEvent): number {
-            const rect: DOMRect = timelineEl.getBoundingClientRect()
-            return Math.min(Math.max(0, e.x - rect.x), rect.width) / rect.width;
-        }
+        if (!videoEl || !timelineEl) return;
 
-        function updateTimeline() {
+        const ontimeupdateUpdateTimeline = function () {
             const timeLine: number = videoEl!.currentTime / videoEl!.duration
             if(timeLine <= 1) {
-                setTimeline(timeLine)
+                updateDisplayTimeline(timeLine.toString())
             }
         }
 
-        function mouseDownScrubbing(e: MouseEvent) {
+        const onmousedownScrubbing = function (e: MouseEvent | TouchEvent) {
             e.preventDefault()
             seekConfigRef.current.isScrubbing = true;
             seekConfigRef.current.isPlayed = !videoEl?.paused;
             videoEl!.pause();
         }
 
-        function mouseMoveOnTimeline(e: MouseEvent) {
+        const onmousemoveUpdateDisplayTimeline = function (e: MouseEvent | TouchEvent) {
+            const value: string = getCurrentTimelinePosition(e).toString();
             if (seekConfigRef.current.isScrubbing) {
-                setTimeline(getCurrentTimelinePosition(e));
+                updateDisplayTimeline(value)
             } else {
-                setPreviewTimeline(getCurrentTimelinePosition(e));
+                updateDisplayBufferTimeline(value)
             }
         }
 
-        function mouseMoveOnDocument(e: MouseEvent) {
+        const onmousemoveOnDocument = function (e: MouseEvent | TouchEvent) {
             if (seekConfigRef.current.isScrubbing) {
-                setTimeline(getCurrentTimelinePosition(e))
+                updateDisplayTimeline(getCurrentTimelinePosition(e).toString());
             }
         }
 
-        function onSeekingVideo(e: MouseEvent) {
+        const onSeekingVideo = function (e: MouseEvent | TouchEvent) {
             if (seekConfigRef.current.isScrubbing) {
                 const currentTimeline: number = getCurrentTimelinePosition(e)
                 seekConfigRef.current.isScrubbing = false;
-                setTimeline(currentTimeline);
-                const currentTime: number = currentTimeline * videoEl!.duration
+
+                updateDisplayTimeline(currentTimeline.toString())
+                const currentTime: number = currentTimeline * videoEl!.duration;
+
                 clearTimeout(seekConfigRef.current.seekTimeout)
                 seekConfigRef.current.seekTimeout  = setTimeout(function (){
                     onSeekVideoDuration(currentTime);
@@ -57,74 +55,95 @@ export default function VideoTimeline({videoEl, sourceBufferRef, onSeekVideoDura
             }
         }
 
-        function resetPreviewTimeline() {
+        const onmouseleaveResetDefaultBufferTimeline = function () {
             // Reset To last current preview timeline
-            setPreviewTimeline(defaultPreviewTimelineRef.current)
+            updateDisplayBufferTimeline(defaultPreviewTimelineRef.current.toString());
         }
 
-        function updatePreviewTimeline() {
+        const onprogressUpdateBufferTimeline = function () {
             const sourceBuffer: SourceBuffer | null = sourceBufferRef.current;
             if (!sourceBuffer) {
-                console.log("[updatePreviewTimeline]:", "sourceBuffer is null")
+                console.log("[onprogressUpdateBufferTimeline]:", "sourceBuffer is null")
                 return;
             }
             if (sourceBuffer.buffered!.length) {
                 const bufferTimeline: number  = sourceBuffer.buffered.end(sourceBuffer.buffered!.length - 1)
                 const previewTimeline: number = bufferTimeline / videoEl!.duration;
                 defaultPreviewTimelineRef.current = previewTimeline;
-                setPreviewTimeline(previewTimeline)
+                updateDisplayBufferTimeline(previewTimeline.toString());
             }
+        }
+
+        const onseekingReplayVideo = function () {
+            if (isReplay()) {
+                updateDisplayTimeline(".0");
+                onmouseleaveResetDefaultBufferTimeline();
+            }
+        }
+
+        function getCurrentTimelinePosition(e:MouseEvent | TouchEvent): number {
+            const rect: DOMRect = timelineRef.current!.getBoundingClientRect();
+            const x: number = "changedTouches" in e ? e.changedTouches[0].clientX : e.x;
+            return Math.min(Math.max(0, x - rect.x), rect.width) / rect.width;
+        }
+
+        function updateDisplayTimeline(value: string) {
+            timelineRef.current!.style.setProperty("--progress-position", value)
+        }
+
+        function updateDisplayBufferTimeline(value: string) {
+            timelineRef.current!.style.setProperty("--preview-position", value)
         }
 
         function isReplay() {
             return videoEl!.currentTime === 0;
         }
 
-        function resetVideoTimelineOnReplay() {
-            if (isReplay()) {
-                setTimeline(.0)
-                resetPreviewTimeline();
-            }
-        }
+        videoEl.addEventListener("timeupdate", ontimeupdateUpdateTimeline)
+        videoEl.addEventListener("progress", onprogressUpdateBufferTimeline)
+        videoEl.addEventListener("seeking", onseekingReplayVideo);
 
-        if (!videoEl) return
-
-        videoEl.addEventListener("timeupdate", updateTimeline)
-        videoEl.addEventListener("progress", updatePreviewTimeline)
-        videoEl.addEventListener("seeking", resetVideoTimelineOnReplay);
-
-        if (!timelineEl) return
-
-        timelineEl.addEventListener("mousedown", mouseDownScrubbing)
-        timelineEl.addEventListener("mousemove", mouseMoveOnTimeline)
-        timelineEl.addEventListener("mouseleave",resetPreviewTimeline)
+        timelineEl.addEventListener("mousedown", onmousedownScrubbing)
+        timelineEl.addEventListener("mousemove", onmousemoveUpdateDisplayTimeline)
+        timelineEl.addEventListener("mouseleave", onmouseleaveResetDefaultBufferTimeline)
 
         document.addEventListener("mouseup", onSeekingVideo)
-        document.addEventListener("mousemove", mouseMoveOnDocument)
+        document.addEventListener("mousemove", onmousemoveOnDocument)
+        // Smartphone Event
+        timelineEl.addEventListener("touchstart", onmousedownScrubbing)
+        timelineEl.addEventListener("touchmove", onmousemoveUpdateDisplayTimeline)
+        timelineEl.addEventListener("touchcancel", onmousemoveUpdateDisplayTimeline)
+        document.addEventListener("touchend", onSeekingVideo)
+        document.addEventListener("touchmove", onmousemoveOnDocument)
+
+        console.log("did mount");
 
         return () => {
-            if (videoEl) {
-                videoEl.removeEventListener("timeupdate", updateTimeline)
-                videoEl.removeEventListener("progress", updatePreviewTimeline)
-                videoEl.removeEventListener("seeking", resetVideoTimelineOnReplay);
-            }
-            if (timelineEl) {
-                timelineEl.removeEventListener("mousedown", mouseDownScrubbing)
-                timelineEl.removeEventListener("mousemove", mouseMoveOnTimeline)
-                timelineEl.removeEventListener("mouseleave",resetPreviewTimeline)
-            }
+            videoEl.removeEventListener("timeupdate", ontimeupdateUpdateTimeline)
+            videoEl.removeEventListener("progress", onprogressUpdateBufferTimeline)
+            videoEl.removeEventListener("seeking", onseekingReplayVideo);
+
+            timelineEl.removeEventListener("mousedown", onmousedownScrubbing)
+            timelineEl.removeEventListener("mousemove", onmousemoveUpdateDisplayTimeline)
+            timelineEl.removeEventListener("mouseleave", onmouseleaveResetDefaultBufferTimeline)
+
             document.removeEventListener("mouseup", onSeekingVideo)
-            document.removeEventListener("mousemove", mouseMoveOnDocument)
+            document.removeEventListener("mousemove", onmousemoveOnDocument)
+            // Smartphone Event
+            timelineEl.removeEventListener("touchstart", onmousedownScrubbing)
+            timelineEl.removeEventListener("touchmove", onmousemoveUpdateDisplayTimeline)
+            timelineEl.removeEventListener("touchcancel", onmousemoveUpdateDisplayTimeline)
+            document.removeEventListener("touchend", onSeekingVideo)
+            document.removeEventListener("touchmove", onmousemoveOnDocument)
         }
-    }, [videoEl, timeline, previewTimeline])
+    }, [videoEl, timelineRef])
 
     return (
-        <div ref={timelineRef} className="timeline-container" style={{"--preview-position": previewTimeline , "--progress-position": timeline} as unknown as CSSProperties}>
+        <div ref={timelineRef} className="timeline-container" >
             <div className="timeline">
                 <img className="preview-img" alt={""}/>
                 <div className="thumb-indicator"></div>
             </div>
         </div>
     )
-
 }

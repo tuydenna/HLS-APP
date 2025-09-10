@@ -162,7 +162,7 @@ export default function SettingButton({videoEl, videoConfigRef, handleChangeVide
             {
                 setting &&
                     createPortal(
-                        <div className={`p-4 z-10 w-80 absolute right-[1%] md:right-5 top-[101%] md:top-auto md:bottom-[10%] py-3 bg-gray-600 md:bg-[#00000096] text-white text-base md:text-sm rounded-lg font-sans`}>
+                        <div className={`p-4 z-10 w-80 absolute right-[1%] md:right-5 top-[101%] md:top-auto md:bottom-[10%] py-3 bg-[#1c1b1bfa] md:bg-[#00000096] text-white text-base md:text-sm rounded-lg font-sans`}>
                             {
                                 setting == "main" && MainSettingUI()
                             }

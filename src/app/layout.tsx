@@ -24,8 +24,10 @@ export default function RootLayout({children}: Readonly<{ children: React.ReactN
             <meta charSet="UTF-8"/>
             <meta httpEquiv="X-UA-Compatible" content="IE=edge"/>
             <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+            <meta name="theme-color" content="#d92057"/>
             <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
             <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico"/>
+            <title></title>
         </head>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
             {children}
