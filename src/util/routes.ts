@@ -1,7 +1,7 @@
 export const RoutesList = {
     HOME: '/',
     UPLOAD_STUDIO: '/studio',
-    PROFILE: '/profile',
+    PROFILE: '/auth/profile',
     LOGIN: '/auth/login',
     REGISTER: '/auth/register',
     PLAY_VIDEO: '/watch',
