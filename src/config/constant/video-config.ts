@@ -1,16 +1,4 @@
-import {IScaleOptions, ISettingOption} from "@interfaces/video-config";
-
-const ScaleOptions: Readonly<IScaleOptions> = {
-    "360p": "360p",
-    "720p": "720p",
-    "1080p": "1080p"
-}
-
-const ScaleSetting: Readonly<ISettingOption[]> = [
-    {name: "1080p", value: "1080p"},
-    {name: "720p", value: "720p"},
-    {name: "360p", value: "360p"}
-]
+import {ISettingOption} from "@interfaces/video-config";
 
 const PlaybackSetting: Readonly<ISettingOption[]> = [
     {name: "0.5x", value: 0.5},
@@ -21,4 +9,4 @@ const PlaybackSetting: Readonly<ISettingOption[]> = [
     {name: "2x", value: 2}
 ]
 
-export {ScaleOptions, ScaleSetting, PlaybackSetting}
+export {PlaybackSetting}

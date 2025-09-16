@@ -1,13 +1,29 @@
 import {RefObject, useState} from "react";
 import {ISettingOption, IVideoConfigRef} from "@interfaces/video-config";
-import {PlaybackSetting, ScaleSetting} from "@constant/video-config";
+import {PlaybackSetting} from "@constant/video-config";
 import {createPortal} from "react-dom";
+import {IVideo} from "@interfaces/video";
+import {onDidMount} from "@lib/react-adapter";
 
-export default function SettingButton({videoEl, videoConfigRef, handleChangeVideoScale}: {videoEl: HTMLVideoElement | null, videoConfigRef: RefObject<IVideoConfigRef>, handleChangeVideoScale: Function}) {
+export default function SettingButton({data, videoEl, videoConfigRef, handleChangeVideoScale}: {
+    data: IVideo,
+    videoEl: HTMLVideoElement | null,
+    videoConfigRef: RefObject<IVideoConfigRef>,
+    handleChangeVideoScale: Function}
+) {
 
-    const [scale, setScale] = useState("360p");
+    const [scale, setScale] = useState("");
     const [playbackRate, setPlaybackRate] = useState("normal");
     const [setting, setSetting] = useState<string>("")
+    const [qualities, setQualities] = useState<ISettingOption[]>([])
+
+    onDidMount(function () {
+        const scaleOptions: ISettingOption[] = data.quality.map(q => {
+            return {name: q.name, value: q.name}
+        })
+        setQualities(scaleOptions)
+        setScale(scaleOptions[0].name || "360p")
+    })
 
     const toggleIsOpen = function () {
         setSetting(setting === "main" ? "" : "main");
@@ -38,11 +54,11 @@ export default function SettingButton({videoEl, videoConfigRef, handleChangeVide
     function getOptionData(): [string, Function, Readonly<ISettingOption[]>, string] {
         switch (setting) {
             case "scale":
-               return ["Quality", onConfigScale, ScaleSetting, scale]
+               return ["Quality", onConfigScale, qualities, scale]
             case "playback":
                 return ["Playback Speed", onConfigPlayback, PlaybackSetting, playbackRate]
             default:
-                return ["", ()=>{}, ScaleSetting, ""]
+                return ["", ()=>{}, qualities, ""]
         }
     }
 

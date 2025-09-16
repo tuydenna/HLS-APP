@@ -299,7 +299,7 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
                     <PlayButton videoEl={videoEl} handleReplay={reopenMediaSourceEvent}/>
                     <SoundButton videoEl={videoEl}/>
                     <DurationTimeLabel videoEl={videoEl}/>
-                    <SettingButton videoEl={videoEl} videoConfigRef={videoConfigRef} handleChangeVideoScale={handleChangeVideoScale}/>
+                    <SettingButton data={data.video} videoEl={videoEl} videoConfigRef={videoConfigRef} handleChangeVideoScale={handleChangeVideoScale}/>
                     <PlayInPictureButton videoEl={videoEl}/>
                     <PlayInTheatreButton videoEl={videoEl}/>
                     <PlayFullScreenButton videoEl={videoEl}/>

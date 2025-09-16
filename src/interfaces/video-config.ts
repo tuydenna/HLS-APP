@@ -1,3 +1,5 @@
+import {IQuality} from "@interfaces/video";
+
 interface IPlaylist {
     fileName: string;
     start: number;

@@ -7,7 +7,7 @@ import { cn } from "@app/lib/utils"
 function AvatarUI({src, fallbackName, widthClass="w-12", heightClass="h-12"}: {src: string | undefined, fallbackName: string | undefined, widthClass?: string , heightClass?: string}): JSX.Element {
   return (
       <Avatar className={cn("border-4 border-muted", widthClass, heightClass)}>
-        <AvatarImage src={src} alt={process.env.NEXT_PUBLIC_APP_NAME}/>
+        <AvatarImage src={src} alt={process.env.NEXT_PUBLIC_APP_NAME} className="object-cover object-center"/>
         <AvatarFallback
             className="bg-violet-500">{fallbackName?.charAt(0) ?? "N/A"}</AvatarFallback>
       </Avatar>

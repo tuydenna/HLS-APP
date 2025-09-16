@@ -18,7 +18,9 @@ export default function VideoTimeline({videoEl, sourceBufferRef, onSeekVideoDura
         }
 
         const onmousedownScrubbing = function (e: MouseEvent | TouchEvent) {
-            e.preventDefault()
+            if (e.defaultPrevented) {
+                e.preventDefault()
+            }
             seekConfigRef.current.isScrubbing = true;
             seekConfigRef.current.isPlayed = !videoEl?.paused;
             videoEl!.pause();
@@ -110,13 +112,11 @@ export default function VideoTimeline({videoEl, sourceBufferRef, onSeekVideoDura
         document.addEventListener("mouseup", onSeekingVideo)
         document.addEventListener("mousemove", onmousemoveOnDocument)
         // Smartphone Event
-        timelineEl.addEventListener("touchstart", onmousedownScrubbing)
-        timelineEl.addEventListener("touchmove", onmousemoveUpdateDisplayTimeline)
+        timelineEl.addEventListener("touchstart", onmousedownScrubbing, {passive: true})
+        timelineEl.addEventListener("touchmove", onmousemoveUpdateDisplayTimeline, {passive: true})
         timelineEl.addEventListener("touchcancel", onmousemoveUpdateDisplayTimeline)
         document.addEventListener("touchend", onSeekingVideo)
-        document.addEventListener("touchmove", onmousemoveOnDocument)
-
-        console.log("did mount");
+        document.addEventListener("touchmove", onmousemoveOnDocument, {passive: true})
 
         return () => {
             videoEl.removeEventListener("timeupdate", ontimeupdateUpdateTimeline)

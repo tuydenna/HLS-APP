@@ -11,4 +11,5 @@ export function onDidUpdate(callBack: EffectCallback, dependencies: Array<any> )
 
 export function redirectTo(router: AppRouterInstance, routesList: string) {
     return router.push(routesList);
+    router.back()
 }

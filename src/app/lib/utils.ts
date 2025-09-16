@@ -14,3 +14,8 @@ export function getAuth(): IUser {
   window.location.href = "/auth/login";
   return auth as unknown as IUser
 }
+
+export function storeAuth(data: IUser): IUser {
+  localStorage.setItem("auth", JSON.stringify(data));
+  return data;
+}

@@ -5,6 +5,12 @@ export interface IVideo {
     DirPath: string
     size: number
     duration: number
+    quality: Readonly<IQuality[]>
+}
+
+export interface IQuality {
+    name: string
+    scale: string
 }
 
 export interface IFileUpload {
