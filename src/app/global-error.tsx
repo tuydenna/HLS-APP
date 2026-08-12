@@ -9,7 +9,7 @@ export default function GlobalError({error, reset}: { error: Error, reset: () =>
 
 
     onDidUpdate(() => {
-        // Log the error to an error reporting service
+        // Log the error to an error reporting services
         console.error(error);
         console.log(error);
         if (error instanceof Error && error.message === 'Unauthorized') {

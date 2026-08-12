@@ -67,13 +67,18 @@ export default function RegisterPage(): JSX.Element {
         }
 
         if (!avatarFile) return alert("please upload a avatar");
+        try {
+            const resAvatar: IFileResWrap<IFileUpload> = await fileService.uploadAvatar(avatarFile!);
+            const auth: IUser = await authService.register({name, email, password, avatar: resAvatar.data.filePath});
+            alert("handleSubmit");
 
-        const resAvatar: IFileResWrap<IFileUpload> = await fileService.uploadAvatar(avatarFile!);
-        const auth: IUser = await authService.register({name, email, password, avatar: resAvatar.data.filePath});
-
-        if (auth) {
-            localStorage.setItem('auth', JSON.stringify(auth));
-            return redirectTo(router, '/');
+            if (auth) {
+                localStorage.setItem('auth', JSON.stringify(auth));
+                return redirectTo(router, '/');
+            }
+        } catch (e) {
+            alert(e)
+            console.log(e);
         }
     };
 

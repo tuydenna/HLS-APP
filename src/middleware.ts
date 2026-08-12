@@ -1,28 +1,32 @@
 import {NextRequest, NextResponse} from 'next/server'
 import {RoutesList} from "@util/routes";
 
-// This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
-    const currentUser: string |undefined = request.cookies.get('auth_token')?.value
+    const authToken = request.cookies.get('auth_token')?.value;
+    const {pathname} = request.nextUrl;
 
-    if (!currentUser) {
-        if (request.nextUrl.pathname.startsWith(RoutesList.REGISTER)) {
+    console.log("Middleware check. Auth token:", authToken ? "present" : "missing");
+
+    // If user is not logged in
+    if (!authToken) {
+        // Allow access to register page
+        if (pathname.startsWith(RoutesList.REGISTER)) {
             return NextResponse.next();
         }
-        if (!request.nextUrl.pathname.startsWith(RoutesList.LOGIN)) {
-            return Response.redirect(new URL(RoutesList.LOGIN, request.url))
+        // Redirect any other protected page to the login page
+        if (!pathname.startsWith(RoutesList.LOGIN)) {
+            return NextResponse.redirect(new URL(RoutesList.LOGIN, request.url));
         }
     }
 
-    if (currentUser && (request.nextUrl.pathname.startsWith(RoutesList.LOGIN) || request.nextUrl.pathname.startsWith(RoutesList.REGISTER))) {
-        return Response.redirect(new URL(RoutesList.HOME, request.url))
+    // If user is logged in, prevent access to login/register pages
+    if (authToken && (pathname.startsWith(RoutesList.LOGIN) || pathname.startsWith(RoutesList.REGISTER))) {
+        return NextResponse.redirect(new URL(RoutesList.HOME, request.url));
     }
 
     return NextResponse.next();
 }
 
-// See "Matching Paths" below to learn more
 export const config = {
-    // matcher:  [RoutesList.HOME, RoutesList.UPLOAD_STUDIO, RoutesList.PROFILE, "/display/:id*"],
     matcher: ["/", "/watch/:id*", "/studio", "/search/:searchKey*", "/auth/login", "/auth/profile", "/auth/register"],
 }
