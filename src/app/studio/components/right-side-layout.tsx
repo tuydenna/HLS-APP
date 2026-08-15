@@ -40,11 +40,11 @@ export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
         isHolding = true;
         holdTimeout = setTimeout(async () => {
             if (isHolding) {
-                if (post.status === PostStatus.Pending) {
-                    alert("Wait pending post is being process...");
-                    return;
-                }
-                const yes: boolean = confirm("Are you sure you want to delete this post?");
+                // if (post.status === PostStatus.Pending) {
+                //     alert("Wait pending post is being process...");
+                //     return;
+                // }
+                const yes: boolean =  confirm("Are you sure you want to delete this post?");
                 if (yes) {
                     await deletePost(post.id);
                 }
