@@ -6,7 +6,10 @@ const nextConfig: NextConfig = {
         localPatterns: [
             {
                 pathname: "/api/image-proxy",
-            }
+            },
+            {
+                pathname: "/**",
+            },
         ],
         remotePatterns: [
             {

@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export function PendingIcon(): JSX.Element {
     return (
-        <Image src="/pending.gif" alt="" width={16} height={16} />
+        <Image src="/pending.gif" alt="" width={21} height={21} />
     )
 }
 

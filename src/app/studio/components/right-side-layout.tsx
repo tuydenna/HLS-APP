@@ -10,6 +10,7 @@ import {getAuth} from "@lib/utils";
 import {IUser} from "@interfaces/user";
 import Link from "next/link";
 import {AvatarUI} from "@components/ui/avatar";
+import Image from "@components/optimize/image";
 
 export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
 
@@ -125,7 +126,7 @@ export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
                             <CardContent className="p-4">
                                 {post.thumbnail && (
                                     <div className="w-full aspect-video mb-3 overflow-hidden rounded">
-                                        <img
+                                        <Image
                                             src={getImageURL(post.thumbnail)}
                                             alt="thumbnail"
                                             className="w-full h-full object-cover object-center"

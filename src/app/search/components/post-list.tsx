@@ -1,7 +1,7 @@
 "use client"
 import React, {RefObject, useRef, useState} from "react";
 import Link from "next/link";
-import Image from "next/image";
+import Image from "@components/optimize/image";
 import {IVideoPost} from "@interfaces/video-post";
 import {getImageProxyAPI, getImageURL, timeAgo} from "@util/helper";
 import {Card, CardDescription, CardFooter, CardHeader, CardTitle} from "@components/ui/card";
@@ -12,7 +12,7 @@ import {LoaderSpinner} from "@components/ui/loader-spinner";
 import { useParams } from 'next/navigation';
 
 export default function PostList({posts}: {posts: IVideoPost[]}) {
-    const [postList, setPostList] = useState(posts);
+    const [postList, setPostList] = useState(posts.filter(Boolean));
     const defaultTake: number = 10;
     const isLoadingMoreRef: RefObject<boolean> = useRef(false);
     const isNoMorePost: RefObject<boolean> = useRef(posts.length < defaultTake );
@@ -26,7 +26,7 @@ export default function PostList({posts}: {posts: IVideoPost[]}) {
                 isLoadingMoreRef.current = true;
             }
             isLoadingMoreRef.current = false;
-            setPostList([...postList, ...posts]);
+            setPostList([...postList, ...posts].filter(Boolean));
         }
         async function onScroll() {
             const nearBottom: boolean = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
@@ -44,13 +44,13 @@ export default function PostList({posts}: {posts: IVideoPost[]}) {
         <>
             <div className={"flex flex-col md:flex-row md:flex-wrap gap-2 m-3 md:m-0"}>
                 {
-                    postList?.map((post: IVideoPost) => (
+                    postList.length ? postList?.map((post: IVideoPost) => (
                         <Card className="w-full md:max-w-sm md:m-[1vw] gap-2" key={post.id}>
                             <CardHeader>
                                 <Link href={`/watch/${post.id}`} className="aspect-video">
                                     <Image className="w-full h-full object-cover"
                                            src={getImageProxyAPI(getImageURL(post.thumbnail))}
-                                           alt={process.env.NEXT_PUBLIC_APP_NAME} width={200} height={100} priority={true} />
+                                           alt={process.env.NEXT_PUBLIC_APP_NAME} width={200} height={100} priority="true" />
                                 </Link>
                             </CardHeader>
                             <CardFooter className="flex-col gap-2">
@@ -66,6 +66,10 @@ export default function PostList({posts}: {posts: IVideoPost[]}) {
                         </Card>
                         )
                     )
+                    :
+                    <div className="flex justify-center items-center w-full">
+                        No content ...
+                    </div>
                 }
             </div>
             <div className={`flex justify-center m-5  transition-all transition-discrete ${isLoadingMoreRef ? "hidden" : "block"}`}>
