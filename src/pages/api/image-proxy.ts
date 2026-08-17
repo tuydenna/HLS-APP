@@ -1,12 +1,12 @@
 // pages/api/image-proxy.js
-import { Readable } from 'stream';
-import type { NextApiRequest, NextApiResponse } from 'next'
+import {Readable} from 'stream';
+import type {NextApiRequest, NextApiResponse} from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const url: string = req.query.url as string;
 
     if (!url) {
-        return res.status(400).json({ error: 'URL is required' });
+        return res.status(400).json({error: 'URL is required'});
     }
 
     try {
@@ -27,11 +27,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // Pipe the image data directly to the client
         // @ts-ignore
-        const bodyStream = Readable.from(externalResponse.body);
+        const bodyStream: Readable = Readable.from(externalResponse.body);
         bodyStream.pipe(res);
 
     } catch (error) {
         console.error('Proxy error:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({error: 'Internal Server Error'});
     }
 }

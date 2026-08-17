@@ -3,6 +3,11 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
     reactStrictMode: false,
     images: {
+        localPatterns: [
+            {
+                pathname: "/api/image-proxy",
+            }
+        ],
         remotePatterns: [
             {
                 protocol: process.env.NEXT_PUBLIC_STORAGE_PROTOCOL,

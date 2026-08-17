@@ -5,15 +5,13 @@ import {Button} from "@components/ui/button";
 import {onDidMount} from "@lib/react-adapter";
 import {getAuth, storeAuth} from "@lib/utils";
 import {IUser} from "@interfaces/user";
-import {geImageProxyAPI, getImageURL} from "@util/helper";
+import {getImageProxyAPI, getImageURL} from "@util/helper";
 import {Label} from "@components/ui/label";
-import Image from "next/image";
+import Image from "@components/optimize/image";
 import {ImageUp} from "lucide-react";
 import {useRouter} from "next/navigation";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
-import AuthService from "@services/auth-service";
 import UserService from "@services/user-service";
-import {encodeToBase64} from "next/dist/build/webpack/loaders/utils";
 
 // The main App component containing the entire profile settings page UI.
 function ProfilePage() {
@@ -25,8 +23,9 @@ function ProfilePage() {
 
     onDidMount(function () {
         const user: IUser = getAuth()
-        setAvatarPreview(geImageProxyAPI(getImageURL(user.avatar)))
+        setAvatarPreview(getImageProxyAPI(getImageURL(user.avatar)))
         setUser(user);
+        console.log("user", user, getImageURL(user.avatar));
     })
 
     function resetForm(target: EventTarget & HTMLFormElement) {

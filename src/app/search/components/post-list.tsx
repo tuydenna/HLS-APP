@@ -3,7 +3,7 @@ import React, {RefObject, useRef, useState} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {IVideoPost} from "@interfaces/video-post";
-import {geImageProxyAPI, getImageURL, timeAgo} from "@util/helper";
+import {getImageProxyAPI, getImageURL, timeAgo} from "@util/helper";
 import {Card, CardDescription, CardFooter, CardHeader, CardTitle} from "@components/ui/card";
 import {AvatarUI} from "@components/ui/avatar";
 import { onDidUpdate} from "@lib/react-adapter";
@@ -49,7 +49,7 @@ export default function PostList({posts}: {posts: IVideoPost[]}) {
                             <CardHeader>
                                 <Link href={`/watch/${post.id}`} className="aspect-video">
                                     <Image className="w-full h-full object-cover"
-                                           src={geImageProxyAPI(getImageURL(post.thumbnail))}
+                                           src={getImageProxyAPI(getImageURL(post.thumbnail))}
                                            alt={process.env.NEXT_PUBLIC_APP_NAME} width={200} height={100} priority={true} />
                                 </Link>
                             </CardHeader>

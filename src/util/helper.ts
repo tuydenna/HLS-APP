@@ -10,7 +10,7 @@ export function getImageURL(path: string | undefined): string{
     return path ? process.env.NEXT_PUBLIC_STORAGE_PROTOCOL +"://" + process.env.NEXT_PUBLIC_STORAGE_HOST +":"+ process.env.NEXT_PUBLIC_STORAGE_PORT + process.env.NEXT_PUBLIC_STORAGE_PATH + path : "";
 }
 
-export function geImageProxyAPI(url: string): string{
+export function getImageProxyAPI(url: string): string{
     return `/api/image-proxy?url=${encodeURIComponent(url)}`;
 }
 
