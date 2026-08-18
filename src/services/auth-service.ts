@@ -1,5 +1,6 @@
-import BaseService from "@services/base-service";
+import BaseService, {fetchAdapter} from "@services/base-service";
 import {IRegisterDto, IUser} from "@interfaces/user";
+import {ErrorException} from "@interfaces/error-exeption";
 
 export default class AuthService extends BaseService<IUser> {
 
@@ -11,8 +12,13 @@ export default class AuthService extends BaseService<IUser> {
         return this.create(user, "register");
     }
 
-    login(data: {username: string; password: string}) {
-        return this.create(data, "login");
+    async login(data: { username: string; password: string }) {
+        // return this.create(data, "login");
+        const res = await fetchAdapter.post("/api/auth/login-proxy", this.getHeaders(), data);
+        if (res.ok) {
+            return (await res.json()).data;
+        }
+        throw new ErrorException(res.status, (await res.json()).message);
     }
 
     logout() {

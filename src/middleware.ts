@@ -2,7 +2,7 @@ import {NextRequest, NextResponse} from 'next/server'
 import {RoutesList} from "@util/routes";
 
 export function middleware(request: NextRequest) {
-    const authToken = request.cookies.get('auth_token')?.value;
+    const authToken: string | undefined = request.cookies.get('auth_token')?.value;
     const {pathname} = request.nextUrl;
 
     console.log("Middleware check. Auth token:", authToken ? "present" : "missing");
