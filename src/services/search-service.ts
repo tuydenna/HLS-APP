@@ -18,18 +18,25 @@ export default class SearchService extends BaseService<IVideoPost> {
     }
 
     async searchPosts(searchKey: string = "", take: number = 15, skip: number = 0): Promise<IVideoPost[]> {
-        const URLParams = new URLSearchParams();
-        URLParams.set("searchKey", searchKey);
-        URLParams.set("skip", skip.toString());
-        URLParams.set("take", take.toString());
-        this.setLastEndpoint("/posts?" + URLParams.toString());
-        const res = await fetchAdapter.get(this.getBaseAPI(), this.getHeaders());
+        try {
+            const URLParams = new URLSearchParams();
+            URLParams.set("searchKey", searchKey);
+            URLParams.set("skip", skip.toString());
+            URLParams.set("take", take.toString());
+            this.setLastEndpoint("/posts?" + URLParams.toString());
+            const res = await fetchAdapter.get(this.getBaseAPI(), this.getHeaders());
 
-        if (res.ok) {
-            return (await res.json()).data;
+            if (res.ok) {
+                return (await res.json()).data;
+            }
+
+            throw new ErrorException(res.status, res.statusText || (await res.json()).data.message);
+        } catch (e) {
+            throw e;
         }
-
-        throw new ErrorException(res.status,res.statusText || (await res.json()).data.message);
+        finally {
+            console.log("searchPosts Finally")
+        }
     }
 
 }

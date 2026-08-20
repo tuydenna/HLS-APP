@@ -40,6 +40,8 @@ export default function PostList({posts}: {posts: IVideoPost[]}) {
         return () => window.removeEventListener('scroll', onScroll);
     }, [postList])
 
+    console.log("postList", postList);
+
     return (
         <>
             <div className={"flex flex-col md:flex-row md:flex-wrap gap-2 m-3 md:m-0"}>

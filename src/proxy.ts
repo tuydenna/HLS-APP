@@ -1,7 +1,8 @@
 import {NextRequest, NextResponse} from 'next/server'
 import {RoutesList} from "@util/routes";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
+    console.log("middleware checking");
     const authToken: string | undefined = request.cookies.get('auth_token')?.value;
     const {pathname} = request.nextUrl;
 

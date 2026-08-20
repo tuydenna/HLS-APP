@@ -6,14 +6,13 @@ import {onDidUpdate} from "@lib/react-adapter";
 export default function GlobalError({error, reset}: { error: Error, reset: () => void }) {
     const router = useRouter();
 
-
-
     onDidUpdate(() => {
         // Log the error to an error reporting services
-        console.error(error);
-        console.log(error);
+        console.error("GlobalError", error);
+        console.log("GlobalError", error);
         if (error instanceof Error && error.message === 'Unauthorized') {
-            // return router.push('/auth/register');
+            alert("Unauthorized");
+            return router.push('/auth/login');
         }
     }, [error])
 

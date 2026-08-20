@@ -21,7 +21,7 @@ export default async function handler(
         return res.status(response.status).json(respondData);
     }
 
-    console.log("login proxy", respondData);
+    console.log("login proxy", respondData,  process.env.NODE_ENV);
     res.setHeader(
         "Set-Cookie",
          stringifySetCookie( {

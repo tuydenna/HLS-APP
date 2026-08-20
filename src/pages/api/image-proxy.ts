@@ -17,6 +17,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             },
         });
 
+        console.log(req.headers.cookie);
+
         if (!externalResponse.ok) {
             throw new Error(`Failed to fetch image: ${externalResponse.statusText}`);
         }
