@@ -1,7 +1,7 @@
 import {Input} from "@app/components/ui/input";
 import React, {JSX, useState} from "react";
 import {Card, CardContent} from "@app/components/ui/card";
-import {getImageURL, timeAgo} from "@util/helper";
+import {getImageProxyAPI, getImageURL, timeAgo} from "@util/helper";
 import {IVideoPost, PostStatus} from "@interfaces/video-post";
 import PostService from "@services/post-service";
 import {ErrorIcon, HomeIcon, PendingIcon, SuccessIcon} from "@app/components/icon";
@@ -127,7 +127,7 @@ export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
                                 {post.thumbnail && (
                                     <div className="w-full aspect-video mb-3 overflow-hidden rounded">
                                         <Image
-                                            src={getImageURL(post.thumbnail)}
+                                            src={getImageProxyAPI(getImageURL(post.thumbnail))}
                                             alt="thumbnail"
                                             className="w-full h-full object-cover object-center"
                                         />

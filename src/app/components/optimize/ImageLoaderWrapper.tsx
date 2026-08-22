@@ -28,7 +28,8 @@ export default function ImageLoaderWrapper({ fallBack, children }: { fallBack: J
     });
 
     function cloneChildren(children: JSX.Element) {
-       return cloneElement(children, {...children.props, style: {opacity: loaded ? 1 : 0}});
+       // return cloneElement(children, {...children.props, style: {opacity: loaded ? 1 : 0}});
+       return <div style={{opacity: `${loaded ? 1 : 0 }`}}>{children}</div>
     }
 
     return loaded ? cloneChildren(children): fallBack;

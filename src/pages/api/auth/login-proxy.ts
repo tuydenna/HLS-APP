@@ -20,7 +20,7 @@ export default async function handler(
     if (!response.ok) {
         return res.status(response.status).json(respondData);
     }
-
+    console.log(response.headers.getSetCookie());
     console.log("login proxy", respondData,  process.env.NODE_ENV);
     res.setHeader(
         "Set-Cookie",
@@ -28,7 +28,7 @@ export default async function handler(
              name: "auth_token",
              value: respondData.data.token,
              httpOnly: true,
-             secure: process.env.NODE_ENV === "production",
+             secure: false,
              sameSite: "strict",
              path: "/",
              maxAge: 60 * 60 * 24 * 7,
