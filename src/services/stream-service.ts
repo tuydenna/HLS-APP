@@ -6,7 +6,7 @@ export default class StreamService extends BaseService<null> {
     private abortController!: AbortController;
 
     constructor() {
-        super("/v2/streams/fmp4");
+        super("/v2/streams/fmp4", "/api/backend-proxy");
     }
 
     async getSegmentFileBuffer(videoId: string, segmentFile: string): Promise<ArrayBuffer | null> {
