@@ -28,7 +28,7 @@ export default async function handler(
              name: "auth_token",
              value: respondData.data.token,
              httpOnly: true,
-             secure: false,
+             secure:  process.env.NODE_ENV === "production",
              sameSite: "strict",
              path: "/",
              maxAge: 60 * 60 * 24 * 7,
