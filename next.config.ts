@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
         console.log("NextConfig", "rewrites");
         return [
             {
-                source: '/api/backend/:path*',
+                source: '/api/backend-proxy/:path*',
                 destination: `${process.env.NEXT_PUBLIC_API_URL || 'https://api.com'}/:path*`,
             },
         ];
