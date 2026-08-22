@@ -34,21 +34,23 @@ export const fetchAdapter = {
 }
 
 export default class BaseService<T> {
-    protected endPoint!: string;
+    protected readonly endPoint!: string;
+    private readonly baseAPIURL: string;
     private headers: HeadersInit = {}
     private lastEndpoint: string = "";
     private defaultHeaders: HeadersInit = {'Content-Type': 'application/json'};
 
-     constructor(endpoint: string) {
+     constructor(endpoint: string, baseAPIURL: string = process.env.NEXT_PUBLIC_API_URL) {
         this.endPoint = endpoint;
+        this.baseAPIURL = baseAPIURL;
     }
 
     getBaseAPI(endUrl: string  = ""): string {
         if (endUrl.trim()) {
             endUrl = endUrl.startsWith("/") ? endUrl : "/" + endUrl;
-            return process.env.NEXT_PUBLIC_API_URL + this.endPoint + endUrl + this.lastEndpoint
+            return this.baseAPIURL + this.endPoint + endUrl + this.lastEndpoint
         }
-        return  process.env.NEXT_PUBLIC_API_URL + this.endPoint + this.lastEndpoint ;
+        return this.baseAPIURL + this.endPoint + this.lastEndpoint ;
     }
 
 
@@ -77,6 +79,7 @@ export default class BaseService<T> {
     }
 
     async update(id: string, data: any = {}): Promise<T> {
+        console.log(this.getBaseAPI(id));
         const res = await fetchAdapter.put(this.getBaseAPI(id),this.getHeaders(), data);
         if (res.ok) {
             return (await res.json()).data;

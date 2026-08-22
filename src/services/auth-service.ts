@@ -5,7 +5,7 @@ import {ErrorException} from "@interfaces/error-exeption";
 export default class AuthService extends BaseService<IUser> {
 
     constructor() {
-        super("/authentications");
+        super("/authentications", "/api/backend");
     }
 
     register(user: IRegisterDto){
