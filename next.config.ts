@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
             },
         ];
     },
+    experimental: {
+        proxyClientMaxBodySize: '20mb',
+    },
     reactStrictMode: false,
     images: {
         localPatterns: [
