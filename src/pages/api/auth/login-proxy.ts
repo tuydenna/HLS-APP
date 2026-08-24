@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import {stringifySetCookie} from "cookie";
+import {parseSetCookie, SetCookie, stringifySetCookie} from "cookie";
 
 export default async function handler(
     req: NextApiRequest,
@@ -20,20 +20,12 @@ export default async function handler(
     if (!response.ok) {
         return res.status(response.status).json(respondData);
     }
-    console.log(response.headers.getSetCookie());
-    console.log("login proxy", respondData,  process.env.NODE_ENV);
-    res.setHeader(
-        "Set-Cookie",
-         stringifySetCookie( {
-             name: "auth_token",
-             value: respondData.data.token,
-             httpOnly: true,
-             secure:  process.env.NODE_ENV === "production",
-             sameSite: "strict",
-             path: "/",
-             maxAge: 60 * 60 * 24 * 7,
-         })
-    );
+    console.log("login proxy", respondData,  process.env.NODE_ENV,  parseSetCookie(response.headers.getSetCookie()?.at(0) || ""));
 
+    const apiCookie: SetCookie = parseSetCookie(response.headers.getSetCookie()?.at(0) || "") || {};
+    apiCookie.sameSite =  "strict";
+    apiCookie.sameSite =  process.env.NODE_ENV === "production";
+
+    res.setHeader("Set-Cookie", stringifySetCookie(apiCookie));
     return res.status(200).json(respondData);
 }

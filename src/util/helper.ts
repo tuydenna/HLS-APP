@@ -7,7 +7,11 @@ export function getEnv(key: string) {
 }
 
 export function getImageURL(path: string | undefined): string{
-    return path ? process.env.NEXT_PUBLIC_STORAGE_PROTOCOL +"://" + process.env.NEXT_PUBLIC_STORAGE_HOST +":"+ process.env.NEXT_PUBLIC_STORAGE_PORT + process.env.NEXT_PUBLIC_STORAGE_PATH + path : "";
+    const protocol: string = process.env.NEXT_PUBLIC_STORAGE_PROTOCOL || "http";
+    const host: string = process.env.NEXT_PUBLIC_STORAGE_HOST || "localhost";
+    const port: string = process.env.NEXT_PUBLIC_STORAGE_PORT || "";
+    const publicPath: string = process.env.NEXT_PUBLIC_STORAGE_PATH || "";
+    return path ? protocol +  "://" + host + port + publicPath + path: "";
 }
 
 export function getImageProxyAPI(url: string): string{

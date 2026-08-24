@@ -79,7 +79,7 @@ export default class BaseService<T> {
     }
 
     async update(id: string, data: any = {}): Promise<T> {
-        console.log(this.getBaseAPI(id));
+        console.log("update", this.getBaseAPI(id));
         const res = await fetchAdapter.put(this.getBaseAPI(id),this.getHeaders(), data);
         if (res.ok) {
             return (await res.json()).data;

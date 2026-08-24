@@ -10,7 +10,7 @@ import {getAuth} from "@lib/utils";
 import {IUser} from "@interfaces/user";
 import Link from "next/link";
 import {AvatarUI} from "@components/ui/avatar";
-import Image from "@components/optimize/image";
+import Image from "next/image";
 
 export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
 
@@ -129,6 +129,8 @@ export function RightSideLayout({newPost}: {newPost: IVideoPost | undefined}) {
                                         <Image
                                             src={getImageProxyAPI(getImageURL(post.thumbnail))}
                                             alt="thumbnail"
+                                            width={200}
+                                            height={200}
                                             className="w-full h-full object-cover object-center"
                                         />
                                     </div>

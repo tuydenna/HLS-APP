@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             },
         });
 
-        console.log(req.headers.cookie);
+        console.log("image proxy", url, req.headers.cookie);
 
         if (!externalResponse.ok) {
             throw new Error(`Failed to fetch image: ${externalResponse.statusText}`);
@@ -26,6 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // Set content headers from the external response
         res.setHeader('Content-Type', externalResponse.headers.get('Content-Type')!);
         res.setHeader('Content-Length', externalResponse.headers.get('Content-Length')!);
+        res.setHeader('Cache-Control', "public, max-age=31536000, s-maxage=31536000, immutable");
 
         // Pipe the image data directly to the client
         // @ts-ignore
