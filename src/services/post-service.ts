@@ -1,6 +1,7 @@
 import BaseService, {fetchAdapter} from "./base-service";
 import {IVideoPost} from "@interfaces/video-post";
 import {ErrorException} from "@interfaces/error-exeption";
+import {RouteProxyConfig} from "@constant/route-proxy-config";
 
 export default class PostService extends BaseService<IVideoPost> {
 
@@ -8,9 +9,16 @@ export default class PostService extends BaseService<IVideoPost> {
         super("/posts");
     }
 
+    async getPosts(): Promise<IVideoPost[]> {
+        const res = await fetchAdapter.get(RouteProxyConfig.API_POXY + this.endPoint, this.getHeaders());
+        if (res.ok) {
+            return (await res.json()).data;
+        }
+        throw new ErrorException(res.status, (await res.json()).message);
+    }
+
     async getAuthorizedPosts() {
-        this.setLastEndpoint("/authors");
-        const res = await fetchAdapter.get(this.getBaseAPI(), this.getHeaders());
+        const res = await fetchAdapter.get(RouteProxyConfig.API_POXY + this.endPoint + "/authors", this.getHeaders());
         if (res.ok) {
             return (await res.json()).data;
         }

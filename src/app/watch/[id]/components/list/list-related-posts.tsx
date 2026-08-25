@@ -16,7 +16,7 @@ export default function ListRelatedPosts() {
     const [posts, setPosts] = useState<IVideoPost[]>([]);
 
     onDidMount(function () {
-        new PostService().getMany().then(setPosts);
+        new PostService().getPosts().then(setPosts);
     })
 
     return (
