@@ -7,7 +7,6 @@ export default class CommentService extends BaseService<IComment> {
     constructor() {
         super("/comments", RouteProxyConfig.API_POXY);
     }
-
 }
 
 
