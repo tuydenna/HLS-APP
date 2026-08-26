@@ -1,16 +1,14 @@
 import BaseService, {fetchAdapter} from "./base-service";
 import {IVideoPost} from "@interfaces/video-post";
 import {ErrorException} from "@interfaces/error-exeption";
-import {RouteProxyConfig} from "@constant/route-proxy-config";
 
 export default class PostService extends BaseService<IVideoPost> {
-
     constructor() {
         super("/posts");
     }
 
     async getPosts(): Promise<IVideoPost[]> {
-        const res = await fetchAdapter.get(RouteProxyConfig.API_POXY + this.endPoint, this.getHeaders());
+        const res = await fetchAdapter.get(this.getBaseAPIProxy(), this.getHeaders());
         if (res.ok) {
             return (await res.json()).data;
         }
@@ -18,7 +16,8 @@ export default class PostService extends BaseService<IVideoPost> {
     }
 
     async getAuthorizedPosts() {
-        const res = await fetchAdapter.get(RouteProxyConfig.API_POXY + this.endPoint + "/authors", this.getHeaders());
+        this.setLastEndpoint("/authors");
+        const res = await fetchAdapter.get(this.getBaseAPIProxy(), this.getHeaders());
         if (res.ok) {
             return (await res.json()).data;
         }
@@ -26,7 +25,8 @@ export default class PostService extends BaseService<IVideoPost> {
     }
 
     async likePost(postId: string, authId: string):  Promise<IVideoPost> {
-        const res = await fetchAdapter.put(this.getBaseAPI(postId + "/likes?authId=" + authId), this.getHeaders());
+        this.setLastEndpoint(postId + "/likes?authId=" + authId);
+        const res = await fetchAdapter.put(this.getBaseAPIProxy(), this.getHeaders());
         if (res.ok) {
             return (await res.json()).data;
         }
@@ -34,7 +34,8 @@ export default class PostService extends BaseService<IVideoPost> {
     }
 
     async dislikePost(postId: string, authId: string): Promise<IVideoPost> {
-        const res = await fetchAdapter.put(this.getBaseAPI(postId + "/dislikes?authId=" + authId), this.getHeaders());
+        this.setLastEndpoint(postId + "/dislikes?authId=" + authId);
+        const res = await fetchAdapter.put(this.getBaseAPIProxy(), this.getHeaders());
         if (res.ok) {
             return (await res.json()).data;
         }

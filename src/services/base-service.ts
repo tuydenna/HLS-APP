@@ -1,4 +1,5 @@
 import {ErrorException} from "@interfaces/error-exeption";
+import {RouteProxyConfig} from "@constant/route-proxy-config";
 
 export const fetchAdapter = {
     get: function (url: string, headers: HeadersInit, signal?: AbortSignal) {
@@ -36,6 +37,7 @@ export const fetchAdapter = {
 export default class BaseService<T> {
     protected readonly endPoint!: string;
     private readonly baseAPIURL: string;
+    private readonly baseAPIProxyURL: string;
     private headers: HeadersInit = {}
     private lastEndpoint: string = "";
     private defaultHeaders: HeadersInit = {'Content-Type': 'application/json'};
@@ -43,6 +45,7 @@ export default class BaseService<T> {
      constructor(endpoint: string, baseAPIURL: string = process.env.NEXT_PUBLIC_API_URL) {
         this.endPoint = endpoint;
         this.baseAPIURL = baseAPIURL;
+        this.baseAPIProxyURL = RouteProxyConfig.API_POXY;
     }
 
     getBaseAPI(endUrl: string  = ""): string {
@@ -50,9 +53,16 @@ export default class BaseService<T> {
             endUrl = endUrl.startsWith("/") ? endUrl : "/" + endUrl;
             return this.baseAPIURL + this.endPoint + endUrl + this.lastEndpoint
         }
-        return this.baseAPIURL + this.endPoint + this.lastEndpoint ;
+        return this.baseAPIURL + this.getEndPoint() ;
     }
 
+    getBaseAPIProxy(endUrl: string  = ""): string {
+        if (endUrl.trim()) {
+            endUrl = endUrl.startsWith("/") ? endUrl : "/" + endUrl;
+            return this.baseAPIProxyURL + this.endPoint + endUrl + this.lastEndpoint
+        }
+        return this.baseAPIProxyURL + this.getEndPoint() ;
+    }
 
     async getOne(id: string): Promise<T> {
         const res = await fetchAdapter.get(this.getBaseAPI(id), this.getHeaders());
@@ -95,6 +105,10 @@ export default class BaseService<T> {
         throw new ErrorException(res.status, (await res.json()).message);
     }
 
+    protected getHeaders(): HeadersInit {
+        return {...this.defaultHeaders, ...this.headers};
+    }
+
     setHeaders(headers: HeadersInit) {
         this.headers = headers;
         return this;
@@ -106,7 +120,7 @@ export default class BaseService<T> {
        }
     }
 
-    protected getHeaders(): HeadersInit {
-        return {...this.defaultHeaders, ...this.headers};
+    getEndPoint(): string  {
+        return this.endPoint + this.lastEndpoint;
     }
 }

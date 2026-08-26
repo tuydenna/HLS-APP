@@ -1,6 +1,7 @@
 import BaseService, {fetchAdapter} from "./base-service";
 import {IVideoPost} from "@interfaces/video-post";
 import {ErrorException} from "@interfaces/error-exeption";
+import {RouteProxyConfig} from "@constant/route-proxy-config";
 
 export default class SearchService extends BaseService<IVideoPost> {
 
@@ -10,7 +11,7 @@ export default class SearchService extends BaseService<IVideoPost> {
 
     async searchAutocompletes(searchKey: string):  Promise<string[]> {
         this.setLastEndpoint(searchKey + "/autoCompletes");
-        const res = await fetchAdapter.get(this.getBaseAPI(), this.getHeaders());
+        const res = await fetchAdapter.get(RouteProxyConfig.API_POXY + this.getEndPoint(), this.getHeaders());
         if (res.ok) {
             return (await res.json()).data;
         }

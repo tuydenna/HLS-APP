@@ -70,7 +70,7 @@ function ProfilePage() {
             console.log(data);
             storeAuth(data);
             resetForm(target);
-
+            alert("Profile update successfully");
         } catch (error) {
             alert(error);
             console.log(e);
