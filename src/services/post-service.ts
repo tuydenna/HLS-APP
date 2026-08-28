@@ -15,6 +15,22 @@ export default class PostService extends BaseService<IVideoPost> {
         throw new ErrorException(res.status, (await res.json()).message);
     }
 
+    async create(data: any, path: string = ""): Promise<IVideoPost> {
+        const res = await fetchAdapter.post(this.getBaseAPIProxy(path), this.getHeaders(), data);
+        if (res.ok) {
+            return (await res.json()).data;
+        }
+        throw new ErrorException(res.status, (await res.json()).message);
+    }
+
+    async delete(id: string): Promise<IVideoPost> {
+        const res = await fetchAdapter.delete(this.getBaseAPIProxy(id), this.getHeaders());
+        if (res.ok) {
+            return (await res.json()).data;
+        }
+        throw new ErrorException(res.status, (await res.json()).message);
+    }
+
     async getAuthorizedPosts() {
         this.setLastEndpoint("/authors");
         const res = await fetchAdapter.get(this.getBaseAPIProxy(), this.getHeaders());
