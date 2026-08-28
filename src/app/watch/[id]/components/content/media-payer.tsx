@@ -244,7 +244,7 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
                 return
             }
 
-            const sourceBuffer: SourceBuffer = initSourceBuffer(mediaSourceRef.current!);
+            const sourceBuffer: SourceBuffer = initSourceBuffer(mediaSourceRef.current!, data.video.hasAudio);
             sourceBufferRef.current = sourceBuffer;
             setInitVideoDuration(mediaSourceRef.current!, data.video.duration)
             resetIsEndStream(videoConfigRef);

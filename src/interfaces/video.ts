@@ -4,6 +4,7 @@ export interface IVideo {
     filePath: string
     DirPath: string
     size: number
+    hasAudio: boolean
     duration: number
     quality: Readonly<IQuality[]>
 }

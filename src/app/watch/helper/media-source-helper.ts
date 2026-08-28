@@ -2,6 +2,8 @@ import {RefObject} from "react";
 import {IQueueConfigRef, IVideoConfigRef} from "@interfaces/video-config";
 
 const videoConfig = {
+    MIME_CODEC_AUDIO: 'video/mp4; codecs="avc1.64002A, mp4a.40.2"',
+    MIME_CODEC_NO_AUDIO: 'video/mp4; codecs="avc1.64002A"',
     MIME_CODEC: 'video/mp4; codecs="avc1.64002A, mp4a.40.2"',
     BUFFER_FETCH_GAP: 5,
     CHUNK_SIZE:  1 * 10 ** 6,
@@ -27,9 +29,9 @@ const initMediaSourceExtension = (videoEl: HTMLVideoElement): MediaSource => {
     return mediaSource;
 }
 
-const initSourceBuffer = (mediaSource: MediaSource): SourceBuffer => {
+const initSourceBuffer = (mediaSource: MediaSource, hasAudio: boolean): SourceBuffer => {
     if (mediaSource.activeSourceBuffers.length >= 1) return mediaSource.sourceBuffers[0];
-    return mediaSource.addSourceBuffer(videoConfig.MIME_CODEC)
+    return mediaSource.addSourceBuffer(hasAudio ? videoConfig.MIME_CODEC_AUDIO : videoConfig.MIME_CODEC_NO_AUDIO);
 }
 
 function setInitVideoDuration(mediaSource: MediaSource, duration: number) {
