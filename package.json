@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "start2": "Stop-Process -Id (Get-NetTCPConnection -LocalPort 3000).OwningProcess -Force && next dev -p 3000 -h 192.168.1.37",
-    "dev": "next dev -p 3000 -H 192.168.1.37",
+    "dev": "next dev -p 3100 -H 192.168.1.37",
     "build": "next build",
     "build2": "next build && npm start",
-    "start": "next start -H 192.168.1.37  -p 3000",
+    "start": "next start -H 192.168.1.37  -p 3100",
     "lint": "next lint"
   },
   "devDependencies": {

@@ -33,13 +33,14 @@ export default class FileService extends BaseService<IFileUpload> {
     }
 
     private xhrUpload(file: File, onProgress?: (event: ProgressEvent<XMLHttpRequestEventTarget>) => void): Promise<IFileResWrap<IFileUpload>> {
+        console.log("xhrUpload", this.getBaseAPIProxy());
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             this.xhrRequests.push(xhr);
             if (onProgress) {
                 xhr.upload.addEventListener("progress", onProgress)
             }
-            xhr.open("POST", this.getBaseAPI());
+            xhr.open("POST", this.getBaseAPIProxy());
             xhr.withCredentials = true;
             xhr.setRequestHeader("file-extension",  file.type.split("/")[1]);
             xhr.setRequestHeader("file-size", file.size.toString());
