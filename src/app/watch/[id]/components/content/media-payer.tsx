@@ -264,7 +264,7 @@ export default function MediaPayer(data: {video: IVideo}):JSX.Element {
 
         if (videoEl) {
             if (isIOS(videoConfig.MIME_CODEC)) {
-                videoEl.src = streamService.getPlaylistEndPoint(data.video.id, videoConfigRef.current.scale);
+                videoEl.src = streamService.getPlaylistEndPoint(data.video.id);
                 videoEl.preload = "metadata";
             } else {
                 const mediaSource: MediaSource = initMediaSourceExtension(videoEl);

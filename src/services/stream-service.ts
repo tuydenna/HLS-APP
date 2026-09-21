@@ -31,6 +31,7 @@ export default class StreamService extends BaseService<null> {
     }
 
     getPlaylistEndPoint(videoId: string, scale?: string): string {
+        return process.env.NEXT_PUBLIC_API_URL + this.getEndPoint() + "/" + videoId + "/playlist";
         return this.getBaseAPI(videoId + "/playlist?scale=" + scale);
     }
 
